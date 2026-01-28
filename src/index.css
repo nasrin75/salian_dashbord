@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'salianFont';
+    src: url('./Assets/Fonts/IRANSansWebFaNum_Light.ttf') format("truetype");
+    
+}
+body {
+  margin: 0;
+  font-family: "salianFont" !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: "salianFont" !important;
+}

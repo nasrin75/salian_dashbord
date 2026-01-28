@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.0255428a.css",
+    "main.js": "/static/js/main.71cb7539.js",
+    "static/media/IRANSansWebFaNum_Light.ttf": "/static/media/IRANSansWebFaNum_Light.2b64937900326fc69f94.ttf",
+    "index.html": "/index.html",
+    "main.0255428a.css.map": "/static/css/main.0255428a.css.map",
+    "main.71cb7539.js.map": "/static/js/main.71cb7539.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0255428a.css",
+    "static/js/main.71cb7539.js"
+  ]
+}
