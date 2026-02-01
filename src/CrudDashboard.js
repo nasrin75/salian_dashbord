@@ -23,15 +23,18 @@ import EquipmentEdit from './pages/equipment/Edit';
 import LocationList from './pages/location/List';
 import LocationCreate from './pages/location/Create';
 import LocationEdit from './pages/location/Edit';
-import ActionTypeList from './pages/actionType/List';
-import ActionTypeCreate from './pages/actionType/Create';
-import ActionTypeEdit from './pages/actionType/Edit';
+import ActionTypeList from './pages/action_type/List';
+import ActionTypeCreate from './pages/action_type/Create';
+import ActionTypeEdit from './pages/action_type/Edit';
 import RoleList from './pages/role/List';
 import RoleCreate from './pages/role/Create';
 import RoleEdit from './pages/role/Edit';
 import PermissionList from './pages/permission/List';
 import PermissionCreate from './pages/permission/Create';
 import PermissionEdit from './pages/permission/Edit'
+import FeatureList from './pages/feature/List';
+import FeatureCreate from './pages/feature/Create';
+import FeatureEdit from './pages/feature/Edit'
 
 const router = createHashRouter([
   {
@@ -70,6 +73,11 @@ const router = createHashRouter([
           { path: 'permissions', element: <PermissionList /> },
           { path: 'permission/create', element: <PermissionCreate /> },
           { path: 'permission/edit/:permissionID', element: <PermissionEdit /> },
+
+          //Features
+          { path: 'features', element: <FeatureList /> },
+          { path: 'feature/create', element: <FeatureCreate /> },
+          { path: 'feature/edit/:featureID', element: <FeatureEdit /> },
       ]}
 
     ],

@@ -192,10 +192,10 @@ function DashboardSidebar({
                     selected={!!matchPath('/setting/permissions', pathname)}
                   />
                   <DashboardSidebarPageItem
-                    id="traffic"
+                    id="features"
                     title="ویژگی قطعات"
-                    href="/setting/traffic"
-                    selected={!!matchPath('/settings/traffic', pathname)}
+                    href="/setting/features"
+                    selected={!!matchPath('/settings/features', pathname)}
                   />
                 </List>
               }
