@@ -12,7 +12,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { EquipmentDetails, updateEquipment } from '../../api/EquipmentApi';
 
 function EquipmentEditForm({ initialValues, onSubmit }) {
-    const { equipmentID } = useParams();
     const navigate = useNavigate();
 
     const [formState, setFormState] = useState(() => ({
@@ -21,7 +20,6 @@ function EquipmentEditForm({ initialValues, onSubmit }) {
     }));
     const formValues = formState.values;
     const formErrors = formState.errors;
-    console.log('EquipmentEditForm', formValues)
 
     const setFormValues = useCallback((newFormValues) => {
         setFormState((previousState) => ({
@@ -50,13 +48,8 @@ function EquipmentEditForm({ initialValues, onSubmit }) {
 
 const handleFormFieldChange = useCallback(
   (name, value, type = "text") => {
-  console.log(name, value,type);
 
     let finalValue = value;
-
-    // if (type === "radio") {
-    //   finalValue = Number(value);
-    // }
 
     const newFormValues = {
       ...formValues,
@@ -81,7 +74,6 @@ const handleFormFieldChange = useCallback(
     }, [initialValues, setFormValues]);
 
     const handleFormSubmit = useCallback(async () => {
-        console.log(formValues);
         const { issues } = EditValidation(formValues);
         if (issues && issues.length > 0) {
             setFormErrors(
@@ -112,7 +104,7 @@ const handleFormFieldChange = useCallback(
     );
 }
 
-export default function EquipmentEdit() {
+export default function Edit() {
     const { equipmentID } = useParams();
     const navigate = useNavigate();
     const [equipment, setEquipment] = useState(null);
@@ -123,10 +115,8 @@ export default function EquipmentEdit() {
         setError(null);
         setIsLoading(true);
 
-        console.log('sssss', equipmentID)
         EquipmentDetails(equipmentID)
             .then(data => {
-                console.log('dtaaaa', equipmentID, data.data['result'])
                 setEquipment(data.data['result'])
                 setIsLoading(false);
             })
@@ -144,7 +134,6 @@ export default function EquipmentEdit() {
         async (formValues) => {
             updateEquipment(formValues)
                 .then(data => {
-                    console.log('handlesubmit', equipmentID)
                     setEquipment('handlesubmit', data.data['result'])
                     setIsLoading(false);
                     navigate('/equipments');

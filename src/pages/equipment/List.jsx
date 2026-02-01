@@ -15,7 +15,7 @@ import { deleteEquipment, getEquipments } from '../../api/EquipmentApi';
 
 const INITIAL_PAGE_SIZE = 10;
 
-export default function EquipmentList() {
+export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
