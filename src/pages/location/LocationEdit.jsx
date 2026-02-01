@@ -3,16 +3,15 @@ import PropTypes from 'prop-types';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import EditForm from '../../components/equipment/EditForm';
+import EditForm from '../../components/location/EditForm';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
-import { EditValidation } from '../../validation/EquipmentValidation';
+import { EditValidation } from '../../validation/LocationValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
-import { EquipmentDetails, updateEquipment } from '../../api/EquipmentApi';
+import { LocationDetails, updateLocation } from '../../api/LocationApi';
 
-function EquipmentEditForm({ initialValues, onSubmit }) {
-    const { equipmentID } = useParams();
+function LocationEditForm({ initialValues, onSubmit }) {
     const navigate = useNavigate();
 
     const [formState, setFormState] = useState(() => ({
@@ -21,7 +20,7 @@ function EquipmentEditForm({ initialValues, onSubmit }) {
     }));
     const formValues = formState.values;
     const formErrors = formState.errors;
-    console.log('EquipmentEditForm', formValues)
+    console.log('LocationEditForm', formValues)
 
     const setFormValues = useCallback((newFormValues) => {
         setFormState((previousState) => ({
@@ -54,10 +53,6 @@ const handleFormFieldChange = useCallback(
 
     let finalValue = value;
 
-    // if (type === "radio") {
-    //   finalValue = Number(value);
-    // }
-
     const newFormValues = {
       ...formValues,
       [name]: finalValue,
@@ -73,7 +68,7 @@ const handleFormFieldChange = useCallback(
     });
 
   },
-  [formValues, formErrors],
+  [formValues,setFormValues, formErrors],
 );
 
     const handleFormReset = useCallback(() => {
@@ -95,7 +90,7 @@ const handleFormFieldChange = useCallback(
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate('/equipments');
+            navigate('/setting/locations');
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -112,10 +107,10 @@ const handleFormFieldChange = useCallback(
     );
 }
 
-export default function EquipmentEdit() {
-    const { equipmentID } = useParams();
+export default function LocationEdit() {
+    const { locationID } = useParams();
     const navigate = useNavigate();
-    const [equipment, setEquipment] = useState(null);
+    const [location, setLocation] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -123,17 +118,16 @@ export default function EquipmentEdit() {
         setError(null);
         setIsLoading(true);
 
-        console.log('sssss', equipmentID)
-        EquipmentDetails(equipmentID)
+        LocationDetails(locationID)
             .then(data => {
-                console.log('dtaaaa', equipmentID, data.data['result'])
-                setEquipment(data.data['result'])
+                console.log('dtaaaa', locationID, data.data['result'])
+                setLocation(data.data['result'])
                 setIsLoading(false);
             })
             .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
-    }, [equipmentID]);
+    }, [locationID]);
 
     useEffect(() => {
         loadData();
@@ -142,16 +136,16 @@ export default function EquipmentEdit() {
 
     const handleSubmit = useCallback(
         async (formValues) => {
-            updateEquipment(formValues)
+            updateLocation(formValues)
                 .then(data => {
-                    console.log('handlesubmit', equipmentID)
-                    setEquipment('handlesubmit', data.data['result'])
+                    console.log('handlesubmit', locationID)
+                    setLocation('handlesubmit', data.data['result'])
                     setIsLoading(false);
-                    navigate('/equipments');
+                    navigate('/setting/locations');
                 })
                 .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
-        [equipmentID],
+        [locationID],
     );
 
     const renderEdit = useMemo(() => {
@@ -180,15 +174,15 @@ export default function EquipmentEdit() {
             );
         }
 
-        return equipment ? (
-            <EquipmentEditForm initialValues={equipment} onSubmit={handleSubmit} />
+        return location ? (
+            <LocationEditForm initialValues={location} onSubmit={handleSubmit} />
         ) : null;
-    }, [isLoading, error, equipment, handleSubmit]);
+    }, [isLoading, error, location, handleSubmit]);
 
 
     return (
         <PageContainer
-            title={"ویرایش قطعه"}
+            title={"ویرایش بخش"}
         >
             <Divider sx={{ marginBottom: "4%" }} />
             <Box sx={{ display: 'flex', flex: 1 }}>{renderEdit}</Box>

@@ -9,7 +9,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Diversity3Outlined from '@mui/icons-material/Diversity3Outlined'
 import BuildCircleOutlined from '@mui/icons-material/BuildCircleOutlined'
 import PersonIcon from '@mui/icons-material/Person';
-import BarChartIcon from '@mui/icons-material/BarChart';
+import SettingsOutlined from '@mui/icons-material/SettingsOutlined';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
 import { matchPath, useLocation } from 'react-router';
@@ -150,13 +150,13 @@ function DashboardSidebar({
             />
             {/* <DashboardSidebarHeaderItem>Example items</DashboardSidebarHeaderItem> */}
             <DashboardSidebarPageItem
-              id="reports"
-              title="Reports"
-              icon={<BarChartIcon />}
+              id="setting"
+              title="تنظیمات"
+              icon={<SettingsOutlined />}
               href="/reports"
-              selected={!!matchPath('/reports', pathname)}
-              defaultExpanded={!!matchPath('/reports', pathname)}
-              expanded={expandedItemIds.includes('reports')}
+              selected={!!matchPath('/setting', pathname)}
+              defaultExpanded={!!matchPath('/setting', pathname)}
+              expanded={expandedItemIds.includes('setting')}
               nestedNavigation={
                 <List
                   dense
@@ -168,18 +168,28 @@ function DashboardSidebar({
                   }}
                 >
                   <DashboardSidebarPageItem
-                    id="sales"
-                    title="Sales"
-                    icon={<DescriptionIcon />}
-                    href="/reports/sales"
-                    selected={!!matchPath('/reports/sales', pathname)}
+                    id="locations"
+                    title="بخش ها"
+                    href="/setting/locations"
+                    selected={!!matchPath('/setting/locations', pathname)}
                   />
                   <DashboardSidebarPageItem
                     id="traffic"
-                    title="Traffic"
-                    icon={<DescriptionIcon />}
-                    href="/reports/traffic"
-                    selected={!!matchPath('/reports/traffic', pathname)}
+                    title="نقش ها"
+                    href="/setting/traffic"
+                    selected={!!matchPath('/setting/traffic', pathname)}
+                  />
+                  <DashboardSidebarPageItem
+                    id="traffic"
+                    title="دسترسی ها"
+                    href="/setting/traffic"
+                    selected={!!matchPath('/setting/traffic', pathname)}
+                  />
+                  <DashboardSidebarPageItem
+                    id="traffic"
+                    title="ویژگی قطعات"
+                    href="/setting/traffic"
+                    selected={!!matchPath('/settings/traffic', pathname)}
                   />
                 </List>
               }

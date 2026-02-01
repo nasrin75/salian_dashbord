@@ -20,6 +20,9 @@ import EmployeeEdit from './pages/employee/EmployeeEdit';
 import EquipmentList from './pages/equipment/EquipmentList';
 import EquipmentCreate from './pages/equipment/EquipmentCreate';
 import EquipmentEdit from './pages/equipment/EquipmentEdit';
+import LocationList from './pages/location/LocationList';
+import LocationCreate from './pages/location/LocationCreate';
+import LocationEdit from './pages/location/LocationEdit';
 
 const router = createHashRouter([
   {
@@ -37,6 +40,11 @@ const router = createHashRouter([
       { path: '/equipments', element: <EquipmentList /> },
       { path: '/equipment/create', element: <EquipmentCreate /> },
       { path: '/equipment/edit/:equipmentID', element: <EquipmentEdit /> },
+
+      //Locations
+      { path: '/setting/locations', element: <LocationList /> },
+      { path: '/setting/location/create', element: <LocationCreate /> },
+      { path: '/setting/location/edit/:locationID', element: <LocationEdit /> },
     ],
   },
 ]);
