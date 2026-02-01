@@ -180,10 +180,10 @@ function DashboardSidebar({
                     selected={!!matchPath('/setting/actionTypes', pathname)}
                   />
                   <DashboardSidebarPageItem
-                    id="traffic"
+                    id="roles"
                     title="نقش ها"
-                    href="/setting/traffic"
-                    selected={!!matchPath('/setting/traffic', pathname)}
+                    href="/setting/roles"
+                    selected={!!matchPath('/setting/roles', pathname)}
                   />
                   <DashboardSidebarPageItem
                     id="traffic"

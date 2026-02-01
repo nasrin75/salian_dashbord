@@ -106,12 +106,12 @@ function EditForm(props) {
 EditForm.propTypes = {
   formState: PropTypes.shape({
     errors: PropTypes.shape({
-      title: PropTypes.string,
-      abbreviation: PropTypes.string,
+      faName: PropTypes.string,
+      enName: PropTypes.string,
     }).isRequired,
     values: PropTypes.shape({
-      title: PropTypes.string,
-      abbreviation: PropTypes.string,
+      faName: PropTypes.string,
+      enName: PropTypes.string,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,

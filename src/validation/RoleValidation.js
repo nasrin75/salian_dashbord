@@ -2,7 +2,7 @@ export function CreateValidation(user) {
   let issues = [];
 
   if (!user.FaName) {
-    issues = [...issues, { message: 'عنوان  فارسی الزامی است.', path: ['FaName'] }];
+    issues = [...issues, { message: 'عنوان فارسی الزامی است.', path: ['FaName'] }];
   }
   if (!user.EnName) {
     issues = [...issues, { message: 'عنوان انگلیسی الزامی است.', path: ['EnName'] }];

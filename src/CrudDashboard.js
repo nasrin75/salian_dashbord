@@ -26,6 +26,9 @@ import LocationEdit from './pages/location/Edit';
 import ActionTypeList from './pages/actionType/List';
 import ActionTypeCreate from './pages/actionType/Create';
 import ActionTypeEdit from './pages/actionType/Edit';
+import RoleList from './pages/role/List';
+import RoleCreate from './pages/role/Create';
+import RoleEdit from './pages/role/Edit';
 
 const router = createHashRouter([
   {
@@ -44,15 +47,23 @@ const router = createHashRouter([
       { path: '/equipment/create', element: <EquipmentCreate /> },
       { path: '/equipment/edit/:equipmentID', element: <EquipmentEdit /> },
 
-      //Locations
-      { path: '/setting/locations', element: <LocationList /> },
-      { path: '/setting/location/create', element: <LocationCreate /> },
-      { path: '/setting/location/edit/:locationID', element: <LocationEdit /> },
+      { path: '/setting/', children:[
+        //Locations
+          { path: 'locations', element: <LocationList /> },
+          { path: 'location/create', element: <LocationCreate /> },
+          { path: 'location/edit/:locationID', element: <LocationEdit /> },
+          
+          //ActionTypes
+          { path: 'actionTypes', element: <ActionTypeList /> },
+          { path: 'actionType/create', element: <ActionTypeCreate /> },
+          { path: 'actionType/edit/:actionID', element: <ActionTypeEdit /> },
 
-      //ActionTypes
-      { path: '/setting/actionTypes', element: <ActionTypeList /> },
-      { path: '/setting/actionType/create', element: <ActionTypeCreate /> },
-      { path: '/setting/actionType/edit/:actionID', element: <ActionTypeEdit /> },
+          //Roles
+          { path: 'roles', element: <RoleList /> },
+          { path: 'role/create', element: <RoleCreate /> },
+          { path: 'role/edit/:roleID', element: <RoleEdit /> },
+      ]}
+
     ],
   },
 ]);

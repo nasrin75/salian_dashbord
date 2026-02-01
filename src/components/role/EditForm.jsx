@@ -2,19 +2,17 @@ import { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import Switch from '@mui/material/Switch';
 
-function CreateForm(props) {
+function EditForm(props) {
   const {
     formState,
     onFieldChange,
     onSubmit,
+    onReset,
     submitButtonLabel,
   } = props;
 
@@ -37,48 +35,44 @@ function CreateForm(props) {
     [formValues, onSubmit],
   );
 
+  const handleReset = useCallback(() => {
+    if (onReset) {
+      onReset(formValues);
+    }
+  }, [formValues, onReset]);
+
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
       noValidate
       autoComplete="off"
+      onReset={handleReset}
       sx={{ width: '100%' }}
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
-              value={formValues.FaName ?? ''}
-              onChange={(e) => onFieldChange("FaName", e.target.value)}
-              name="FaName"
+              value={formValues.faName ?? ''}
+              onChange={(e) => onFieldChange("faName", e.target.value)}
+              name="faName"
               label="عنوان فارسی"
-              error={!!formErrors.FaName}
-              helperText={formErrors.FaName ?? ' '}
+              error={!!formErrors.faName}
+              helperText={formErrors.faName ?? ' '}
               fullWidth
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
-              value={formValues.EnName ?? ''}
-              onChange={(e) => onFieldChange("EnName", e.target.value)}
-              name="EnName"
+              value={formValues.enName ?? ''}
+              onChange={(e) => onFieldChange("enName", e.target.value)}
+              name="enName"
               label="عنوان انگلیسی"
-              error={!!formErrors.EnName}
-              helperText={formErrors.EnName ?? ' '}
+              error={!!formErrors.enName}
+              helperText={formErrors.enName ?? ' '}
               fullWidth
             />
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 12 }} sx={{ display: 'flex' }}>
-            <FormControl>
-              <FormGroup
-                name="IsShow"
-                onChange={(e) => onFieldChange("IsShow", e.target.value, 'switch')}
-              >
-                <FormControlLabel control={<Switch />} label="نمایش" />
-              </FormGroup>
-            </FormControl>
           </Grid>
         </Grid>
       </FormGroup>
@@ -96,15 +90,15 @@ function CreateForm(props) {
   );
 }
 
-CreateForm.propTypes = {
+EditForm.propTypes = {
   formState: PropTypes.shape({
     errors: PropTypes.shape({
-      FaName: PropTypes.string,
-      EnName: PropTypes.string,
+      faName: PropTypes.string,
+      enName: PropTypes.string,
     }).isRequired,
     values: PropTypes.shape({
-      FaName: PropTypes.string,
-      EnName: PropTypes.string,
+      faName: PropTypes.string,
+      enName: PropTypes.string,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,
@@ -112,4 +106,6 @@ CreateForm.propTypes = {
   submitButtonLabel: PropTypes.string.isRequired,
 };
 
-export default CreateForm;
+
+export default EditForm;
+

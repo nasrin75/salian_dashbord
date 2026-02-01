@@ -2,13 +2,10 @@ import { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import Switch from '@mui/material/Switch';
 
 function CreateForm(props) {
   const {
@@ -68,17 +65,6 @@ function CreateForm(props) {
               helperText={formErrors.EnName ?? ' '}
               fullWidth
             />
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 12 }} sx={{ display: 'flex' }}>
-            <FormControl>
-              <FormGroup
-                name="IsShow"
-                onChange={(e) => onFieldChange("IsShow", e.target.value, 'switch')}
-              >
-                <FormControlLabel control={<Switch />} label="نمایش" />
-              </FormGroup>
-            </FormControl>
           </Grid>
         </Grid>
       </FormGroup>
