@@ -11,11 +11,11 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
-import { deleteEmployee, getEmployees } from '../../api/EmployeeApi';
+import { deleteEquipment, getEquipments } from '../../api/EquipmentApi';
 
 const INITIAL_PAGE_SIZE = 10;
 
-export default function EmployeeList() {
+export default function EquipmentList() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function EmployeeList() {
         searchParams.get('sort') ? JSON.parse(searchParams.get('sort') ?? '') : [],
     );
 
-    const [employees, setEmployees] = useState([]);
+    const [equipments, setEquipments] = useState([]);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -101,9 +101,9 @@ export default function EmployeeList() {
     const loadData = useCallback(async () => {
         setIsLoading(true);
 
-        getEmployees()
+        getEquipments()
             .then(data => {
-                setEmployees(data.data['result'])
+                setEquipments(data.data['result'])
 
                 setIsLoading(false)
 
@@ -118,24 +118,24 @@ export default function EmployeeList() {
 
 
     const handleCreateClick = useCallback(() => {
-        navigate('/employee/create');
+        navigate('/equipment/create');
     }, [navigate]);
 
-    const handleEmployeeEditPage = useCallback(
-        (employeeID) => () => {
-            console.log(employeeID)
-            navigate(`/employee/edit/${employeeID}`);
+    const handleEquipmentEditPage = useCallback(
+        (equipmentID) => () => {
+            console.log(equipmentID)
+            navigate(`/equipment/edit/${equipmentID}`);
         },
         [navigate],
     );
 
-    const handelDeleteEmployee = useCallback(
-        (employee) => async () => {
+    const handelDeleteEquipment = useCallback(
+        (equipment) => async () => {
 
             const confirmed = await dialogs.confirm(
-                `آبا از حذف پرسنل  ${employee.name} مطمئنید?`,
+                `آبا از حذف قطعه  ${equipment.name} مطمئنید?`,
                 {
-                    title: `حذف پرسنل?`,
+                    title: `حذف قطعات?`,
                     severity: 'خطا',
                     okText: 'حذف',
                     cancelText: 'انصراف',
@@ -145,10 +145,10 @@ export default function EmployeeList() {
             if (confirmed) {
                 setIsLoading(true);
 
-                deleteEmployee(employee.id)
+                deleteEquipment(equipment.id)
                     .then(() => {
                         loadData();
-                        toast.success("پرسنل با موفقیت حذف شد.")
+                        toast.success("عملیات با موفقیت حذف شد.")
                         setIsLoading(false)
 
                     }).catch(() =>
@@ -169,10 +169,11 @@ export default function EmployeeList() {
 
     const columns = useMemo(
         () => [
-            { field: 'id', headerName: 'کدپرسنلی ', width: 240, align: 'right', },
-            { field: 'name', headerName: 'نام', width: 140, align: 'right' },
-            { field: 'email', headerName: 'ایمیل', width: 240, align: 'right' },
-            { field: 'location', headerName: 'موقعیت', width: 140, align: 'right' },
+            { field: 'id', headerName: 'شماره ', width: 240, align: 'right', },
+            { field: 'name', headerName: 'نام قطعه', width: 140, align: 'right' },
+            { field: 'type', headerName: 'نوع قطعه', width: 140, align: 'right' },
+            { field: 'usedCount', headerName: 'تعداداستفاده شده', width: 140, align: 'right' },
+            { field: 'unusedCount', headerName: 'تعداداستفاده نشده', width: 240, align: 'right' },
             {
                 field: '',
                 headerName: 'عملیات',
@@ -184,27 +185,21 @@ export default function EmployeeList() {
                         key="edit-item"
                         icon={<EditIcon />}
                         label="Edit"
-                        onClick={handleEmployeeEditPage(row.id)}
+                        onClick={handleEquipmentEditPage(row.id)}
                     />,
                     <GridActionsCellItem
                         key="delete-item"
                         icon={<DeleteIcon />}
                         label="Delete"
-                        onClick={handelDeleteEmployee(row)}
-                    />,
-                    <GridActionsCellItem
-                        key="log-item"
-                        icon={<History />}
-                        label="log"
-                    // onClick={handleEmployeeEditPage(row)}
+                        onClick={handelDeleteEquipment(row)}
                     />,
                 ],
             },
         ],
-        [handleEmployeeEditPage, handelDeleteEmployee],
+        [handleEquipmentEditPage, handelDeleteEquipment],
     );
 
-    const pageTitle = 'پرسنل';
+    const pageTitle = 'قطعات';
 
     return (
         <PageContainer
@@ -217,7 +212,7 @@ export default function EmployeeList() {
                         onClick={handleCreateClick}
                         startIcon={<AddIcon />}
                     >
-                        افزودن پرسنل
+                        افزودن قطعه
                     </Button>
                 </Stack>
             }
@@ -225,8 +220,8 @@ export default function EmployeeList() {
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>
 
                 <DataGrid
-                    rows={employees}
-                    rowCount={employees.length}
+                    rows={equipments}
+                    rowCount={equipments.length}
                     columns={columns}
                     align="center"
                     pagination

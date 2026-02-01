@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import EditForm from '../../components/employee/EditForm';
+import EditForm from '../../components/equipment/EditForm';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
-import { updateEmployee, employeeDetails, EmployeeDetails } from '../../api/EmployeeApi';
-import { EditValidation } from '../../validation/EmployeeValidation';
+import { EditValidation } from '../../validation/EquipmentValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
+import { EquipmentDetails, updateEquipment } from '../../api/EquipmentApi';
 
-function EmployeeEditForm({ initialValues, onSubmit }) {
-    const { employeeID } = useParams();
+function EquipmentEditForm({ initialValues, onSubmit }) {
+    const { equipmentID } = useParams();
     const navigate = useNavigate();
 
     const [formState, setFormState] = useState(() => ({
@@ -21,7 +21,7 @@ function EmployeeEditForm({ initialValues, onSubmit }) {
     }));
     const formValues = formState.values;
     const formErrors = formState.errors;
-    console.log('EmployeeEditForm', formValues)
+    console.log('EquipmentEditForm', formValues)
 
     const setFormValues = useCallback((newFormValues) => {
         setFormState((previousState) => ({
@@ -48,29 +48,40 @@ function EmployeeEditForm({ initialValues, onSubmit }) {
         }));
     }, []);
 
-    const handleFormFieldChange = useCallback(
-        (name, value) => {
-            const validateField = async (values) => {
-                const { issues } = EditValidation(values);
-                setFormErrors({
-                    ...formErrors,
-                    [name]: issues?.find((issue) => issue.path?.[0] === name)?.message,
-                });
-            };
+const handleFormFieldChange = useCallback(
+  (name, value, type = "text") => {
+  console.log(name, value,type);
 
-            const newFormValues = { ...formValues, [name]: value };
-            setFormValues(newFormValues);
-            validateField(newFormValues);
+    let finalValue = value;
 
-        },
-        [formValues, formErrors, setFormErrors, setFormValues],
-    );
+    if (type === "radio") {
+      finalValue = Number(value);
+    }
+
+    const newFormValues = {
+      ...formValues,
+      [name]: finalValue,
+    };
+
+    setFormValues(newFormValues);
+
+    const { issues } = EditValidation(newFormValues);
+
+    setFormErrors({
+      ...formErrors,
+      [name]: issues?.find(i => i.path?.[0] === name)?.message,
+    });
+
+  },
+  [formValues, formErrors],
+);
 
     const handleFormReset = useCallback(() => {
         setFormValues(initialValues);
     }, [initialValues, setFormValues]);
 
     const handleFormSubmit = useCallback(async () => {
+        console.log(formValues);
         const { issues } = EditValidation(formValues);
         if (issues && issues.length > 0) {
             setFormErrors(
@@ -84,7 +95,7 @@ function EmployeeEditForm({ initialValues, onSubmit }) {
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            // navigate('/employees');
+            navigate('/equipments');
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -101,10 +112,10 @@ function EmployeeEditForm({ initialValues, onSubmit }) {
     );
 }
 
-export default function EmployeeEdit() {
-    const { employeeID } = useParams();
+export default function EquipmentEdit() {
+    const { equipmentID } = useParams();
     const navigate = useNavigate();
-    const [employee, setEmployee] = useState(null);
+    const [equipment, setEquipment] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -112,17 +123,17 @@ export default function EmployeeEdit() {
         setError(null);
         setIsLoading(true);
 
-        console.log('sssss', employeeID)
-        EmployeeDetails(employeeID)
+        console.log('sssss', equipmentID)
+        EquipmentDetails(equipmentID)
             .then(data => {
-                console.log('dtaaaa', employeeID, data.data['result'])
-                setEmployee(data.data['result'])
+                console.log('dtaaaa', equipmentID, data.data['result'])
+                setEquipment(data.data['result'])
                 setIsLoading(false);
             })
             .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
-    }, [employeeID]);
+    }, [equipmentID]);
 
     useEffect(() => {
         loadData();
@@ -131,16 +142,16 @@ export default function EmployeeEdit() {
 
     const handleSubmit = useCallback(
         async (formValues) => {
-            updateEmployee(formValues)
+            updateEquipment(formValues)
                 .then(data => {
-                    console.log('handlesubmit', employeeID)
-                    setEmployee('handlesubmit', data.data['result'])
+                    console.log('handlesubmit', equipmentID)
+                    setEquipment('handlesubmit', data.data['result'])
                     setIsLoading(false);
-                    navigate('/employees');
+                    navigate('/equipments');
                 })
                 .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
-        [employeeID],
+        [equipmentID],
     );
 
     const renderEdit = useMemo(() => {
@@ -169,15 +180,15 @@ export default function EmployeeEdit() {
             );
         }
 
-        return employee ? (
-            <EmployeeEditForm initialValues={employee} onSubmit={handleSubmit} />
+        return equipment ? (
+            <EquipmentEditForm initialValues={equipment} onSubmit={handleSubmit} />
         ) : null;
-    }, [isLoading, error, employee, handleSubmit]);
+    }, [isLoading, error, equipment, handleSubmit]);
 
 
     return (
         <PageContainer
-            title={"ویرایش پرسنل"}
+            title={"ویرایش قطعه"}
         >
             <Divider sx={{ marginBottom: "4%" }} />
             <Box sx={{ display: 'flex', flex: 1 }}>{renderEdit}</Box>

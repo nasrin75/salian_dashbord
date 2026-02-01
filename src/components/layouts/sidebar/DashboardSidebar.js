@@ -7,6 +7,7 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
 import Diversity3Outlined from '@mui/icons-material/Diversity3Outlined'
+import BuildCircleOutlined from '@mui/icons-material/BuildCircleOutlined'
 import PersonIcon from '@mui/icons-material/Person';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -139,6 +140,13 @@ function DashboardSidebar({
               icon={<Diversity3Outlined />}
               href="/employees"
               selected={!!matchPath('/employee/*', pathname) || pathname === '/'}
+            />
+               <DashboardSidebarPageItem
+              id="equipments"
+              title="قطعات"
+              icon={<BuildCircleOutlined />}
+              href="/equipments"
+              selected={!!matchPath('/equipment/*', pathname) || pathname === '/'}
             />
             {/* <DashboardSidebarHeaderItem>Example items</DashboardSidebarHeaderItem> */}
             <DashboardSidebarPageItem
