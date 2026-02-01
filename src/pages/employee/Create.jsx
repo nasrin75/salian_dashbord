@@ -13,7 +13,7 @@ const INITIAL_FORM_VALUES = {
     LocationId: '',
 };
 
-export default function EmployeeCreate() {
+export default function Create() {
     const navigate = useNavigate();
 
 

@@ -21,7 +21,6 @@ function EmployeeEditForm({ initialValues, onSubmit }) {
     }));
     const formValues = formState.values;
     const formErrors = formState.errors;
-    console.log('EmployeeEditForm', formValues)
 
     const setFormValues = useCallback((newFormValues) => {
         setFormState((previousState) => ({
@@ -101,7 +100,7 @@ function EmployeeEditForm({ initialValues, onSubmit }) {
     );
 }
 
-export default function EmployeeEdit() {
+export default function Edit() {
     const { employeeID } = useParams();
     const navigate = useNavigate();
     const [employee, setEmployee] = useState(null);

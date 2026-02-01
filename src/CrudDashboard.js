@@ -14,9 +14,9 @@ import {
 import UserList from './pages/user/UserList';
 import UserCreate from './pages/user/UserCreate';
 import UserEdit from './pages/user/UserEdit';
-import EmployeeList from './pages/employee/EmployeeList';
-import EmployeeCreate from './pages/employee/EmployeeCreate';
-import EmployeeEdit from './pages/employee/EmployeeEdit';
+import EmployeeList from './pages/employee/List';
+import EmployeeCreate from './pages/employee/Create';
+import EmployeeEdit from './pages/employee/Edit';
 import EquipmentList from './pages/equipment/EquipmentList';
 import EquipmentCreate from './pages/equipment/EquipmentCreate';
 import EquipmentEdit from './pages/equipment/EquipmentEdit';

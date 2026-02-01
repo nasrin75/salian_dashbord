@@ -15,7 +15,7 @@ import { deleteEmployee, getEmployees } from '../../api/EmployeeApi';
 
 const INITIAL_PAGE_SIZE = 10;
 
-export default function EmployeeList() {
+export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
