@@ -13,7 +13,7 @@ const INITIAL_FORM_VALUES = {
     IsShow: false,
 };
 
-export default function ActionTypeCreate() {
+export default function Create() {
     const navigate = useNavigate();
     const [formState, setFormState] = React.useState(() => ({
         values: INITIAL_FORM_VALUES,

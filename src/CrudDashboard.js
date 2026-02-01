@@ -23,8 +23,8 @@ import EquipmentEdit from './pages/equipment/EquipmentEdit';
 import LocationList from './pages/location/LocationList';
 import LocationCreate from './pages/location/LocationCreate';
 import LocationEdit from './pages/location/LocationEdit';
-import ActionTypeList from './pages/actionType/ActionTypeList';
-import ActionTypeCreate from './pages/actionType/ActionTypeCreate';
+import ActionTypeList from './pages/actionType/List';
+import ActionTypeCreate from './pages/actionType/Create';
 import ActionTypeEdit from './pages/actionType/Edit';
 
 const router = createHashRouter([

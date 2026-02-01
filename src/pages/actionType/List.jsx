@@ -14,7 +14,7 @@ import { deleteActionType, getActionTypes } from '../../api/ActionTypeApi';
 
 const INITIAL_PAGE_SIZE = 10;
 
-export default function ActionTypeList() {
+export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
