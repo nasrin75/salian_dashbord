@@ -29,6 +29,9 @@ import ActionTypeEdit from './pages/actionType/Edit';
 import RoleList from './pages/role/List';
 import RoleCreate from './pages/role/Create';
 import RoleEdit from './pages/role/Edit';
+import PermissionList from './pages/permission/List';
+import PermissionCreate from './pages/permission/Create';
+import PermissionEdit from './pages/permission/Edit'
 
 const router = createHashRouter([
   {
@@ -62,6 +65,11 @@ const router = createHashRouter([
           { path: 'roles', element: <RoleList /> },
           { path: 'role/create', element: <RoleCreate /> },
           { path: 'role/edit/:roleID', element: <RoleEdit /> },
+
+          //Permissions
+          { path: 'permissions', element: <PermissionList /> },
+          { path: 'permission/create', element: <PermissionCreate /> },
+          { path: 'permission/edit/:permissionID', element: <PermissionEdit /> },
       ]}
 
     ],
