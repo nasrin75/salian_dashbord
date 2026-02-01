@@ -5,13 +5,9 @@ import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
-import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import Radio from '@mui/material/Radio';
-import FormLabel from '@mui/material/FormLabel';
-import RadioGroup from '@mui/material/RadioGroup';
 import Switch from '@mui/material/Switch';
 
 function CreateForm(props) {
@@ -26,11 +22,6 @@ function CreateForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [data, setData] = useState({
-  //   Title: '',
-  //   Abbreviation: '',
-  //   isShow: false,
-  // });
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -58,38 +49,35 @@ function CreateForm(props) {
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
-              value={formValues.Title ?? ''}
-              onChange={(e) => onFieldChange("Title", e.target.value)}
-              name="Title"
-              label="عنوان بخش"
-              error={!!formErrors.Title}
-              helperText={formErrors.Title ?? ' '}
+              value={formValues.FaName ?? ''}
+              onChange={(e) => onFieldChange("FaName", e.target.value)}
+              name="FaName"
+              label="عنوان فارسی"
+              error={!!formErrors.FaName}
+              helperText={formErrors.FaName ?? ' '}
               fullWidth
             />
           </Grid>
-          
-           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
-              value={formValues.Abbreviation ?? ''}
-              onChange={(e) => onFieldChange("Abbreviation", e.target.value)}
-              name="Abbreviation"
-              label="مخفف"
-              error={!!formErrors.Abbreviation}
-              helperText={formErrors.Abbreviation ?? ' '}
+              value={formValues.EnName ?? ''}
+              onChange={(e) => onFieldChange("EnName", e.target.value)}
+              name="EnName"
+              label="عنوان انگلیسی"
+              error={!!formErrors.EnName}
+              helperText={formErrors.EnName ?? ' '}
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 ,md:12}} sx={{ display: 'flex' }}>
+
+          <Grid size={{ xs: 12, sm: 6, md: 12 }} sx={{ display: 'flex' }}>
             <FormControl>
               <FormGroup
                 name="IsShow"
-                onChange={(e)=>onFieldChange("IsShow",e.target.value,'switch')}
+                onChange={(e) => onFieldChange("IsShow", e.target.value, 'switch')}
               >
-                <FormControlLabel control={<Switch />} label="نمایش" />    
+                <FormControlLabel control={<Switch />} label="نمایش" />
               </FormGroup>
-              <FormHelperText error={!!formErrors.isShow}>
-                {formErrors.isShow ?? ' '}
-              </FormHelperText>
             </FormControl>
           </Grid>
         </Grid>
@@ -111,12 +99,12 @@ function CreateForm(props) {
 CreateForm.propTypes = {
   formState: PropTypes.shape({
     errors: PropTypes.shape({
-      Title: PropTypes.string,
-      Abbreviation: PropTypes.string,
+      Name: PropTypes.string,
+      Type: PropTypes.string,
     }).isRequired,
     values: PropTypes.shape({
-      Title: PropTypes.string,
-      Abbreviation: PropTypes.string,
+      Name: PropTypes.string,
+      Type: PropTypes.string,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,

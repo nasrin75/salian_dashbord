@@ -174,6 +174,12 @@ function DashboardSidebar({
                     selected={!!matchPath('/setting/locations', pathname)}
                   />
                   <DashboardSidebarPageItem
+                    id="actionTypes"
+                    title="نوع عملیات"
+                    href="/setting/actionTypes"
+                    selected={!!matchPath('/setting/actionTypes', pathname)}
+                  />
+                  <DashboardSidebarPageItem
                     id="traffic"
                     title="نقش ها"
                     href="/setting/traffic"

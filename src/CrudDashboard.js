@@ -23,6 +23,9 @@ import EquipmentEdit from './pages/equipment/EquipmentEdit';
 import LocationList from './pages/location/LocationList';
 import LocationCreate from './pages/location/LocationCreate';
 import LocationEdit from './pages/location/LocationEdit';
+import ActionTypeList from './pages/actionType/ActionTypeList';
+import ActionTypeCreate from './pages/actionType/ActionTypeCreate';
+import ActionTypeEdit from './pages/actionType/Edit';
 
 const router = createHashRouter([
   {
@@ -45,6 +48,11 @@ const router = createHashRouter([
       { path: '/setting/locations', element: <LocationList /> },
       { path: '/setting/location/create', element: <LocationCreate /> },
       { path: '/setting/location/edit/:locationID', element: <LocationEdit /> },
+
+      //ActionTypes
+      { path: '/setting/actionTypes', element: <ActionTypeList /> },
+      { path: '/setting/actionType/create', element: <ActionTypeCreate /> },
+      { path: '/setting/actionType/edit/:actionID', element: <ActionTypeEdit /> },
     ],
   },
 ]);

@@ -2,23 +2,20 @@ import { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
-import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import Radio from '@mui/material/Radio';
-import FormLabel from '@mui/material/FormLabel';
-import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 import Switch from '@mui/material/Switch';
 
-function CreateForm(props) {
+function EditForm(props) {
   const {
     formState,
     onFieldChange,
     onSubmit,
+    onReset,
     submitButtonLabel,
   } = props;
 
@@ -26,11 +23,6 @@ function CreateForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [data, setData] = useState({
-  //   Title: '',
-  //   Abbreviation: '',
-  //   isShow: false,
-  // });
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -46,52 +38,55 @@ function CreateForm(props) {
     [formValues, onSubmit],
   );
 
+  const handleReset = useCallback(() => {
+    if (onReset) {
+      onReset(formValues);
+    }
+  }, [formValues, onReset]);
+
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
       noValidate
       autoComplete="off"
+      onReset={handleReset}
       sx={{ width: '100%' }}
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
-              value={formValues.Title ?? ''}
-              onChange={(e) => onFieldChange("Title", e.target.value)}
-              name="Title"
-              label="عنوان بخش"
-              error={!!formErrors.Title}
-              helperText={formErrors.Title ?? ' '}
+              value={formValues.faName ?? ''}
+              onChange={(e) => onFieldChange("faName", e.target.value)}
+              name="faName"
+              label="عنوان فارسی"
+              error={!!formErrors.faName}
+              helperText={formErrors.faName ?? ' '}
               fullWidth
             />
           </Grid>
-          
-           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
-              value={formValues.Abbreviation ?? ''}
-              onChange={(e) => onFieldChange("Abbreviation", e.target.value)}
-              name="Abbreviation"
-              label="مخفف"
-              error={!!formErrors.Abbreviation}
-              helperText={formErrors.Abbreviation ?? ' '}
+              value={formValues.enName ?? ''}
+              onChange={(e) => onFieldChange("enName", e.target.value)}
+              name="enName"
+              label="عنوان انگلیسی"
+              error={!!formErrors.enName}
+              helperText={formErrors.enName ?? ' '}
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 ,md:12}} sx={{ display: 'flex' }}>
+         <Grid size={{ xs: 12, sm: 6 ,md:12}} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormGroup
-                name="IsShow"
-                onChange={(e)=>onFieldChange("IsShow",e.target.value,'switch')}
-              >
-                <FormControlLabel control={<Switch />} label="نمایش" />    
+              <FormGroup>
+                <FormControlLabel name="isShow" control={<Switch 
+                checked={formValues.isShow ?? false}
+                 onChange={(e)=>onFieldChange("isShow",e.target.checked,'switch')} />} label="نمایش" />    
               </FormGroup>
-              <FormHelperText error={!!formErrors.isShow}>
-                {formErrors.isShow ?? ' '}
-              </FormHelperText>
             </FormControl>
           </Grid>
+
         </Grid>
       </FormGroup>
       <Stack direction="row" spacing={2} justifyContent="space-between">
@@ -108,15 +103,15 @@ function CreateForm(props) {
   );
 }
 
-CreateForm.propTypes = {
+EditForm.propTypes = {
   formState: PropTypes.shape({
     errors: PropTypes.shape({
-      Title: PropTypes.string,
-      Abbreviation: PropTypes.string,
+      title: PropTypes.string,
+      abbreviation: PropTypes.string,
     }).isRequired,
     values: PropTypes.shape({
-      Title: PropTypes.string,
-      Abbreviation: PropTypes.string,
+      title: PropTypes.string,
+      abbreviation: PropTypes.string,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,
@@ -124,4 +119,6 @@ CreateForm.propTypes = {
   submitButtonLabel: PropTypes.string.isRequired,
 };
 
-export default CreateForm;
+
+export default EditForm;
+
