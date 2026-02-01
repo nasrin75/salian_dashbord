@@ -14,7 +14,7 @@ import { deleteLocation, getLocations } from '../../api/LocationApi';
 
 const INITIAL_PAGE_SIZE = 10;
 
-export default function LocationList() {
+export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();

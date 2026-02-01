@@ -49,7 +49,6 @@ function LocationEditForm({ initialValues, onSubmit }) {
 
 const handleFormFieldChange = useCallback(
   (name, value, type = "text") => {
-  console.log(name, value,type);
 
     let finalValue = value;
 
@@ -76,7 +75,6 @@ const handleFormFieldChange = useCallback(
     }, [initialValues, setFormValues]);
 
     const handleFormSubmit = useCallback(async () => {
-        console.log(formValues);
         const { issues } = EditValidation(formValues);
         if (issues && issues.length > 0) {
             setFormErrors(
@@ -107,7 +105,7 @@ const handleFormFieldChange = useCallback(
     );
 }
 
-export default function LocationEdit() {
+export default function Edit() {
     const { locationID } = useParams();
     const navigate = useNavigate();
     const [location, setLocation] = useState(null);
@@ -120,7 +118,6 @@ export default function LocationEdit() {
 
         LocationDetails(locationID)
             .then(data => {
-                console.log('dtaaaa', locationID, data.data['result'])
                 setLocation(data.data['result'])
                 setIsLoading(false);
             })
@@ -138,7 +135,6 @@ export default function LocationEdit() {
         async (formValues) => {
             updateLocation(formValues)
                 .then(data => {
-                    console.log('handlesubmit', locationID)
                     setLocation('handlesubmit', data.data['result'])
                     setIsLoading(false);
                     navigate('/setting/locations');
