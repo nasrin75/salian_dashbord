@@ -67,7 +67,6 @@ export default function Create() {
         }
         setFormErrors({});
 
-        console.log('create-feature',formValues)
         createFeature(JSON.stringify(formValues))
             .then(() => {
                 toast.success("ویژگی جدید با موفقیت ایجاد شد.")

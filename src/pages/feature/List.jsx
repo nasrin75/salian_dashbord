@@ -102,7 +102,6 @@ export default function List() {
 
         getFeatures()
             .then(data => {
-                
                 setFeatures(data.data['result'])
 
                 setIsLoading(false)
@@ -169,7 +168,7 @@ export default function List() {
     const columns = useMemo(
         () => [
             { field: 'name', headerName: 'عنوان', width: 240, align: 'right', },
-            { field: 'equipment', headerName: 'نام قطعات', width: 240, align: 'right', },
+            { field: 'equipments', headerName: 'نام قطعات', width: 240, align: 'right', },
             {
                 field: '',
                 headerName: 'عملیات',

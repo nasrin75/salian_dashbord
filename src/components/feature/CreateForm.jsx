@@ -13,11 +13,9 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { useTheme } from '@mui/material/styles';
 
 
 function CreateForm(props) {
-   const theme = useTheme();
   const {
     formState,
     onFieldChange,
@@ -29,16 +27,16 @@ function CreateForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [equipments,setEquipments] = useState([])
-  const [equipmentIds,setEquipmentIds] = useState([])
+  const [equipments, setEquipments] = useState([])
+  const [equipmentIds, setEquipmentIds] = useState([])
 
-  useEffect(()=>{
+  useEffect(() => {
     getEquipments()
-    .then(data =>{
-      setEquipments(data.data['result'])
-    })
-    .catch( err => toast.error("مشکلی در گرفتن لیست قطعات رخ داده است."))
-  },[])
+      .then(data => {
+        setEquipments(data.data['result'])
+      })
+      .catch(() => toast.error("مشکلی در گرفتن لیست قطعات رخ داده است."))
+  }, [])
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -54,18 +52,17 @@ function CreateForm(props) {
     [formValues, onSubmit],
   )
 
+  // add equipment ids in array like :[1,2,3]
   const handleEquipmentIds = (event) => {
     const {
       target: { value },
     } = event;
 
-    console.log(value)
-
     setEquipmentIds(
       // On autofill we get a stringified value.
-       typeof value === 'string' ? value.split(',') : value,
+      typeof value === 'string' ? value.split(',') : value,
     );
-    onFieldChange("EquipmentIds", equipmentIds)
+    onFieldChange("EquipmentIds", value)
   };
   return (
     <Box
@@ -102,7 +99,7 @@ function CreateForm(props) {
               >
                 {equipments.map((eq) => (
                   <MenuItem
-                    style={{margin:'5px'}}
+                    style={{ margin: '5px' }}
                     key={eq.id}
                     value={eq.id}
                   >
