@@ -24,7 +24,6 @@ function EditForm(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [locations, setLocations] = useState([]);
 
-  console.log(formValues)
   useEffect(() => {
 
     getLocations()

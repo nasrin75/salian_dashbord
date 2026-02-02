@@ -12,6 +12,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
+import Switch from '@mui/material/Switch';
 
 function EditForm(props) {
   const {
@@ -75,15 +76,23 @@ function EditForm(props) {
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
-                // name="type"
                 onChange={(e) => onFieldChange("type", e.target.value, "radio")}
               >
-                <FormControlLabel value="1" control={<Radio checked={formValues.type == ("internal" || formValues.type =='1') ?? false} />} label="Internal" />
-                <FormControlLabel value="2" control={<Radio checked={formValues.type == ("external" || formValues.type =='2') ?? false} />} label="External" />
+                <FormControlLabel value="1" control={<Radio checked={formValues.type == ("internal" || formValues.type == '1') ?? false} />} label="Internal" />
+                <FormControlLabel value="2" control={<Radio checked={formValues.type == ("external" || formValues.type == '2') ?? false} />} label="External" />
               </RadioGroup>
               <FormHelperText error={!!formErrors.type}>
                 {formErrors.type ?? ' '}
               </FormHelperText>
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 12 }} sx={{ display: 'flex' }}>
+            <FormControl>
+              <FormGroup>
+                <FormControlLabel name="isShowInMenu" control={<Switch
+                  checked={formValues.isShowInMenu ?? false}
+                  onChange={(e) => onFieldChange("isShowInMenu", e.target.checked, 'switch')} />} label="نمایش در زیر منو انبار" />
+              </FormGroup>
             </FormControl>
           </Grid>
 
@@ -107,13 +116,13 @@ EditForm.propTypes = {
   formState: PropTypes.shape({
     errors: PropTypes.shape({
       name: PropTypes.string,
-      email: PropTypes.string,
-      locationId: PropTypes.string,
+      type: PropTypes.string,
+      isShowInMenu:PropTypes.bool,
     }).isRequired,
     values: PropTypes.shape({
       name: PropTypes.string,
-      email: PropTypes.string,
-      locationId: PropTypes.string,
+      type: PropTypes.string,
+      isShowInMenu:PropTypes.bool,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,

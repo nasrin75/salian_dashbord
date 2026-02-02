@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField';
 import Radio from '@mui/material/Radio';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
+import Switch from '@mui/material/Switch';
 
 function CreateForm(props) {
   const {
@@ -84,6 +85,19 @@ function CreateForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
+          <Grid size={{ xs: 12, sm: 6 ,md:12}} sx={{ display: 'flex' }}>
+            <FormControl>
+              <FormGroup
+                name="IsShowInMenu"
+                onChange={(e)=>onFieldChange("IsShowInMenu",e.target.value,'switch')}
+              >
+                <FormControlLabel control={<Switch />} label="نمایش در زیر منو انبار" />    
+              </FormGroup>
+              <FormHelperText error={!!formErrors.isShow}>
+                {formErrors.isShow ?? ' '}
+              </FormHelperText>
+            </FormControl>
+          </Grid>
         </Grid>
       </FormGroup>
       <Stack direction="row" spacing={2} justifyContent="space-between">
@@ -105,10 +119,12 @@ CreateForm.propTypes = {
     errors: PropTypes.shape({
       Name: PropTypes.string,
       Type: PropTypes.string,
+      IsShowInMenu: PropTypes.string,
     }).isRequired,
     values: PropTypes.shape({
       Name: PropTypes.string,
       Type: PropTypes.string,
+      IsShowInMenu: PropTypes.string,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,

@@ -9,8 +9,8 @@ import { createEquipment } from '../../api/EquipmentApi';
 
 const INITIAL_FORM_VALUES = {
     Name: '',
-    Email: '',
-    LocationId: '',
+    Type: '',
+    IsShowInMenu: '',
 };
 
 export default function Create() {
@@ -43,6 +43,9 @@ export default function Create() {
         (name, value, type = "text") => {
             let finalValue = value;
 
+            if (type == 'switch') {
+                finalValue = value == 'on' ? true : false;
+            }
             const newFormValues = {
                 ...formValues,
                 [name]: finalValue,
