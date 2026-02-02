@@ -41,8 +41,8 @@ export default function Create() {
         (name, value, type = "text") => {
             let finalValue = value;
 
-            if(type == 'switch'){
-                finalValue = value == 'on' ? true:false;
+            if (type == 'switch') {
+                finalValue = value == 'on' ? true : false;
             }
             const newFormValues = {
                 ...formValues,
