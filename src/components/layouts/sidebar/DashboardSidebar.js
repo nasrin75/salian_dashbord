@@ -10,10 +10,8 @@ import Diversity3Outlined from '@mui/icons-material/Diversity3Outlined'
 import BuildCircleOutlined from '@mui/icons-material/BuildCircleOutlined'
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsOutlined from '@mui/icons-material/SettingsOutlined';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import { matchPath, useLocation } from 'react-router';
-import DashboardSidebarContext from '../../../context/DashboardSidebarContext';
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../../../constants';
 import DashboardSidebarPageItem from '../sidebar/DashboardSidebarPageItem';
 
@@ -21,6 +19,7 @@ import {
   getDrawerSxTransitionMixin,
   getDrawerWidthTransitionMixin,
 } from '../../../mixins';
+import DashboardSidebarContext from '../../../context/DashboardSidebarContext';
 
 function DashboardSidebar({
   expanded = true,
@@ -105,11 +104,11 @@ function DashboardSidebar({
           component="nav"
           aria-label={`${viewport.charAt(0).toUpperCase()}${viewport.slice(1)}`}
           sx={{
-            height: '100%',
+            height: '100vh',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            overflow: 'auto',
+            overflow: 'hidden',
             scrollbarGutter: mini ? 'stable' : 'auto',
             overflowX: 'hidden',
             pt: !mini ? 0 : 2,
@@ -126,7 +125,6 @@ function DashboardSidebar({
               width: mini ? MINI_DRAWER_WIDTH : 'auto',
             }}
           >
-            {/* <DashboardSidebarHeaderItem>کاربران</DashboardSidebarHeaderItem> */}
             <DashboardSidebarPageItem
               id="users"
               title="کاربران"
@@ -201,12 +199,39 @@ function DashboardSidebar({
               }
             />
             <DashboardSidebarPageItem
+              id="profile"
+              title="پروفایل"
+              icon={<AccountCircle />}
+              href="/profile"
+              selected={!!matchPath('/profile', pathname)}
+              defaultExpanded={!!matchPath('/profile', pathname)}
+              expanded={expandedItemIds.includes('profile')}
+              nestedNavigation={
+                <List
+                  dense
+                  sx={{
+                    padding: 0,
+                    my: 1,
+                    pl: mini ? 0 : 1,
+                    minWidth: 240,
+                  }}
+                >
+                  <DashboardSidebarPageItem
+                    id="profile-setting"
+                    title="تنظیمات"
+                    href="/profile/setting"
+                    selected={!!matchPath('/profile/setting', pathname)}
+                  />
+                </List>
+              }
+            />
+            {/* <DashboardSidebarPageItem
               id="integrations"
               title="Integrations"
               icon={<LayersIcon />}
               href="/integrations"
               selected={!!matchPath('/integrations', pathname)}
-            />
+            /> */}
           </List>
         </Box>
       </React.Fragment>

@@ -35,7 +35,7 @@ import PermissionEdit from './pages/permission/Edit'
 import FeatureList from './pages/feature/List';
 import FeatureCreate from './pages/feature/Create';
 import FeatureEdit from './pages/feature/Edit'
-
+import ProfileSetting from './pages/profile/Setting'
 const router = createHashRouter([
   {
     Component: DashboardLayout,
@@ -53,12 +53,13 @@ const router = createHashRouter([
       { path: '/equipment/create', element: <EquipmentCreate /> },
       { path: '/equipment/edit/:equipmentID', element: <EquipmentEdit /> },
 
-      { path: '/setting/', children:[
-        //Locations
+      {
+        path: '/setting/', children: [
+          //Locations
           { path: 'locations', element: <LocationList /> },
           { path: 'location/create', element: <LocationCreate /> },
           { path: 'location/edit/:locationID', element: <LocationEdit /> },
-          
+
           //ActionTypes
           { path: 'actionTypes', element: <ActionTypeList /> },
           { path: 'actionType/create', element: <ActionTypeCreate /> },
@@ -78,7 +79,12 @@ const router = createHashRouter([
           { path: 'features', element: <FeatureList /> },
           { path: 'feature/create', element: <FeatureCreate /> },
           { path: 'feature/edit/:featureID', element: <FeatureEdit /> },
-      ]}
+        ]
+      },
+
+
+      //Profile
+      { path: 'profile/setting', element: <ProfileSetting /> },
 
     ],
   },

@@ -99,7 +99,7 @@ function EditForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 8 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.name ?? ''}
               onChange={(e) => onFieldChange("name", e.target.value)}
