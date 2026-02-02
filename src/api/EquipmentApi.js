@@ -18,3 +18,7 @@ export const createEquipment = (data) =>{
 export const updateEquipment = (data) =>{
     return Api.put('/equipment/edit',data)
 }
+
+export const getInventorySubMenu =()=>{
+    return Api.get('/equipment/inventory/subMenu')
+}

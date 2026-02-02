@@ -36,6 +36,7 @@ import FeatureList from './pages/feature/List';
 import FeatureCreate from './pages/feature/Create';
 import FeatureEdit from './pages/feature/Edit'
 import ProfileSetting from './pages/profile/Setting'
+import Inventory from './pages/inventory/List'
 const router = createHashRouter([
   {
     Component: DashboardLayout,
@@ -85,6 +86,8 @@ const router = createHashRouter([
 
       //Profile
       { path: 'profile/setting', element: <ProfileSetting /> },
+      //Inventory
+      { path: 'inventories', element: <Inventory /> },
 
     ],
   },

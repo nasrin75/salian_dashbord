@@ -1,4 +1,4 @@
-import * as React from 'react';
+
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -20,6 +20,8 @@ import {
   getDrawerWidthTransitionMixin,
 } from '../../../mixins';
 import DashboardSidebarContext from '../../../context/DashboardSidebarContext';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { getEquipments, getInventorySubMenu } from '../../../api/EquipmentApi';
 
 function DashboardSidebar({
   expanded = true,
@@ -31,15 +33,22 @@ function DashboardSidebar({
 
   const { pathname } = useLocation();
 
-  const [expandedItemIds, setExpandedItemIds] = React.useState([]);
+  const [expandedItemIds, setExpandedItemIds] = useState([]);
 
   const isOverSmViewport = useMediaQuery(theme.breakpoints.up('sm'));
   const isOverMdViewport = useMediaQuery(theme.breakpoints.up('md'));
 
-  const [isFullyExpanded, setIsFullyExpanded] = React.useState(expanded);
-  const [isFullyCollapsed, setIsFullyCollapsed] = React.useState(!expanded);
+  const [isFullyExpanded, setIsFullyExpanded] = useState(expanded);
+  const [isFullyCollapsed, setIsFullyCollapsed] = useState(!expanded);
+  const [inventorySubMenu, setInventorySubMenu] = useState([])
 
-  React.useEffect(() => {
+  useEffect(() => {
+    getInventorySubMenu()
+      .then(data => setInventorySubMenu(data.data['result']))
+      .catch(err => console.log(err))
+  }, [])
+
+  useEffect(() => {
     if (expanded) {
       const drawerWidthTransitionTimeout = setTimeout(() => {
         setIsFullyExpanded(true);
@@ -53,7 +62,7 @@ function DashboardSidebar({
     return () => { };
   }, [expanded, theme.transitions.duration.enteringScreen]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!expanded) {
       const drawerWidthTransitionTimeout = setTimeout(() => {
         setIsFullyCollapsed(true);
@@ -69,14 +78,14 @@ function DashboardSidebar({
 
   const mini = !disableCollapsibleSidebar && !expanded;
 
-  const handleSetSidebarExpanded = React.useCallback(
+  const handleSetSidebarExpanded = useCallback(
     (newExpanded) => () => {
       setExpanded(newExpanded);
     },
     [setExpanded],
   );
 
-  const handlePageItemClick = React.useCallback(
+  const handlePageItemClick = useCallback(
     (itemId, hasNestedNavigation) => {
       if (hasNestedNavigation && !mini) {
         setExpandedItemIds((previousValue) =>
@@ -96,9 +105,9 @@ function DashboardSidebar({
   const hasDrawerTransitions =
     isOverSmViewport && (!disableCollapsibleSidebar || isOverMdViewport);
 
-  const getDrawerContent = React.useCallback(
+  const getDrawerContent = useCallback(
     (viewport) => (
-      <React.Fragment>
+      <Fragment>
         <Toolbar />
         <Box
           component="nav"
@@ -126,6 +135,41 @@ function DashboardSidebar({
             }}
           >
             <DashboardSidebarPageItem
+              id="inventory"
+              title="انبار"
+              icon={<SettingsOutlined />}
+              href="/inventories"
+              selected={!!matchPath('/inventory', pathname)}
+              defaultExpanded={!!matchPath('/inventory', pathname)}
+              expanded={expandedItemIds.includes('inventory')}
+              nestedNavigation={
+                <List
+                  dense
+                  sx={{
+                    padding: 0,
+                    my: 1,
+                    pl: mini ? 0 : 1,
+                    minWidth: 240,
+                  }}
+                >
+                  <DashboardSidebarPageItem
+                    id="/inventories"
+                    title="انبار"
+                    href="/inventories"
+                    selected={!!matchPath("/inventories", pathname)}
+                  />
+                {inventorySubMenu.map(subMenu => {
+                  return <DashboardSidebarPageItem
+                    id={subMenu}
+                    title={subMenu}
+                    href={`/inventories?equipment=${subMenu}`}
+                    selected={!!matchPath(`/inventories?equipment=${subMenu}`, pathname)}
+                  />
+                })}
+                </List>
+              }
+            />
+            <DashboardSidebarPageItem
               id="users"
               title="کاربران"
               icon={<PersonIcon />}
@@ -139,7 +183,7 @@ function DashboardSidebar({
               href="/employees"
               selected={!!matchPath('/employee/*', pathname) || pathname === '/'}
             />
-               <DashboardSidebarPageItem
+            <DashboardSidebarPageItem
               id="equipments"
               title="قطعات"
               icon={<BuildCircleOutlined />}
@@ -234,12 +278,12 @@ function DashboardSidebar({
             /> */}
           </List>
         </Box>
-      </React.Fragment>
+      </Fragment>
     ),
     [mini, hasDrawerTransitions, isFullyExpanded, expandedItemIds, pathname],
   );
 
-  const getDrawerSharedSx = React.useCallback(
+  const getDrawerSharedSx = useCallback(
     (isTemporary) => {
       const drawerWidth = mini ? MINI_DRAWER_WIDTH : DRAWER_WIDTH;
 
@@ -261,7 +305,7 @@ function DashboardSidebar({
     [expanded, mini],
   );
 
-  const sidebarContextValue = React.useMemo(() => {
+  const sidebarContextValue = useMemo(() => {
     return {
       onPageItemClick: handlePageItemClick,
       mini,
