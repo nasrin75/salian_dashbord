@@ -7,11 +7,12 @@ import AddIcon from '@mui/icons-material/Add';
 import History from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import { useLocation, useNavigate, useParams,} from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteInventory, getInventories } from '../../api/InventoryApi';
+import { useSearchParams } from "react-router-dom"
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -101,10 +102,10 @@ export default function List() {
     const loadData = useCallback(async () => {
         setIsLoading(true);
 
-        getInventories()
+        getInventories(searchParams.get("equipment"))
             .then(data => {
                 setInventories(data.data['result'])
-
+console.log("resp::",data.data['result'])
                 setIsLoading(false)
 
             }).catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است"))
@@ -133,7 +134,7 @@ export default function List() {
         (inventory) => async () => {
 
             const confirmed = await dialogs.confirm(
-                `آبا از حذف قطعه  ${inventory.name} از انبار مطمئنید?`,
+                `آبا از حذف قطعه شماره  ${inventory.id} از انبار مطمئنید?`,
                 {
                     title: `حذف قطعه?`,
                     severity: 'خطا',

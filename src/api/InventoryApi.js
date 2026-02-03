@@ -1,7 +1,7 @@
 import Api from "./Api"
 
-export const getInventories = () => {
-    return Api.get('/inventory');
+export const getInventories = (equipment="ALL") => {
+    return Api.get(`/inventory?equipment=${equipment}`);
 }
 export const deleteInventory = (inventoryID) => {
     return Api.delete(`/inventory/delete?id=${inventoryID}`)

@@ -34,9 +34,15 @@ import PermissionCreate from './pages/permission/Create';
 import PermissionEdit from './pages/permission/Edit'
 import FeatureList from './pages/feature/List';
 import FeatureCreate from './pages/feature/Create';
-import FeatureEdit from './pages/feature/Edit'
-import ProfileSetting from './pages/profile/Setting'
-import Inventory from './pages/inventory/List'
+import FeatureEdit from './pages/feature/Edit';
+import ProfileSetting from './pages/profile/Setting';
+import Inventory from './pages/inventory/List';
+import InventoryCreate from './pages/inventory/Create';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import dayjs from './config/dateConfig';
+import "dayjs/locale/fa"
+
 const router = createHashRouter([
   {
     Component: DashboardLayout,
@@ -88,6 +94,7 @@ const router = createHashRouter([
       { path: 'profile/setting', element: <ProfileSetting /> },
       //Inventory
       { path: 'inventories', element: <Inventory /> },
+      { path: 'inventory/create', element: <InventoryCreate /> },
 
     ],
   },
@@ -102,6 +109,11 @@ const themeComponents = {
 
 export default function CrudDashboard(props) {
   return (
+      <LocalizationProvider
+       dateAdapter={AdapterDayjs}
+       adapterLocale="fa"
+       dateLibInstance={dayjs}
+       >
     <AppTheme {...props} themeComponents={themeComponents}>
       <CssBaseline enableColorScheme />
       <NotificationsProvider>
@@ -110,5 +122,6 @@ export default function CrudDashboard(props) {
         </DialogsProvider>
       </NotificationsProvider>
     </AppTheme>
+    </LocalizationProvider>
   );
 }
