@@ -15,7 +15,25 @@ body{
 *{
      font-family: "salianFont" !important;
 }
-
+.css-3vcva2-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-popupIndicator:active {
+    background-color: #fff !important;
+    border: none !important;
+    /* padding: 0px; */
+}
+.MuiAutocomplete-endAdornment{
+    right: 0px !important;
+}
+.popupIndicator {
+    border: none !important;
+}
+.css-ky3a3f-MuiInputAdornment-root{
+    color: #fff !important;
+    margin-left: 0px !important;
+    margin-right: 10px !important;
+}
+/* .css-13pe1bg-MuiPickersSectionList-root-MuiPickersInputBase-sectionsContainer-MuiPickersOutlinedInput-sectionsContainer{
+    width: 298px !important;
+} */
 
 @media (min-width: 1200px) {
     .css-1hco7h0-MuiContainer-root {
