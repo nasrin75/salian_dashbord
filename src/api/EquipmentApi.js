@@ -22,3 +22,7 @@ export const updateEquipment = (data) =>{
 export const getInventorySubMenu =()=>{
     return Api.get('/equipment/inventory/subMenu')
 }
+
+export const getEquipmentFeatures =(equipmentID)=>{
+    return Api.get(`/equipment/features/${equipmentID}`)
+}

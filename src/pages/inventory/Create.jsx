@@ -8,24 +8,24 @@ import { CreateValidation } from '../../validation/InventoryValidation';
 import { createInventory } from '../../api/InventoryApi';
 
 const INITIAL_FORM_VALUES = {
-    ItNumber: '',
-    ItParentNumber: '',
-    UserId: '',
-    EmployeeId: '',
-    LocationId: '',
-    EquipmentId: '',
-    Status: '',
+    ItNumber: null,
+    ItParentNumber: null,
+    EmployeeId: null,
+    LocationId: null,
+    EquipmentId: null,
+    Status: null,
     PropertyNumber: '',
     SerialNumber: '',
-    InvoiceNumber: '',
-    InvoiceImage: '',
-    Description: '',
+    InvoiceNumber: null,
+    InvoiceImage: null,
+    Description: null,
     BrandName: '',
     ModelName: '',
-    Capacity: '',
-    Size: '',
-    ExpireWarrantyDate: '',
-    DeliveryDate: '',
+    Capacity: null,
+    Size: null,
+    ExpireWarrantyDate: null,
+    DeliveryDate: null,
+    Features :[]
 };
 
 export default function Create() {
@@ -61,6 +61,9 @@ export default function Create() {
             if (type == 'switch') {
                 finalValue = value == 'on' ? true : false;
             }
+            if (type == 'radio') {
+                finalValue = Number(value);
+            }
             const newFormValues = {
                 ...formValues,
                 [name]: finalValue,
@@ -78,9 +81,12 @@ export default function Create() {
         },
         [formValues, formErrors],
     );
-    const handleFormSubmit = React.useCallback(async () => {
-        const { issues } = CreateValidation(formValues);
-        console.log('hasError',issues)
+    const handleFormSubmit = React.useCallback(async (payload) => {
+
+        console.log("handleFormSubmit_1",JSON.stringify(payload))
+        console.log("handleFormSubmit_1",payload)
+        const { issues } = CreateValidation(payload);
+        
         if (issues && issues.length > 0) {
             setFormErrors(
                 Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
@@ -89,14 +95,14 @@ export default function Create() {
         }
         setFormErrors({});
 
-        createInventory(JSON.stringify(formValues))
+        createInventory(payload)
             .then(() => {
-                console.log(formValues)
+                console.log('createInventory',payload)
                 toast.success("عملیات با موفقیت انجام شد.")
                 navigate('/inventories');
             })
 
-    }, [formValues, navigate, setFormErrors]);
+    }, [navigate, setFormErrors]);
 
     return (
         <PageContainer
