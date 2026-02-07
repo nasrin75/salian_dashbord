@@ -43,11 +43,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from './config/dateConfig';
 import "dayjs/locale/fa"
+import Login from './pages/auth/Login';
 
 const router = createHashRouter([
   {
     Component: DashboardLayout,
     children: [
+       //Users
+      { path: '/login', element: <Login />, index: true },
       //Users
       { path: '/*', element: <UserList />, index: true },
       { path: '/user/create', element: <UserCreate /> },
