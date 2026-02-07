@@ -10,7 +10,7 @@ import { createEquipment } from '../../api/EquipmentApi';
 const INITIAL_FORM_VALUES = {
     Name: '',
     Type: '',
-    IsShowInMenu: '',
+    IsShowInMenu: false,
 };
 
 export default function Create() {
