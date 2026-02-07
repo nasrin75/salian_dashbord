@@ -72,7 +72,7 @@ export default function Create() {
             setFormValues(newFormValues);
 
             const { issues } = CreateValidation(newFormValues);
-console.log("error_issue",issues)
+
             setFormErrors({
                 ...formErrors,
                 [name]: issues?.find(i => i.path?.[0] === name)?.message,
@@ -82,9 +82,6 @@ console.log("error_issue",issues)
         [formValues, formErrors],
     );
     const handleFormSubmit = React.useCallback(async (payload) => {
-
-        console.log("handleFormSubmit_1",JSON.stringify(payload))
-        console.log("handleFormSubmit_1",payload)
         const { issues } = CreateValidation(payload);
         
         if (issues && issues.length > 0) {
@@ -97,10 +94,10 @@ console.log("error_issue",issues)
 
         createInventory(JSON.stringify(payload))
             .then(() => {
-                console.log('createInventory',payload)
                 toast.success("عملیات با موفقیت انجام شد.")
                 navigate('/inventories');
             })
+            .catch(()=> toast.error("مشکلی در افزودن به انبار رخ داده است"))
 
     }, [navigate, setFormErrors]);
 

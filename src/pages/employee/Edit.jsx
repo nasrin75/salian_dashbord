@@ -12,7 +12,6 @@ import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function EmployeeEditForm({ initialValues, onSubmit }) {
-    const { employeeID } = useParams();
     const navigate = useNavigate();
 
     const [formState, setFormState] = useState(() => ({

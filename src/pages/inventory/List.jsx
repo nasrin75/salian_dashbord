@@ -2,17 +2,18 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { DataGrid, GridActionsCellItem, gridClasses, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, gridClasses, GRID_DATE_COL_DEF, GridEditDateCell, getGridDateOperators } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
 import History from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useLocation, useNavigate, useParams,} from 'react-router';
+import { useLocation, useNavigate} from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteInventory, getInventories } from '../../api/InventoryApi';
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams } from "react-router-dom";
+import dayjs from 'dayjs';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -98,6 +99,7 @@ export default function List() {
         },
         [navigate, pathname, searchParams],
     );
+
 
     const loadData = useCallback(async () => {
         setIsLoading(true);
@@ -186,7 +188,7 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'id', headerName: 'ID', width: 140, align: 'right', },
+            { field: 'id', headerName: 'ID', width: 100, align: 'right', },
             { field: 'employee', headerName: 'مالک', width: 140, align: 'right' },
             { field: 'location', headerName: 'بخش', width: 140, align: 'right' },
             { field: 'propertyNumber', headerName: 'شماره اموال', width: 140, align: 'right' },
@@ -196,21 +198,41 @@ export default function List() {
             { field: 'status', headerName: 'وضعیت', width: 140, align: 'right' },
             { field: 'user', headerName: 'کاربر', width: 140, align: 'right' },
             { field: 'serialNumber', headerName: 'شماره سریال', width: 140, align: 'right' },
-            { field: 'expireWarrantyDate', headerName: 'تاریخ اتمام گارانتی', width: 140, align: 'right' },
-            { field: 'deliveryDate', headerName: 'تاریخ تحویل', width: 140, align: 'right' },
+            {
+                field: 'expireWarrantyDate',
+                headerName: 'تاریخ اتمام گارانتی',
+                width: 140,
+                align: 'right',
+                valueFormatter: params => dayjs(params).format("YYYY/MM/DD")
+            },
+            {
+                field: 'deliveryDate',
+                headerName: 'تاریخ تحویل',
+                width: 140,
+                align: 'right',
+                valueFormatter: params => dayjs(params).format("YYYY/MM/DD")
+            },
             { field: 'size', headerName: 'سایز', width: 140, align: 'right' },
             { field: 'capacity', headerName: 'capacity', width: 140, align: 'right' },
-            { field: 'itNumber', headerName: 'شماره IT', width: 140, align: 'right' },
+            { field: 'itNumber', headerName: 'شماره IT', width: 100, align: 'right' },
             { field: 'itParentNumber', headerName: 'شماره IT Parent', width: 140, align: 'right' },
             { field: 'invoiceNumber', headerName: 'شماره فاکتور', width: 140, align: 'right' },
             { field: 'invoiceImage', headerName: 'تصویر فاکتور', width: 140, align: 'right' },
-            { field: 'updatedAt', headerName: 'آخرین بروزرسانی', width: 140, align: 'right' },
+            {
+                field: 'updatedAt',
+                headerName: 'آخرین بروزرسانی',
+                width: 240,
+                align: 'right',
+                valueFormatter: params => dayjs(params).format("YYYY/MM/DD h:m:ss"),
+                type:'date'
+            },
             { field: 'description', headerName: 'توضیحات', width: 140, align: 'right' },
             {
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
                 // flex: 1,
+                width: 240,
                 align: 'center',
                 getActions: ({ row }) => [
                     <GridActionsCellItem
@@ -230,12 +252,6 @@ export default function List() {
                         icon={<History />}
                         label="log"
                     // onClick={handleInventoryEditPage(row)}
-                    />,
-                    <GridActionsCellItem
-                        key="log-item"
-                        icon={<History />}
-                        label="log"
-                    // onClick={handelDeleteEmployee(row)}
                     />,
                 ],
             },
@@ -272,18 +288,6 @@ export default function List() {
                     // sortingMode="server"
                     // filterMode="server"
                     // paginationMode="server"
-                    // columnVisibilityModel={{
-                    //     // Hide columns status and traderName, the other columns will remain visible
-                    //     location: false,
-                    //     user: false,
-                    //     expireWarrantyDate: false,
-                    //     deliveryDate: false,
-                    //     size: false,
-                    //     capacity: false,
-                    //     invoiceNumber: false,
-                    //     invoiceImage: false,
-                    //     description: false
-                    // }}
                     paginationModel={paginationModel}
                     onPaginationModelChange={handlePaginationModelChange}
                     sortModel={sortModel}
