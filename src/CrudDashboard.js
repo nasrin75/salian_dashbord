@@ -38,6 +38,7 @@ import FeatureEdit from './pages/feature/Edit';
 import ProfileSetting from './pages/profile/Setting';
 import Inventory from './pages/inventory/List';
 import InventoryCreate from './pages/inventory/Create';
+import InventoryEdit from './pages/inventory/Edit';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from './config/dateConfig';
@@ -95,6 +96,7 @@ const router = createHashRouter([
       //Inventory
       { path: 'inventories', element: <Inventory /> },
       { path: 'inventory/create', element: <InventoryCreate /> },
+      { path: 'inventory/edit/:inventoryID', element: <InventoryEdit /> },
 
     ],
   },
