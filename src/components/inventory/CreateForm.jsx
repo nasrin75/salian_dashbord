@@ -246,7 +246,7 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
-
+          {/* start Size */}
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.Size ?? null}
@@ -258,6 +258,9 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
+          {/* end Size */}
+
+          {/* start Capacity */}
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.Capacity ?? null}
@@ -269,6 +272,9 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
+          {/* end Capacity */}
+
+          {/* start InvoiceNumber */}
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.InvoiceNumber ?? null}
@@ -280,17 +286,18 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
+          {/* start Description */}
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
               label="توضیحات"
               multiline
-              onChange={(e) => onFieldChange("Description",e.target.value)}
+              onChange={(e) => onFieldChange("Description", e.target.value)}
               rows={2}
               maxRows={Infinity}
               fullWidth
             />
           </Grid>
-
+          {/* start DeliveryDate */}
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ تحویل"
@@ -314,6 +321,7 @@ function CreateForm(props) {
             />
           </Grid>
 
+          {/* start ExpireWarrantyDate */}
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ پایان گارانتی"
@@ -361,7 +369,7 @@ function CreateForm(props) {
             )}
           </Grid>
           {/* status part */}
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">
                 وضعیت
@@ -380,7 +388,7 @@ function CreateForm(props) {
                   label="اسقاطی"
                 />
                 <FormControlLabel
-                  value="0"
+                  value="-2"
                   control={<Radio />}
                   label="استفاده نشده"
                 />
@@ -407,29 +415,31 @@ function CreateForm(props) {
             </FormControl>
           </Grid>
           {/* end status part */}
+
+          {/* show equipment features */}
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }} spacing={3}>
+            {features.map((feature) => (
+              <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
+                <TextField
+                  //sx={{ width: 400 }}
+                  label={feature.name}
+                  value={featureValues[feature.id] || ""}
+                  onChange={(e) =>
+
+                    setFeatureValues((prev) => ({
+                      ...prev,
+                      [feature.id]: e.target.value,
+                    }))
+
+                  }
+                  fullWidth
+                />
+              </Grid>
+            ))}
+          </Grid>
         </Grid>
 
-        {/* show equipment features */}
-        <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
-          {features.map((feature) => (
-            <Grid key={feature.id} size={{ xs: 12, sm: 3 }}>
-              <TextField
-                sx={{ width: 400 }}
-                label={feature.name}
-                value={featureValues[feature.id] || ""}
-                onChange={(e) =>
 
-                  setFeatureValues((prev) => ({
-                    ...prev,
-                    [feature.id]: e.target.value,
-                  }))
-
-                }
-                fullWidth
-              />
-            </Grid>
-          ))}
-        </Grid>
       </FormGroup>
       <Stack
         direction="row"
