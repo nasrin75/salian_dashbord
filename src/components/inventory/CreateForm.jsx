@@ -10,10 +10,6 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import { getEquipmentFeatures, getEquipments } from "../../api/EquipmentApi";
 import { toast } from "react-toastify";
 import { getLocations } from "../../api/LocationApi";
@@ -21,13 +17,10 @@ import { getEmployees } from "../../api/EmployeeApi";
 import Autocomplete from "@mui/material/Autocomplete";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { styled } from "@mui/material/styles";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
 import Radio from "@mui/material/Radio";
 import FormLabel from "@mui/material/FormLabel";
 import RadioGroup from "@mui/material/RadioGroup";
-import axios from "axios";
-import { getFeatures } from "../../api/FeatureApi";
+
 function CreateForm(props) {
   const { formState, onFieldChange, onSubmit, submitButtonLabel } = props;
 
@@ -45,8 +38,7 @@ function CreateForm(props) {
     //Equipment List
     getEquipments()
       .then((data) => setEquipments(data.data["result"]))
-      .catch((err) => console.log(err));
-    // .catch(() => toast("مشکلی در گرفتن لیست قطعات رخ داده است"));
+      .catch(() => toast("مشکلی در گرفتن لیست قطعات رخ داده است"));
 
     //Location List
     getLocations()
@@ -65,44 +57,23 @@ function CreateForm(props) {
       .then((data) => {
         const list = data.data["result"];
         setFeatures(list);
-
-        // create default values
-        const initial = {};
-        list.forEach((f) => {
-          initial[f.id] = "";
-        });
-
-        setFeatureValues(initial);
       })
-      .catch((err) => {
+      .catch(() => {
         toast.error("خطا در دریافت ویژگی‌ها");
       });
   };
 
-  // const handleSubmit = useCallback(
-  //   async (event) => {
-  //     event.preventDefault();
-
-  //     setIsSubmitting(true);
-  //     try {
-  //       await onSubmit(formValues);
-  //     } finally {
-  //       setIsSubmitting(false);
-  //     }
-  //   },
-  //   [formValues, onSubmit]
-  // );
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
       setIsSubmitting(true);
-      console.log("handleSubmit", featureValues);
+
       try {
         const payload = {
           ...formValues,
           Features: Object.keys(featureValues).map((id) => ({
-            featureId: Number(id),
-            value: featureValues[id],
+            FeatureId: Number(id),
+            Value: featureValues[id],
           })),
         };
 
@@ -233,7 +204,7 @@ function CreateForm(props) {
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.ItNumber ?? null}
-              onChange={(e) => onFieldChange("ItNumber", e.target.value)}
+              onChange={(e) => onFieldChange("ItNumber", e.target.value, 'number')}
               name="ItNumber"
               label="شماره IT"
               error={!!formErrors.ItNumber}
@@ -243,12 +214,12 @@ function CreateForm(props) {
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
-              value={formValues.ItParentId ?? null}
-              onChange={(e) => onFieldChange("ItParentId", e.target.value)}
-              name="ItParentId"
+              value={formValues.ItParentNumber ?? null}
+              onChange={(e) => onFieldChange("ItParentNumber", e.target.value, 'number')}
+              name="ItParentNumber"
               label="شماره IT Parent"
-              error={!!formErrors.ItParentId}
-              helperText={formErrors.ItParentId ?? " "}
+              error={!!formErrors.ItParentNumber}
+              helperText={formErrors.ItParentNumber ?? " "}
               fullWidth
             />
           </Grid>
@@ -313,6 +284,7 @@ function CreateForm(props) {
             <TextField
               label="توضیحات"
               multiline
+              onChange={(e) => onFieldChange("Description",e.target.value)}
               rows={2}
               maxRows={Infinity}
               fullWidth
@@ -446,10 +418,12 @@ function CreateForm(props) {
                 label={feature.name}
                 value={featureValues[feature.id] || ""}
                 onChange={(e) =>
+
                   setFeatureValues((prev) => ({
                     ...prev,
                     [feature.id]: e.target.value,
                   }))
+
                 }
                 fullWidth
               />

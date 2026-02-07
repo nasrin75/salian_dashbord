@@ -105,7 +105,7 @@ export default function List() {
         getInventories(searchParams.get("equipment"))
             .then(data => {
                 setInventories(data.data['result'])
-console.log("resp::",data.data['result'])
+
                 setIsLoading(false)
 
             }).catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است"))

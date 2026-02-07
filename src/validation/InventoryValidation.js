@@ -17,9 +17,7 @@ export function CreateValidation(inventory) {
    if (!inventory.Status) {
     issues = [...issues, { message: 'یکی از وضعیت های زیر را انتخاب کنید', path: ['Status'] }];
   }
-  //  if (!inventory.SerialNumber) {
-  //   issues = [...issues, { message: 'شماره سریال الزامی است.', path: ['SerialNumber'] }];
-  // }
+
 
   if (!inventory.DeliveryDate) {
     issues = [...issues, { message: 'تاریخ تحویل الزامی است.', path: ['DeliveryDate'] }];

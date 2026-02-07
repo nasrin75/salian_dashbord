@@ -61,7 +61,7 @@ export default function Create() {
             if (type == 'switch') {
                 finalValue = value == 'on' ? true : false;
             }
-            if (type == 'radio') {
+            if (type == 'radio' || type == 'number') {
                 finalValue = Number(value);
             }
             const newFormValues = {
@@ -72,7 +72,7 @@ export default function Create() {
             setFormValues(newFormValues);
 
             const { issues } = CreateValidation(newFormValues);
-
+console.log("error_issue",issues)
             setFormErrors({
                 ...formErrors,
                 [name]: issues?.find(i => i.path?.[0] === name)?.message,
@@ -95,7 +95,7 @@ export default function Create() {
         }
         setFormErrors({});
 
-        createInventory(payload)
+        createInventory(JSON.stringify(payload))
             .then(() => {
                 console.log('createInventory',payload)
                 toast.success("عملیات با موفقیت انجام شد.")
