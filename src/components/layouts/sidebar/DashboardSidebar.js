@@ -155,8 +155,8 @@ function DashboardSidebar({
                   <DashboardSidebarPageItem
                     id="/inventories"
                     title="انبار"
-                    href="/inventories"
-                    selected={!!matchPath("/inventories", pathname)}
+                    href="/inventories?equipment=ALL"
+                    selected={!!matchPath("/inventories?equipment=ALL", pathname)}
                   />
                 {inventorySubMenu.map(subMenu => {
                   return <DashboardSidebarPageItem
