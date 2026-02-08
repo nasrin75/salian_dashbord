@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import History from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useLocation, useNavigate} from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
@@ -195,7 +195,28 @@ export default function List() {
             { field: 'brandName', headerName: 'برند', width: 140, align: 'right' },
             { field: 'modelName', headerName: 'مدل', width: 140, align: 'right' },
             { field: 'equipment', headerName: 'قطعه', width: 140, align: 'right' },
-            { field: 'status', headerName: 'وضعیت', width: 140, align: 'right' },
+            {
+                field: 'status',
+                headerName: 'وضعیت',
+                width: 140,
+                align: 'right',
+                renderCell: params => {
+                    switch (params.row.status) {
+                        case 'backFromCharge':
+                            return "برگشت از شارژ";
+                        case 'useless':
+                            return "اسقاطی";
+                        case 'unuse':
+                            return "استفاده نشده";
+                        case 'inuse':
+                            return "استفاده شده";
+                        case 'sendToCharge':
+                            return "ارسال جهت شارژ";
+                        case 'repair':
+                            return "تعمیر";
+                    }
+                }
+            },
             { field: 'user', headerName: 'کاربر', width: 140, align: 'right' },
             { field: 'serialNumber', headerName: 'شماره سریال', width: 140, align: 'right' },
             {
@@ -217,14 +238,26 @@ export default function List() {
             { field: 'itNumber', headerName: 'شماره IT', width: 100, align: 'right' },
             { field: 'itParentNumber', headerName: 'شماره IT Parent', width: 140, align: 'right' },
             { field: 'invoiceNumber', headerName: 'شماره فاکتور', width: 140, align: 'right' },
-            { field: 'invoiceImage', headerName: 'تصویر فاکتور', width: 140, align: 'right' },
+            {
+                field: 'invoiceImage', headerName: 'تصویر فاکتور', width: 140, align: 'right',
+                renderCell: (params) => {
+                    return (params.row?.invoiceImage &&
+                        <div>
+                            <img src={
+                                process.env.REACT_APP_BASE_URL +
+                                `/images/inventory/${params.row?.invoiceImage}`
+                            } width={100} />
+                        </div>
+                    )
+                }
+            },
             {
                 field: 'updatedAt',
                 headerName: 'آخرین بروزرسانی',
                 width: 240,
                 align: 'right',
-                valueFormatter: params => dayjs(params).format("YYYY/MM/DD h:m:ss"),
-                type:'date'
+                type: 'date',
+                valueFormatter: params => dayjs(params).format("YYYY/MM/DD h:m"),
             },
             { field: 'description', headerName: 'توضیحات', width: 140, align: 'right' },
             {
@@ -285,6 +318,7 @@ export default function List() {
                     columns={columns}
                     align="center"
                     pagination
+                    disableVirtualization
                     // sortingMode="server"
                     // filterMode="server"
                     // paginationMode="server"
