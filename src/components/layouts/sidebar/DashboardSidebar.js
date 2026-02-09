@@ -158,14 +158,14 @@ function DashboardSidebar({
                     href="/inventories?equipment=ALL"
                     selected={!!matchPath("/inventories?equipment=ALL", pathname)}
                   />
-                {inventorySubMenu.map(subMenu => {
-                  return <DashboardSidebarPageItem
-                    id={subMenu}
-                    title={subMenu}
-                    href={`/inventories?equipment=${subMenu}`}
-                    selected={!!matchPath(`/inventories?equipment=${subMenu}`, pathname)}
-                  />
-                })}
+                  {inventorySubMenu.map(subMenu => {
+                    return <DashboardSidebarPageItem
+                      id={subMenu}
+                      title={subMenu}
+                      href={`/inventories?equipment=${subMenu}`}
+                      selected={!!matchPath(`/inventories?equipment=${subMenu}`, pathname)}
+                    />
+                  })}
                 </List>
               }
             />
@@ -269,13 +269,6 @@ function DashboardSidebar({
                 </List>
               }
             />
-            {/* <DashboardSidebarPageItem
-              id="integrations"
-              title="Integrations"
-              icon={<LayersIcon />}
-              href="/integrations"
-              selected={!!matchPath('/integrations', pathname)}
-            /> */}
           </List>
         </Box>
       </Fragment>
