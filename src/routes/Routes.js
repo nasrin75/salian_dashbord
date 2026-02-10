@@ -1,5 +1,4 @@
 import UserList from '../pages/user/UserList';
-import UserCreate from '../pages/user/UserCreate';
 import UserEdit from '../pages/user/UserEdit';
 import EmployeeList from '../pages/employee/List';
 import EmployeeCreate from '../pages/employee/Create';
@@ -27,31 +26,38 @@ import Inventory from '../pages/inventory/List';
 import InventoryCreate from '../pages/inventory/Create';
 import InventoryEdit from '../pages/inventory/Edit';
 import Login from '../pages/auth/Login';
-import DashboardLayout from '../components/DashboardLayout';
-import { BrowserRouter, createBrowserRouter, createHashRouter } from 'react-router';
+import { createBrowserRouter } from 'react-router';
 import ProtectedRoutes from './ProtectedRoutes';
-import useAuth from '../hooks/useAuth/useAuth';
 import PublicRoutes from './PublicRoutes';
+import useAuth from '../hooks/useAuth/useAuth';
+import { RouterProvider } from 'react-router-dom';
+import { Component } from 'react';
+import UserCreate from '../pages/user/UserCreate';
 
-const PrivateRoutes = createBrowserRouter([
-    {
+const Routes = () => {
+    const { token } = useAuth();
+
+    // user can access this route when is login
+    const RouteNeedToAuth = [{
+        path: '/',
         Component: ProtectedRoutes,
         children: [
             //Users
-            { path: '/*', element: <UserList />, index: true },
-            { path: '/user/create', element: <UserCreate /> },
-            { path: '/user/edit/:userId', element: <UserEdit /> },
+            { path: 'users', element: <UserList />, index: true },
+            // { path: 'user/create', element: <div>salam users</div> },
+            { path: 'user/create', element: <UserCreate /> },
+            { path: 'user/edit/:userId', element: <UserEdit /> },
             //Employees
-            { path: '/employees', element: <EmployeeList /> },
-            { path: '/employee/create', element: <EmployeeCreate /> },
-            { path: '/employee/edit/:employeeID', element: <EmployeeEdit /> },
+            { path: 'employees', element: <EmployeeList /> },
+            { path: 'employee/create', element: <EmployeeCreate /> },
+            { path: 'employee/edit/:employeeID', element: <EmployeeEdit /> },
             //Equipments
-            { path: '/equipments', element: <EquipmentList /> },
-            { path: '/equipment/create', element: <EquipmentCreate /> },
-            { path: '/equipment/edit/:equipmentID', element: <EquipmentEdit /> },
+            { path: 'equipments', element: <EquipmentList /> },
+            { path: 'equipment/create', element: <EquipmentCreate /> },
+            { path: 'equipment/edit/:equipmentID', element: <EquipmentEdit /> },
 
             {
-                path: '/setting/', children: [
+                path: 'setting/', children: [
                     //Locations
                     { path: 'locations', element: <LocationList /> },
                     { path: 'location/create', element: <LocationCreate /> },
@@ -88,89 +94,28 @@ const PrivateRoutes = createBrowserRouter([
             { path: 'inventory/edit/:inventoryID', element: <InventoryEdit /> },
 
         ],
-    },
-    {
-        Component: PublicRoutes,
-        children: [
-            { path: '/login', element: <Login /> },
-        ]
-    },
-]);
-export default PrivateRoutes;
-const Routes = () => {
-    const token = useAuth();
+    }];
 
-    const PublicRoutes = createHashRouter([
+    // if user don't login can access this routes
+    const RouteNotNeedToAuth = [
         {
-            Component: DashboardLayout,
+            path: "/",
+            Component: PublicRoutes,
             children: [
-                //Auth
-                { path: '/*', element: <Login /> },
-            ],
+                { path: 'login', element: <Login /> },
+            ]
         }
-    ]);
-
-    const PrivateRoutes = createHashRouter([
-        {
-            Component: ProtectedRoutes,
-            children: [
-
-                //Users
-                { path: '/*', element: <UserList />, index: true },
-                { path: '/user/create', element: <UserCreate /> },
-                { path: '/user/edit/:userId', element: <UserEdit /> },
-                //Employees
-                { path: '/employees', element: <EmployeeList /> },
-                { path: '/employee/create', element: <EmployeeCreate /> },
-                { path: '/employee/edit/:employeeID', element: <EmployeeEdit /> },
-                //Equipments
-                { path: '/equipments', element: <EquipmentList /> },
-                { path: '/equipment/create', element: <EquipmentCreate /> },
-                { path: '/equipment/edit/:equipmentID', element: <EquipmentEdit /> },
-
-                {
-                    path: '/setting/', children: [
-                        //Locations
-                        { path: 'locations', element: <LocationList /> },
-                        { path: 'location/create', element: <LocationCreate /> },
-                        { path: 'location/edit/:locationID', element: <LocationEdit /> },
-
-                        //ActionTypes
-                        { path: 'actionTypes', element: <ActionTypeList /> },
-                        { path: 'actionType/create', element: <ActionTypeCreate /> },
-                        { path: 'actionType/edit/:actionID', element: <ActionTypeEdit /> },
-
-                        //Roles
-                        { path: 'roles', element: <RoleList /> },
-                        { path: 'role/create', element: <RoleCreate /> },
-                        { path: 'role/edit/:roleID', element: <RoleEdit /> },
-
-                        //Permissions
-                        { path: 'permissions', element: <PermissionList /> },
-                        { path: 'permission/create', element: <PermissionCreate /> },
-                        { path: 'permission/edit/:permissionID', element: <PermissionEdit /> },
-
-                        //Features
-                        { path: 'features', element: <FeatureList /> },
-                        { path: 'feature/create', element: <FeatureCreate /> },
-                        { path: 'feature/edit/:featureID', element: <FeatureEdit /> },
-                    ]
-                },
+    ];
 
 
-                //Profile
-                { path: 'profile/setting', element: <ProfileSetting /> },
-                //Inventory
-                { path: 'inventories', element: <Inventory /> },
-                { path: 'inventory/create', element: <InventoryCreate /> },
-                { path: 'inventory/edit/:inventoryID', element: <InventoryEdit /> },
-
-            ],
-        },
-    ]);
+    const router = createBrowserRouter([
+        ...RouteNeedToAuth,
+        ...(!token ? RouteNeedToAuth : []),
+        ...RouteNotNeedToAuth
+    ])
 
 
-    //return !token ? PublicRoutes : PrivateRoutes;
-    return PublicRoutes;
+    return <RouterProvider router={router} />
 }
-//export default Routes;
+
+export default Routes;
