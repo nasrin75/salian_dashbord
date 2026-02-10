@@ -32,7 +32,7 @@ const LogoContainer = styled('div')({
   },
 });
 
-function DashboardHeader({ logo, title, menuOpen, onToggleMenu }) {
+function DashboardHeader({ logo, title, menuOpen, onToggleMenu,isLogin = false }) {
   const theme = useTheme();
 
   const handleMenuOpen = React.useCallback(() => {
@@ -77,7 +77,10 @@ function DashboardHeader({ logo, title, menuOpen, onToggleMenu }) {
           }}
         >
           <Stack direction="row" alignItems="center">
-            <Box sx={{ mr: 1 }}>{getMenuIcon(menuOpen)}</Box>
+            {!isLogin && (
+              <Box sx={{ mr: 1 }}>{getMenuIcon(menuOpen)}</Box> 
+            )}
+            
             <Link to="/" style={{ textDecoration: 'none' }}>
               <Stack direction="row" alignItems="center">
                 {logo ? <LogoContainer>{logo}</LogoContainer> : null}
@@ -119,6 +122,7 @@ DashboardHeader.propTypes = {
   menuOpen: PropTypes.bool.isRequired,
   onToggleMenu: PropTypes.func.isRequired,
   title: PropTypes.string,
+  isLogin: PropTypes.bool,
 };
 
 export default DashboardHeader;

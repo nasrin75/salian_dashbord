@@ -8,6 +8,7 @@ import DashboardHeader from './layouts/header/DashboardHeader';
 import DashboardSidebar from './layouts/sidebar/DashboardSidebar';
 import SitemarkIcon from './SitemarkIcon';
 import useAuth from '../hooks/useAuth/useAuth';
+import Login from '../pages/auth/Login';
 
 export default function DashboardLayout() {
   const theme = useTheme();
@@ -46,9 +47,30 @@ export default function DashboardLayout() {
   );
 
   const layoutRef = React.useRef(null);
-  const token = useAuth();
-  if(!token){
-    return  <Outlet />
+  const {token} = useAuth();
+  
+  if (!token) {
+    return (
+      <Box
+        ref={layoutRef}
+        sx={{
+          position: 'relative',
+          //display: 'flex',
+          overflow: 'hidden',
+          height: '100%',
+          width: '100%',
+        }}
+      >
+        <DashboardHeader
+          logo=""
+          title=""
+          isLogin="true"
+          menuOpen=""
+          onToggleMenu=""
+        />
+        <Login />
+      </Box>
+    )
   }
   return (
     <Box
