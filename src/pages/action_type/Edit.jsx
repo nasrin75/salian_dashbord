@@ -10,6 +10,7 @@ import { EditValidation } from '../../validation/ActionTypeValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ActionTypeDetails, updateActionType } from '../../api/ActionTypeApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 function ActionTypeEditForm({ initialValues, onSubmit }) {
     const navigate = useNavigate();
@@ -87,7 +88,7 @@ const handleFormFieldChange = useCallback(
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate('/setting/actionTypes');
+            navigate(APP_ROUTES.ACTION_TYPE_LIST_PATH);
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -136,7 +137,7 @@ export default function ActionTypeEdit() {
                 .then(data => {
                     setActionType('handlesubmit', data.data['result'])
                     setIsLoading(false);
-                    navigate('/setting/actionTypes');
+                    navigate(APP_ROUTES.ACTION_TYPE_LIST_PATH);
                 })
                 .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },

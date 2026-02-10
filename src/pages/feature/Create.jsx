@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Divider from '@mui/material/Divider';
 import { CreateValidation } from '../../validation/FeatureValidation';
 import { createFeature } from '../../api/FeatureApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_FORM_VALUES = {
     Name: '',
@@ -70,7 +71,7 @@ export default function Create() {
         createFeature(JSON.stringify(formValues))
             .then(() => {
                 toast.success("ویژگی جدید با موفقیت ایجاد شد.")
-                navigate('/setting/features');
+                navigate(APP_ROUTES.FEATURE_LIST_PATH);
             })
 
     }, [formValues, navigate, setFormErrors]);

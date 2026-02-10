@@ -137,7 +137,7 @@ export default function Setting() {
                 .then(data => {
                     setUser(data.data['result'])
                     setIsLoading(false);
-                    // navigate('/settings/users');
+                    
                 })
                 .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Divider from '@mui/material/Divider';
 import { CreateValidation } from '../../validation/RoleValidation';
 import { createRole } from '../../api/RoleApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_FORM_VALUES = {
     FaName: '',
@@ -70,7 +71,7 @@ export default function Create() {
         createRole(JSON.stringify(formValues))
             .then(() => {
                 toast.success("نقش با موفقیت ایجاد شد.")
-                navigate('/setting/roles');
+                navigate(APP_ROUTES.ROLE_LIST_PATH);
             })
 
     }, [formValues, navigate, setFormErrors]);

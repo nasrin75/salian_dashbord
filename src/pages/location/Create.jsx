@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Divider from '@mui/material/Divider';
 import { CreateValidation } from '../../validation/LocationValidation';
 import { createLocation } from '../../api/LocationApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_FORM_VALUES = {
     Title: '',
@@ -75,7 +76,7 @@ export default function Create() {
         createLocation(JSON.stringify(formValues))
             .then(() => {
                 toast.success("بخش جدید با موفقیت ایجاد شد.")
-                navigate('/setting/locations');
+                navigate(APP_ROUTES.LOCATION_LIST_PATH);
             })
 
     }, [formValues, navigate, setFormErrors]);

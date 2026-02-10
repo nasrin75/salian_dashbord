@@ -10,6 +10,7 @@ import { EditValidation } from '../../validation/EquipmentValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { EquipmentDetails, updateEquipment } from '../../api/EquipmentApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 function EquipmentEditForm({ initialValues, onSubmit }) {
     const navigate = useNavigate();
@@ -87,7 +88,7 @@ const handleFormFieldChange = useCallback(
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate('/equipments');
+            navigate(APP_ROUTES.EQUIPMENT_LIST_PATH);
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -136,7 +137,7 @@ export default function Edit() {
                 .then(data => {
                     setEquipment('handlesubmit', data.data['result'])
                     setIsLoading(false);
-                    navigate('/equipments');
+                    navigate(APP_ROUTES.EQUIPMENT_LIST_PATH);
                 })
                 .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },

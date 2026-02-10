@@ -10,6 +10,7 @@ import { EditValidation } from '../../validation/LocationValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LocationDetails, updateLocation } from '../../api/LocationApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 function LocationEditForm({ initialValues, onSubmit }) {
     const navigate = useNavigate();
@@ -88,7 +89,7 @@ const handleFormFieldChange = useCallback(
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate('/setting/locations');
+            navigate(APP_ROUTES.LOCATION_LIST_PATH);
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -137,7 +138,7 @@ export default function Edit() {
                 .then(data => {
                     setLocation('handlesubmit', data.data['result'])
                     setIsLoading(false);
-                    navigate('/setting/locations');
+                    navigate(APP_ROUTES.LOCATION_LIST_PATH);
                 })
                 .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },

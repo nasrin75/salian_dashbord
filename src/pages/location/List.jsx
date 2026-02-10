@@ -11,6 +11,7 @@ import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteLocation, getLocations } from '../../api/LocationApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -117,7 +118,7 @@ export default function List() {
 
 
     const handleCreateClick = useCallback(() => {
-        navigate('/setting/location/create');
+        navigate(APP_ROUTES.LOCATION_CREATE_PATH);
     }, [navigate]);
 
     const handleLocationEditPage = useCallback(

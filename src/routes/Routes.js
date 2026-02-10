@@ -33,6 +33,7 @@ import useAuth from '../hooks/useAuth/useAuth';
 import { RouterProvider } from 'react-router-dom';
 import { Component } from 'react';
 import UserCreate from '../pages/user/UserCreate';
+import { APP_ROUTES } from '../utlis/constants/routePath';
 
 const Routes = () => {
     const { token } = useAuth();
@@ -43,55 +44,50 @@ const Routes = () => {
         Component: ProtectedRoutes,
         children: [
             //Users
-            { path: 'users', element: <UserList />, index: true },
-            // { path: 'user/create', element: <div>salam users</div> },
-            { path: 'user/create', element: <UserCreate /> },
-            { path: 'user/edit/:userId', element: <UserEdit /> },
+            { path: APP_ROUTES.USER_LIST_PATH, element: <UserList />, index: true },
+            { path: APP_ROUTES.USER_CREATE_PATH, element: <UserCreate /> },
+            { path: APP_ROUTES.USER_EDIT_PATH, element: <UserEdit /> },
             //Employees
-            { path: 'employees', element: <EmployeeList /> },
-            { path: 'employee/create', element: <EmployeeCreate /> },
-            { path: 'employee/edit/:employeeID', element: <EmployeeEdit /> },
+            { path: APP_ROUTES.EMPLOYEE_LIST_PATH, element: <EmployeeList /> },
+            { path: APP_ROUTES.EMPLOYEE_CREATE_PATH, element: <EmployeeCreate /> },
+            { path: APP_ROUTES.EMPLOYEE_EDIT_PATH, element: <EmployeeEdit /> },
             //Equipments
-            { path: 'equipments', element: <EquipmentList /> },
-            { path: 'equipment/create', element: <EquipmentCreate /> },
-            { path: 'equipment/edit/:equipmentID', element: <EquipmentEdit /> },
+            { path: APP_ROUTES.EQUIPMENT_LIST_PATH, element: <EquipmentList /> },
+            { path: APP_ROUTES.EQUIPMENT_CREATE_PATH, element: <EquipmentCreate /> },
+            { path: APP_ROUTES.EQUIPMENT_EDIT_PATH, element: <EquipmentEdit /> },
 
-            {
-                path: 'setting/', children: [
-                    //Locations
-                    { path: 'locations', element: <LocationList /> },
-                    { path: 'location/create', element: <LocationCreate /> },
-                    { path: 'location/edit/:locationID', element: <LocationEdit /> },
+            //Locations
+            { path: APP_ROUTES.LOCATION_LIST_PATH, element: <LocationList /> },
+            { path: APP_ROUTES.LOCATION_CREATE_PATH, element: <LocationCreate /> },
+            { path: APP_ROUTES.LOCATION_EDIT_PATH, element: <LocationEdit /> },
 
-                    //ActionTypes
-                    { path: 'actionTypes', element: <ActionTypeList /> },
-                    { path: 'actionType/create', element: <ActionTypeCreate /> },
-                    { path: 'actionType/edit/:actionID', element: <ActionTypeEdit /> },
+            //ActionTypes
+            { path: APP_ROUTES.ACTION_TYPE_LIST_PATH, element: <ActionTypeList /> },
+            { path: APP_ROUTES.ACTION_TYPE_CREATE_PATH, element: <ActionTypeCreate /> },
+            { path: APP_ROUTES.ACTION_TYPE_EDIT_PATH, element: <ActionTypeEdit /> },
 
-                    //Roles
-                    { path: 'roles', element: <RoleList /> },
-                    { path: 'role/create', element: <RoleCreate /> },
-                    { path: 'role/edit/:roleID', element: <RoleEdit /> },
+            //Roles
+            { path: APP_ROUTES.ROLE_LIST_PATH, element: <RoleList /> },
+            { path: APP_ROUTES.ROLE_CREATE_PATH, element: <RoleCreate /> },
+            { path: APP_ROUTES.ROLE_EDIT_PATH, element: <RoleEdit /> },
 
-                    //Permissions
-                    { path: 'permissions', element: <PermissionList /> },
-                    { path: 'permission/create', element: <PermissionCreate /> },
-                    { path: 'permission/edit/:permissionID', element: <PermissionEdit /> },
+            //Permissions
+            { path: APP_ROUTES.PERMISSION_LIST_PATH, element: <PermissionList /> },
+            { path: APP_ROUTES.PERMISSION_CREATE_PATH, element: <PermissionCreate /> },
+            { path: APP_ROUTES.PERMISSION_EDIT_PATH, element: <PermissionEdit /> },
 
-                    //Features
-                    { path: 'features', element: <FeatureList /> },
-                    { path: 'feature/create', element: <FeatureCreate /> },
-                    { path: 'feature/edit/:featureID', element: <FeatureEdit /> },
-                ]
-            },
+            //Features
+            { path: APP_ROUTES.FEATURE_LIST_PATH, element: <FeatureList /> },
+            { path: APP_ROUTES.FEATURE_CREATE_PATH, element: <FeatureCreate /> },
+            { path: APP_ROUTES.FEATURE_EDIT_PATH, element: <FeatureEdit /> },
 
 
             //Profile
-            { path: 'profile/setting', element: <ProfileSetting /> },
+            { path: APP_ROUTES.PROFILE_SETTING_PATH, element: <ProfileSetting /> },
             //Inventory
-            { path: 'inventories', element: <Inventory /> },
-            { path: 'inventory/create', element: <InventoryCreate /> },
-            { path: 'inventory/edit/:inventoryID', element: <InventoryEdit /> },
+            { path: APP_ROUTES.INVENTORY_LIST_PATH, element: <Inventory /> },
+            { path: APP_ROUTES.INVENTORY_CREATE_PATH, element: <InventoryCreate /> },
+            { path: APP_ROUTES.INVENTORY_EDIT_PATH, element: <InventoryEdit /> },
 
         ],
     }];
@@ -102,7 +98,7 @@ const Routes = () => {
             path: "/",
             Component: PublicRoutes,
             children: [
-                { path: 'login', element: <Login /> },
+                { path: APP_ROUTES.LOGIN_PATH, element: <Login /> },
             ]
         }
     ];

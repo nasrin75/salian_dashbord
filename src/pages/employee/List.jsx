@@ -12,6 +12,7 @@ import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteEmployee, getEmployees } from '../../api/EmployeeApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -118,7 +119,7 @@ export default function List() {
 
 
     const handleCreateClick = useCallback(() => {
-        navigate('/employee/create');
+         navigate(APP_ROUTES.EMPLOYEE_CREATE_PATH);
     }, [navigate]);
 
     const handleEmployeeEditPage = useCallback(

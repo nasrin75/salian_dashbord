@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Divider from '@mui/material/Divider';
 import { CreateValidation } from '../../validation/ActionTypeValidation';
 import { createActionType } from '../../api/ActionTypeApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_FORM_VALUES = {
     FaName: '',
@@ -74,7 +75,7 @@ export default function Create() {
         createActionType(JSON.stringify(formValues))
             .then(() => {
                 toast.success("عملیات با موفقیت ایجاد شد.")
-                navigate('/setting/actionTypes');
+                navigate(APP_ROUTES.ACTION_TYPE_LIST_PATH);
             })
 
     }, [formValues, navigate, setFormErrors]);

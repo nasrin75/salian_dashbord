@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Divider from '@mui/material/Divider';
 import { CreateValidation } from '../../validation/EmployeeValidation';
 import { createEmployee } from '../../api/EmployeeApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_FORM_VALUES = {
     Name: '',
@@ -73,7 +74,7 @@ export default function Create() {
         createEmployee(JSON.stringify(formValues))
             .then(() => {
                 toast.success("پرسنل جدید با موفقیت ایجاد شد.")
-                navigate('/employees');
+                navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
             })
 
     }, [formValues, navigate, setFormErrors]);

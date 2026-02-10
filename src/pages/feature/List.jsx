@@ -11,6 +11,7 @@ import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteFeature, getFeatures } from '../../api/FeatureApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -117,7 +118,7 @@ export default function List() {
 
 
     const handleCreateClick = useCallback(() => {
-        navigate('/setting/feature/create');
+        navigate(APP_ROUTES.FEATURE_CREATE_PATH);
     }, [navigate]);
 
     const handleFeatureEditPage = useCallback(

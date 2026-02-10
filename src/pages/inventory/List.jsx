@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { deleteInventory, getInventories } from '../../api/InventoryApi';
 import { useSearchParams } from "react-router-dom";
 import dayjs from 'dayjs';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -121,7 +122,7 @@ export default function List() {
 
 
     const handleCreateClick = useCallback(() => {
-        navigate('/inventory/create');
+        navigate(APP_ROUTES.INVENTORY_CREATE_PATH);
     }, [navigate]);
 
     const handleInventoryEditPage = useCallback(

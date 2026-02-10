@@ -9,6 +9,7 @@ import { updateInventory, InventoryDetails } from '../../api/InventoryApi';
 import { EditValidation } from '../../validation/InventoryValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 function InventoryEditForm({ initialValues, onSubmit }) {
     const { inventoryID } = useParams();
@@ -90,7 +91,7 @@ function InventoryEditForm({ initialValues, onSubmit }) {
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate('/inventories');
+            navigate(APP_ROUTES.INVENTORY_LIST_PATH);
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -141,7 +142,7 @@ export default function Edit() {
                 .then(data => { 
                     setInventory(data.data['result'])
                     setIsLoading(false);
-                    navigate('/inventories');
+                    navigate(APP_ROUTES.INVENTORY_LIST_PATH);
                 })
                 .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },

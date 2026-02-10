@@ -9,6 +9,7 @@ import { EditValidation } from '../../validation/PermissionValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PermissionDetails, updatePermission } from '../../api/PermissionApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 function PermissionEditForm({ initialValues, onSubmit }) {
     const navigate = useNavigate();
@@ -86,7 +87,7 @@ const handleFormFieldChange = useCallback(
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate('/setting/permissions');
+            navigate(APP_ROUTES.PERMISSION_LIST_PATH);
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -135,7 +136,7 @@ export default function PermissionEdit() {
                 .then(data => {
                     setPermission('handlesubmit', data.data['result'])
                     setIsLoading(false);
-                    navigate('/setting/permissions');
+                    navigate(APP_ROUTES.PERMISSION_LIST_PATH);
                 })
                 .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },

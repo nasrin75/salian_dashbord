@@ -10,6 +10,7 @@ import { updateEmployee, employeeDetails, EmployeeDetails } from '../../api/Empl
 import { EditValidation } from '../../validation/EmployeeValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 function EmployeeEditForm({ initialValues, onSubmit }) {
     const navigate = useNavigate();
@@ -82,7 +83,7 @@ function EmployeeEditForm({ initialValues, onSubmit }) {
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            // navigate('/employees');
+            navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -134,7 +135,7 @@ export default function Edit() {
                     console.log('handlesubmit', employeeID)
                     setEmployee('handlesubmit', data.data['result'])
                     setIsLoading(false);
-                    navigate('/employees');
+                     navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
                 })
                 .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },

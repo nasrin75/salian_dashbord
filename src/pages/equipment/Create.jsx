@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Divider from '@mui/material/Divider';
 import { CreateValidation } from '../../validation/EquipmentValidation';
 import { createEquipment } from '../../api/EquipmentApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_FORM_VALUES = {
     Name: '',
@@ -76,7 +77,7 @@ export default function Create() {
         createEquipment(JSON.stringify(formValues))
             .then(() => {
                 toast.success("قطعه جدید با موفقیت ایجاد شد.")
-                navigate('/equipments');
+                navigate(APP_ROUTES.EQUIPMENT_LIST_PATH);
             })
 
     }, [formValues, navigate, setFormErrors]);

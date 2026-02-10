@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Divider from '@mui/material/Divider';
 import { CreateValidation } from '../../validation/PermissionValidation';
 import { createPermission } from '../../api/PermissionApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_FORM_VALUES = {
     FaName: '',
@@ -70,7 +71,7 @@ export default function Create() {
         createPermission(JSON.stringify(formValues))
             .then(() => {
                 toast.success("دسترسی با موفقیت ایجاد شد.")
-                navigate('/setting/permissions');
+                navigate(APP_ROUTES.PERMISSION_LIST_PATH);
             })
 
     }, [formValues, navigate, setFormErrors]);

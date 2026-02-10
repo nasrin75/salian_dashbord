@@ -12,6 +12,7 @@ import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteEquipment, getEquipments } from '../../api/EquipmentApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -118,7 +119,7 @@ export default function List() {
 
 
     const handleCreateClick = useCallback(() => {
-        navigate('/equipment/create');
+        navigate(APP_ROUTES.EQUIPMENT_CREATE_PATH);
     }, [navigate]);
 
     const handleEquipmentEditPage = useCallback(

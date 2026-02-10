@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Divider from '@mui/material/Divider';
 import { CreateValidation } from '../../validation/InventoryValidation';
 import { createInventory } from '../../api/InventoryApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_FORM_VALUES = {
     ItNumber: null,
@@ -95,7 +96,7 @@ export default function Create() {
         createInventory(JSON.stringify(payload))
             .then(() => {
                 toast.success("عملیات با موفقیت انجام شد.")
-                navigate('/inventories');
+                navigate(APP_ROUTES.INVENTORY_LIST_PATH);
             })
             .catch(()=> toast.error("مشکلی در افزودن به انبار رخ داده است"))
 
