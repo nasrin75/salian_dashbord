@@ -6,3 +6,5 @@ export function StoreTokenInLocalStorage(token) {
 export function GetTokenFromLocalStorage() {
     localStorage.getItem('token')
 }
+
+export const getToken = localStorage.getItem('token')

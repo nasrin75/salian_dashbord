@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
 import axios from "axios";
 import { login } from "../../api/AuthApi";
 import { toast } from "react-toastify";
+import { StoreTokenInLocalStorage } from "../../utlis/constants/common";
 
 const AuthProvider = ({ children }) => {
 
@@ -19,10 +20,11 @@ const AuthProvider = ({ children }) => {
             login(data)
                 .then(data => {
                     const result = data.data['result'];
-
-                    setToken(result.token)
-                    console.log('token', result.token)
-                    localStorage.setItem('token', result.token)
+                    const token = result.token;
+                    setToken(token)
+                    StoreTokenInLocalStorage(token);
+                    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+                    
                     //Notify
                     toast.success("شما با موفقیت وارد شدید")
 
@@ -32,21 +34,20 @@ const AuthProvider = ({ children }) => {
         [setToken, token],
     );
 
-    useEffect(() => {
-        if (token) {
-            axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-            localStorage.setItem("token", token)
-        } else {
-            delete axios.defaults.headers.common["Authorization"];
-            localStorage.removeItem(token);
-        }
-    }, [token])
+    // useEffect(() => {
+    //     if (token) {
+    //         console.log('delhasTokenToken')
+    //         axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+    //         StoreTokenInLocalStorage(token);
+    //     } else {
+    //         console.log('delToken::', token)
+    //         //alert("توکن اکسپایر شده")
 
-    // Memoized value of the authentication context
-    const contextValue = useMemo(() => ({
-        token,
-        setToken
-    }), [token])
+    //         // delete axios.defaults.headers.common["Authorization"];
+    //         // localStorage.removeItem(token);
+    //     }
+    // }, [token])
+
 
     // Provide the authentication context to the children components
     return (
