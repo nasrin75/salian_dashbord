@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'salianFont';
     src: url('./../Fonts/IRANSansWebFaNum_Light.ttf') format("truetype");
-    
+
 }
 
-body{
+body {
     direction: rtl;
     text-align: right;
     font-family: "salianFont" !important;
@@ -12,29 +12,57 @@ body{
     font-weight: 400;
     line-height: 1.5;
 }
-*{
-     font-family: "salianFont" !important;
+
+* {
+    font-family: "salianFont" !important;
 }
+
 .css-3vcva2-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-popupIndicator:active {
     background-color: #fff !important;
     border: none !important;
     /* padding: 0px; */
 }
-.MuiAutocomplete-endAdornment{
+
+.MuiAutocomplete-endAdornment {
     right: 0px !important;
 }
+
 .popupIndicator {
     border: none !important;
 }
-.css-ky3a3f-MuiInputAdornment-root{
+
+.css-ky3a3f-MuiInputAdornment-root {
     color: #fff !important;
     margin-left: 0px !important;
     margin-right: 10px !important;
 }
+
 /* .css-13pe1bg-MuiPickersSectionList-root-MuiPickersInputBase-sectionsContainer-MuiPickersOutlinedInput-sectionsContainer{
     width: 298px !important;
 } */
 
+.login-btn {
+    background-color: #466457 !important;
+    color: #fff !important;
+}
+
+.login-btn:hover {
+    background-color: hsl(120, 81%, 14%) !important;
+}
+
+.otp-btn{
+    background-color: hsl(45, 90%, 40%) !important;
+    border: hsl(45, 94%, 20%) !important;
+     color: #fff !important;
+}
+.otp-btn:hover{
+    background-color: hsl(45, 83%, 35%) !important;
+    /* border: hsl(45, 94%, 20%) !important;
+     color: #fff !important; */
+}
+/* .css-1p8i14v-MuiButtonBase-root-MuiButton-root{
+    color: #fff;
+} */
 @media (min-width: 1200px) {
     .css-1hco7h0-MuiContainer-root {
         max-width: 90% !important;
