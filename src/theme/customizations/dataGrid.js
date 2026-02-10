@@ -144,8 +144,8 @@ export const dataGridCustomizations = {
         },
         [`& .${iconButtonClasses.edgeEnd}`]: {
           border: 'none',
-          height: '28px',
-          width: '28px',
+          height: '5px',
+          width: '5px',
         },
       },
     },
