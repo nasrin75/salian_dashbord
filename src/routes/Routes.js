@@ -106,7 +106,6 @@ const Routes = () => {
 
     const router = createBrowserRouter([
         ...RouteNeedToAuth,
-        ...(!token ? RouteNeedToAuth : []),
         ...RouteNotNeedToAuth
     ])
 
