@@ -104,13 +104,15 @@ export default function List() {
 
         getPermissions()
             .then(data => {
-                
+
                 setPermissions(data.data['result'])
 
                 setIsLoading(false)
 
-            }).catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است"))
-
+            }).catch((err) => {
+                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+                toast.error(message);
+            })
         setIsLoading(false);
     }, [paginationModel, sortModel, filterModel, searchParams]);
 

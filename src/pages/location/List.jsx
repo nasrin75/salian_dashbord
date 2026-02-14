@@ -107,7 +107,10 @@ export default function List() {
 
                 setIsLoading(false)
 
-            }).catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است"))
+            }).catch((err) => {
+                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+                toast.error(message);
+            })
 
         setIsLoading(false);
     }, [paginationModel, sortModel, filterModel, searchParams]);
@@ -170,7 +173,7 @@ export default function List() {
         () => [
             { field: 'title', headerName: 'نام', width: 240, align: 'right', },
             { field: 'abbreviation', headerName: 'مخفف', width: 140, align: 'right' },
-            { field: 'isShow', headerName: 'نمایش', width: 140, align: 'right',type:"boolean" },
+            { field: 'isShow', headerName: 'نمایش', width: 140, align: 'right', type: "boolean" },
             {
                 field: '',
                 headerName: 'عملیات',
