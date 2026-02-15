@@ -121,7 +121,6 @@ export default function Edit() {
                 setEquipment(data.data['result'])
                 setIsLoading(false);
             })
-            .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
     }, [equipmentID]);
@@ -139,7 +138,6 @@ export default function Edit() {
                     setIsLoading(false);
                     navigate(APP_ROUTES.EQUIPMENT_LIST_PATH);
                 })
-                .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
         [equipmentID],
     );

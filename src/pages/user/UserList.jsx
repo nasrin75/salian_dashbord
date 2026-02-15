@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
@@ -12,37 +11,62 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
-import { getUsers , deleteUser } from '../../api/UserApi';
+import { getUsers, deleteUser } from '../../api/UserApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import PermissionModal from '../../components/user/PermissionModal';
+import Modal from '@mui/material/Modal';
+import Typography from '@mui/material/Typography';
+import { getPermissions } from '../../api/PermissionApi';
 
 const INITIAL_PAGE_SIZE = 10;
-
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 export default function UserList() {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
+
+   const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   const navigate = useNavigate();
 
   const dialogs = useDialogs();
 
-  const [paginationModel, setPaginationModel] = React.useState({
+  const [paginationModel, setPaginationModel] = useState({
     page: searchParams.get('page') ? Number(searchParams.get('page')) : 0,
     pageSize: searchParams.get('pageSize')
       ? Number(searchParams.get('pageSize'))
       : INITIAL_PAGE_SIZE,
   });
-  const [filterModel, setFilterModel] = React.useState(
+  const [filterModel, setFilterModel] = useState(
     searchParams.get('filter')
       ? JSON.parse(searchParams.get('filter') ?? '')
       : { items: [] },
   );
-  const [sortModel, setSortModel] = React.useState(
+  const [sortModel, setSortModel] = useState(
     searchParams.get('sort') ? JSON.parse(searchParams.get('sort') ?? '') : [],
   );
 
-  const [users, setUsers] = React.useState([]);
+  const [users, setUsers] = useState([]);
 
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  const handlePaginationModelChange = React.useCallback(
+  const [isLoading, setIsLoading] = useState(true);
+ const [permissions, setPermissions] = [];
+    // useEffect(() => {
+    //     getPermissions()
+    //         .then(data => setPermissions(data.data['result']))
+    // }, [])
+  const handlePaginationModelChange = useCallback(
     (model) => {
       setPaginationModel(model);
 
@@ -58,7 +82,7 @@ export default function UserList() {
     [navigate, pathname, searchParams],
   );
 
-  const handleFilterModelChange = React.useCallback(
+  const handleFilterModelChange = useCallback(
     (model) => {
       setFilterModel(model);
 
@@ -80,7 +104,7 @@ export default function UserList() {
     [navigate, pathname, searchParams],
   );
 
-  const handleSortModelChange = React.useCallback(
+  const handleSortModelChange = useCallback(
     (model) => {
       setSortModel(model);
 
@@ -99,43 +123,49 @@ export default function UserList() {
     [navigate, pathname, searchParams],
   );
 
-  const loadData = React.useCallback(async () => {
-      setIsLoading(true);
-  
-   getUsers()
-      .then(data =>{
+  const loadData = useCallback(async () => {
+    setIsLoading(true);
+
+    getUsers()
+      .then(data => {
         setUsers(data.data['result'])
 
         setIsLoading(false)
 
-      }).catch(() =>toast.error("مشکلی در گرفتن اطلاعات رخ داده است") )
-  
-      setIsLoading(false);
-    }, [paginationModel, sortModel, filterModel,searchParams]);
+      })
 
-  React.useEffect(() => {
+    setIsLoading(false);
+  }, [paginationModel, sortModel, filterModel, searchParams]);
+
+  useEffect(() => {
     loadData();
   }, [loadData]);
 
 
-  const handleCreateClick = React.useCallback(() => {
-    navigate('/user/create');
+  const handleCreateClick = useCallback(() => {
+    navigate(APP_ROUTES.USER_CREATE_PATH);
   }, [navigate]);
 
-  const handleUserEditPage = React.useCallback(
+  const handleUserEditPage = useCallback(
     (userID) => () => {
-      console.log(userID)
-      // navigate(`/user/edit/${userID}`);
       navigate(`/user/edit/${userID}`);
     },
     [navigate],
   );
 
-  const handelDeleteUser = React.useCallback(
+  const handelPermissions = useCallback(() => {
+    handleOpen()
+ getPermissions()
+            .then(data => setPermissions(data.data['result']))
+    // setOpenPermissionModal(!openPermissionModal)
+    // console.log("openis :: ",openPermissionModal)
+  }, [navigate]);
+
+  const handelDeleteUser = useCallback(
     (user) => async () => {
-      
+
       const confirmed = await dialogs.confirm(
-        `آبا از حذف کاربر  ${user.username} مطمینید?`,
+        `آبا از حذف کاربر  ${user.username} مطمئنید?`,
         {
           title: `حذف کاربر?`,
           severity: 'خطا',
@@ -146,36 +176,43 @@ export default function UserList() {
 
       if (confirmed) {
         setIsLoading(true);
-       
-          deleteUser(user.id)
-                .then(() =>{
-                  loadData();
-                  toast.success("کاربر با موفقیت حذف شد.")
-                  setIsLoading(false)
 
-                }).catch(() => 
-                    toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
-                 )
+        deleteUser(user.id)
+          .then(() => {
+            loadData();
+            toast.success("کاربر با موفقیت حذف شد.")
+            setIsLoading(false)
+
+          }).catch(() =>
+            toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+          )
         setIsLoading(false);
       }
     },
     [dialogs, loadData],
   );
 
-  const initialState = React.useMemo(
+  const initialState = useMemo(
     () => ({
       pagination: { paginationModel: { pageSize: INITIAL_PAGE_SIZE } },
     }),
     [],
   );
 
-  const columns = React.useMemo(
+  const columns = useMemo(
     () => [
-      { field: 'username', headerName: 'نام کاربری', width: 240 ,align: 'right' },
-      { field: 'mobile', headerName: 'موبایل', width: 140,align: 'right' },
-      { field: 'email', headerName: 'ایمیل', width: 240 ,align: 'right'},
-      { field: 'role', headerName: 'نقش', width: 140 ,align: 'right'},    
-      { field: 'status', headerName: 'وضعیت', width: 140, type: 'string' ,align: 'right'},
+      { field: 'username', headerName: 'نام کاربری', width: 240, align: 'right' },
+      { field: 'mobile', headerName: 'موبایل', width: 140, align: 'right' },
+      { field: 'email', headerName: 'ایمیل', width: 240, align: 'right' },
+      { field: 'role', headerName: 'نقش', width: 140, align: 'right' },
+      {
+        field: 'status',
+        headerName: 'وضعیت',
+        width: 140,
+        type: 'string',
+        align: 'right',
+        renderCell: params => params.row.status == 'Active' ? 'فعال' : 'غیرفعال'
+      },
       {
         field: '',
         headerName: 'عملیات',
@@ -195,17 +232,18 @@ export default function UserList() {
             label="Delete"
             onClick={handelDeleteUser(row)}
           />,
-           <GridActionsCellItem
-            key="delete-item"
+          <GridActionsCellItem
+            key="permission-item"
             icon={<VpnKeyOutlined />}
             label="permissions"
-            // onClick={handelDeleteUser(row)}
+            //onClick={handelPermissions(row)}
+            onClick={handelPermissions}
           />,
           <GridActionsCellItem
-            key="delete-item"
+            key="log-item"
             icon={<History />}
-            label="permissions"
-            // onClick={handelDeleteUser(row)}
+            label="log"
+          // onClick={handelDeleteEmployee(row)}
           />,
         ],
       },
@@ -214,8 +252,13 @@ export default function UserList() {
   );
 
   const pageTitle = 'کاربران';
-
+  // {
+  //   if (!openPermissionModal) {
+  //     return (<PermissionModal open={openPermissionModal} />)
+  //   }
+  // }
   return (
+
     <PageContainer
       title={pageTitle}
       marginTop='20px'
@@ -226,56 +269,60 @@ export default function UserList() {
             onClick={handleCreateClick}
             startIcon={<AddIcon />}
           >
-             افزودن کاربر 
+            افزودن کاربر
           </Button>
         </Stack>
       }
     >
-      <Box sx={{ width: '100%', marginTop:'5px' ,paddingRight:'5px'}}>
 
-          <DataGrid
-            rows={users}
-            rowCount={users.length}
-            columns={columns}
-            align="center"
-            pagination
-            sortingMode="server"
-            // filterMode="server"
-            // paginationMode="server"
-            paginationModel={paginationModel}
-            onPaginationModelChange={handlePaginationModelChange}
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            filterModel={filterModel}
-            onFilterModelChange={handleFilterModelChange}
-            disableRowSelectionOnClick
-            loading={isLoading}
-            initialState={initialState}
-            showToolbar
-            pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
-            sx={{
-              [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {
-                outline: 'transparent',
-              },
-              [`& .${gridClasses.columnHeader}:focus-within, & .${gridClasses.cell}:focus-within`]:
-                {
-                  outline: 'none',
-                },
-              [`& .${gridClasses.row}:hover`]: {
-                cursor: 'pointer',
-              },
-            }}
-            slotProps={{
-              loadingOverlay: {
-                variant: 'circular-progress',
-                noRowsVariant: 'circular-progress',
-              },
-              baseIconButton: {
-                size: 'small',
-              },
-            }}
-          />
+      <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>
+
+        <DataGrid
+          rows={users}
+          rowCount={users.length}
+          columns={columns}
+          align="center"
+          pagination
+          // sortingMode="server"
+          // filterMode="server"
+          // paginationMode="server"
+          paginationModel={paginationModel}
+          onPaginationModelChange={handlePaginationModelChange}
+          sortModel={sortModel}
+          onSortModelChange={handleSortModelChange}
+          filterModel={filterModel}
+          onFilterModelChange={handleFilterModelChange}
+          disableRowSelectionOnClick
+          loading={isLoading}
+          initialState={initialState}
+          showToolbar
+          pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
+          sx={{
+            [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {
+              outline: 'transparent',
+            },
+            [`& .${gridClasses.columnHeader}:focus-within, & .${gridClasses.cell}:focus-within`]:
+            {
+              outline: 'none',
+            },
+            [`& .${gridClasses.row}:hover`]: {
+              cursor: 'pointer',
+            },
+          }}
+          slotProps={{
+            loadingOverlay: {
+              variant: 'circular-progress',
+              noRowsVariant: 'circular-progress',
+            },
+            baseIconButton: {
+              size: 'small',
+            },
+          }}
+        />
       </Box>
+
+<PermissionModal open={open} close={handleClose} allPermissions={permissions} />
+
     </PageContainer>
   );
 }

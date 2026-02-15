@@ -89,9 +89,7 @@ const handleFormFieldChange = useCallback(
             toast.success("ویرایش با موفقیت انجام شد.")
 
             navigate(APP_ROUTES.ACTION_TYPE_LIST_PATH);
-        } catch (editError) {
-            toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
-        }
+        } catch (editError) {}
     }, [formValues, navigate, onSubmit, setFormErrors]);
 
     return (
@@ -121,7 +119,6 @@ export default function ActionTypeEdit() {
                 setActionType(data.data['result'])
                 setIsLoading(false);
             })
-            .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
     }, [actionID]);
@@ -139,7 +136,6 @@ export default function ActionTypeEdit() {
                     setIsLoading(false);
                     navigate(APP_ROUTES.ACTION_TYPE_LIST_PATH);
                 })
-                .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
         [actionID],
     );

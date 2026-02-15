@@ -121,7 +121,6 @@ export default function RoleEdit() {
                 setRole(data.data['result'])
                 setIsLoading(false);
             })
-            .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
     }, [roleID]);
@@ -139,7 +138,6 @@ export default function RoleEdit() {
                     setIsLoading(false);
                     navigate(APP_ROUTES.ROLE_LIST_PATH);
                 })
-                .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
         [roleID],
     );

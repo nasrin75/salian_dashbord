@@ -122,7 +122,6 @@ export default function Edit() {
                 setLocation(data.data['result'])
                 setIsLoading(false);
             })
-            .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
     }, [locationID]);
@@ -140,7 +139,6 @@ export default function Edit() {
                     setIsLoading(false);
                     navigate(APP_ROUTES.LOCATION_LIST_PATH);
                 })
-                .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
         [locationID],
     );

@@ -120,7 +120,6 @@ export default function PermissionEdit() {
                 setPermission(data.data['result'])
                 setIsLoading(false);
             })
-            .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
     }, [permissionID]);
@@ -138,7 +137,6 @@ export default function PermissionEdit() {
                     setIsLoading(false);
                     navigate(APP_ROUTES.PERMISSION_LIST_PATH);
                 })
-                .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
         [permissionID],
     );

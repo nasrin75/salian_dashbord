@@ -126,7 +126,6 @@ export default function Edit() {
                 setInventory(data.data['result'])
                 setIsLoading(false);
             })
-            .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
     }, [inventoryID]);
@@ -144,7 +143,6 @@ export default function Edit() {
                     setIsLoading(false);
                     navigate(APP_ROUTES.INVENTORY_LIST_PATH);
                 })
-                .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
         [inventoryID],
     );

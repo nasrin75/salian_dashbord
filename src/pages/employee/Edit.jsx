@@ -118,7 +118,6 @@ export default function Edit() {
                 setEmployee(data.data['result'])
                 setIsLoading(false);
             })
-            .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
     }, [employeeID]);
@@ -137,7 +136,6 @@ export default function Edit() {
                     setIsLoading(false);
                      navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
                 })
-                .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
         [employeeID],
     );

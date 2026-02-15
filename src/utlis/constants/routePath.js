@@ -8,6 +8,7 @@ export const APP_ROUTES = {
     USER_LIST_PATH: 'users',
     USER_CREATE_PATH: 'user/create',
     USER_EDIT_PATH: 'user/edit/:userId',
+    USER_PERMISSION : 'user/permission',
 
     //Employee
     EMPLOYEE_LIST_PATH: '/employees',

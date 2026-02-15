@@ -120,7 +120,6 @@ export default function Setting() {
                 setUser(data.data['result'])
                 setIsLoading(false);
             })
-            .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
     }, [userID]);
@@ -139,7 +138,6 @@ export default function Setting() {
                     setIsLoading(false);
                     
                 })
-                .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
         [userID],
     );

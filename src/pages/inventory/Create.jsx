@@ -26,7 +26,7 @@ const INITIAL_FORM_VALUES = {
     Size: null,
     ExpireWarrantyDate: null,
     DeliveryDate: null,
-    Features :[]
+    Features: []
 };
 
 export default function Create() {
@@ -84,7 +84,7 @@ export default function Create() {
     );
     const handleFormSubmit = React.useCallback(async (payload) => {
         const { issues } = CreateValidation(payload);
-        
+
         if (issues && issues.length > 0) {
             setFormErrors(
                 Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
@@ -96,9 +96,9 @@ export default function Create() {
         createInventory(JSON.stringify(payload))
             .then(() => {
                 toast.success("عملیات با موفقیت انجام شد.")
-                navigate(APP_ROUTES.INVENTORY_LIST_PATH+'?equipment=ALL');
+                navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
             })
-            .catch(()=> toast.error("مشکلی در افزودن به انبار رخ داده است"))
+            .catch(() => toast.error("مشکلی در افزودن به انبار رخ داده است"))
 
     }, [navigate, setFormErrors]);
 

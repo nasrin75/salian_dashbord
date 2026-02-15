@@ -120,7 +120,6 @@ export default function FeatureEdit() {
                 setFeature(data.data['result'])
                 setIsLoading(false);
             })
-            .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
         setIsLoading(false);
     }, [featureID]);
@@ -138,7 +137,6 @@ export default function FeatureEdit() {
                     setIsLoading(false);
                     navigate(APP_ROUTES.FEATURE_LIST_PATH);
                 })
-                .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
         },
         [featureID],
     );
