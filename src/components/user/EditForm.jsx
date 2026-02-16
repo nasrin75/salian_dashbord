@@ -1,4 +1,3 @@
-import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -14,6 +13,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import FormLabel from '@mui/material/FormLabel';
 import { getRoles } from '../../api/RoleApi';
+import { useCallback, useEffect, useState } from 'react';
 
 function EditForm(props) {
   const {
@@ -27,10 +27,10 @@ function EditForm(props) {
   const formValues = formState.values;
   const formErrors = formState.errors;
 
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [roles, setRoles] = React.useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [roles, setRoles] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
 
     getRoles()
       .then((data) => {
@@ -39,7 +39,7 @@ function EditForm(props) {
       .catch(err => console.log(err))
 
   }, [])
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
 
@@ -85,7 +85,7 @@ function EditForm(props) {
   //   onFieldChange("LoginTypes", updated)
   // }
 
-  const handleReset = React.useCallback(() => {
+  const handleReset = useCallback(() => {
     if (onReset) {
       onReset(formValues);
     }
