@@ -10,7 +10,7 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import RadioGroup from '@mui/material/RadioGroup';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getPermissions } from '../../api/PermissionApi';
 
 const style = {
@@ -27,8 +27,9 @@ const style = {
 const PermissionModal = (props) => {
 
     const {
-        open, close, allPermissions
+        open, close,allPermissions
     } = props
+    //const [permissions, setPermissions] = useState([]);
 console.log("allPermissions ==",props.allPermissions);
     return (
         <Modal
@@ -65,9 +66,9 @@ console.log("allPermissions ==",props.allPermissions);
                                 >
                                     <FormControlLabel control={<Radio />} label="" />
                                     {
-                                        props.allPermissions.map(permission => {
-                                            return <FormControlLabel value={permission.id} control={<Radio />} label={permission.Name} />
-                                            // return <FormControlLabel value={permission.id} control={<Radio checked={formValues.permissionId == permission.id ?? false} />} label={permission.Name} />
+                                        allPermissions.map(permission => {
+                                            //return <FormControlLabel value={permission.id} control={<Radio />} label={permission.Name} />
+                                             return <FormControlLabel value={permission.id} control={<Radio />} label={permission.title} />
                                         })
                                     }
 

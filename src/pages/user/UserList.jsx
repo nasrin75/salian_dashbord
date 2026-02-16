@@ -18,6 +18,7 @@ import PermissionModal from '../../components/user/PermissionModal';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import { getPermissions } from '../../api/PermissionApi';
+import AddPermissionForm from '../../components/user/AssignPermissionForm';
 
 const INITIAL_PAGE_SIZE = 10;
 const style = {
@@ -35,7 +36,7 @@ export default function UserList() {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
 
-   const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -61,11 +62,8 @@ export default function UserList() {
   const [users, setUsers] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
- const [permissions, setPermissions] = [];
-    // useEffect(() => {
-    //     getPermissions()
-    //         .then(data => setPermissions(data.data['result']))
-    // }, [])
+  const [permissions, setPermissions] = useState([]);
+
   const handlePaginationModelChange = useCallback(
     (model) => {
       setPaginationModel(model);
@@ -132,7 +130,7 @@ export default function UserList() {
 
         setIsLoading(false)
 
-      })
+      }).catch(() => toast.error("عدم دسترسی"))
 
     setIsLoading(false);
   }, [paginationModel, sortModel, filterModel, searchParams]);
@@ -152,15 +150,14 @@ export default function UserList() {
     },
     [navigate],
   );
-
-  const handelPermissions = useCallback(() => {
-    handleOpen()
- getPermissions()
-            .then(data => setPermissions(data.data['result']))
-    // setOpenPermissionModal(!openPermissionModal)
-    // console.log("openis :: ",openPermissionModal)
-  }, [navigate]);
-
+ const handelPermissions = useCallback(
+  
+    (userID) => () => {
+      navigate(`/user/assignPermission/${userID}`);
+    },
+    [navigate],
+  );
+ 
   const handelDeleteUser = useCallback(
     (user) => async () => {
 
@@ -236,8 +233,7 @@ export default function UserList() {
             key="permission-item"
             icon={<VpnKeyOutlined />}
             label="permissions"
-            //onClick={handelPermissions(row)}
-            onClick={handelPermissions}
+            onClick={handelPermissions(row.id)}
           />,
           <GridActionsCellItem
             key="log-item"
@@ -320,8 +316,10 @@ export default function UserList() {
           }}
         />
       </Box>
+      {/* {
+        open && (<AddPermissionForm open={open} close={handleClose} allPermissions={permissions} />)
+      } */}
 
-<PermissionModal open={open} close={handleClose} allPermissions={permissions} />
 
     </PageContainer>
   );

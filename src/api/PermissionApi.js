@@ -18,3 +18,6 @@ export const createPermission = (data) => {
 export const updatePermission = (data) => {
     return Api.put('/permission/edit', data)
 }
+export const assignUserPermission = (data) => {
+    return Api.post('/user/permission/add', data)
+}

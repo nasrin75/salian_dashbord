@@ -34,6 +34,8 @@ import { RouterProvider } from 'react-router-dom';
 import { Component } from 'react';
 import UserCreate from '../pages/user/UserCreate';
 import { APP_ROUTES } from '../utlis/constants/routePath';
+import AddPermissionForm from '../components/user/AssignPermissionForm';
+import AssignPermission from '../pages/user/AssignPermission';
 
 const Routes = () => {
     const { token } = useAuth();
@@ -47,6 +49,8 @@ const Routes = () => {
             { path: APP_ROUTES.USER_LIST_PATH, element: <UserList />, index: true },
             { path: APP_ROUTES.USER_CREATE_PATH, element: <UserCreate /> },
             { path: APP_ROUTES.USER_EDIT_PATH, element: <UserEdit /> },
+            { path: APP_ROUTES.USER_ASSIGN_PERMISSION_PATH, element: <AssignPermission /> },
+            
             //Employees
             { path: APP_ROUTES.EMPLOYEE_LIST_PATH, element: <EmployeeList /> },
             { path: APP_ROUTES.EMPLOYEE_CREATE_PATH, element: <EmployeeCreate /> },
