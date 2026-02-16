@@ -34,20 +34,6 @@ const AuthProvider = ({ children }) => {
         [setToken, token],
     );
 
-    // useEffect(() => {
-    //     if (token) {
-    //         console.log('delhasTokenToken')
-    //         axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-    //         StoreTokenInLocalStorage(token);
-    //     } else {
-    //         console.log('delToken::', token)
-    //         //alert("توکن اکسپایر شده")
-
-    //         // delete axios.defaults.headers.common["Authorization"];
-    //         // localStorage.removeItem(token);
-    //     }
-    // }, [token])
-
 
     // Provide the authentication context to the children components
     return (
