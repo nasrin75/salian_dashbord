@@ -1,5 +1,7 @@
 import axios from "axios";
+import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { APP_ROUTES } from "../utlis/constants/routePath";
 
 const Api = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -36,6 +38,7 @@ Api.interceptors.response.use(
         case 401:
           toast.error("لطفا دوباره وارد شوید")
           localStorage.clear('token')
+          this.router.navigate([APP_ROUTES.LOGIN_PATH])
           break;
         case 404:
           toast.error("موردی یافت نشد.")
