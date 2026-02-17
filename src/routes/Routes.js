@@ -29,16 +29,12 @@ import Login from '../pages/auth/Login';
 import { createBrowserRouter } from 'react-router';
 import ProtectedRoutes from './ProtectedRoutes';
 import PublicRoutes from './PublicRoutes';
-import useAuth from '../hooks/useAuth/useAuth';
 import { RouterProvider } from 'react-router-dom';
-import { Component } from 'react';
 import UserCreate from '../pages/user/UserCreate';
 import { APP_ROUTES } from '../utlis/constants/routePath';
-import AddPermissionForm from '../components/user/AssignPermissionForm';
 import AssignPermission from '../pages/user/AssignPermission';
 
 const Routes = () => {
-    const { token } = useAuth();
 
     // user can access this route when is login
     const RouteNeedToAuth = [{
@@ -46,7 +42,7 @@ const Routes = () => {
         Component: ProtectedRoutes,
         children: [
             //Users
-            { path: APP_ROUTES.USER_LIST_PATH, element: <UserList />, index: true },
+            { path: APP_ROUTES.USER_LIST_PATH, element:<UserList />, index: true },
             { path: APP_ROUTES.USER_CREATE_PATH, element: <UserCreate /> },
             { path: APP_ROUTES.USER_EDIT_PATH, element: <UserEdit /> },
             { path: APP_ROUTES.USER_ASSIGN_PERMISSION_PATH, element: <AssignPermission /> },
