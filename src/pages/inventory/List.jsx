@@ -274,7 +274,7 @@ export default function List() {
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
-                flex: 1,
+                width: 240,
                 align: 'center',
                 getActions: ({ row }) => {
                     const actions = [];
