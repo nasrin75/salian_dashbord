@@ -13,10 +13,14 @@ import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteEmployee, getEmployees } from '../../api/EmployeeApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const INITIAL_PAGE_SIZE = 10;
 
 export default function List() {
+    const { hasPermission } = useAuth();
+
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -108,10 +112,10 @@ export default function List() {
 
                 setIsLoading(false)
 
-            }).catch((err) =>{
-               let message =  err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
-               toast.error(message);
-            } )
+            }).catch((err) => {
+                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+                toast.error(message);
+            })
 
         setIsLoading(false);
     }, [paginationModel, sortModel, filterModel, searchParams]);
@@ -122,7 +126,7 @@ export default function List() {
 
 
     const handleCreateClick = useCallback(() => {
-         navigate(APP_ROUTES.EMPLOYEE_CREATE_PATH);
+        navigate(APP_ROUTES.EMPLOYEE_CREATE_PATH);
     }, [navigate]);
 
     const handleEmployeeEditPage = useCallback(
@@ -170,40 +174,54 @@ export default function List() {
         }),
         [],
     );
-
+    const isAlow = hasPermission([PERMISSION.EMPLOYEE_EDIT]) ||
+        hasPermission([PERMISSION.EMPLOYEE_DELETE]) ||
+        hasPermission([PERMISSION.EMPLOYEE_HISTORY]);
+        
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'کدپرسنلی ', width: 240, align: 'right', },
             { field: 'name', headerName: 'نام', width: 140, align: 'right' },
             { field: 'email', headerName: 'ایمیل', width: 240, align: 'right' },
             { field: 'location', headerName: 'موقعیت', width: 140, align: 'right' },
-            {
+            ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
                 flex: 1,
                 align: 'center',
-                getActions: ({ row }) => [
-                    <GridActionsCellItem
-                        key="edit-item"
-                        icon={<EditIcon />}
-                        label="Edit"
-                        onClick={handleEmployeeEditPage(row.id)}
-                    />,
-                    <GridActionsCellItem
-                        key="delete-item"
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handelDeleteEmployee(row)}
-                    />,
-                    <GridActionsCellItem
-                        key="log-item"
-                        icon={<History />}
-                        label="log"
-                    // onClick={handleEmployeeEditPage(row)}
-                    />,
-                ],
-            },
+                getActions: ({ row }) => {
+                    const actions = [];
+                    if (hasPermission([PERMISSION.EMPLOYEE_EDIT])) {
+                        actions.push(<GridActionsCellItem
+                            key="edit-item"
+                            icon={<EditIcon />}
+                            label="Edit"
+                            onClick={handleEmployeeEditPage(row.id)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.EMPLOYEE_DELETE])) {
+                        actions.push(<GridActionsCellItem
+                            key="delete-item"
+                            icon={<DeleteIcon />}
+                            label="Delete"
+                            onClick={handelDeleteEmployee(row)}
+                        />)
+                    }
+                    if (hasPermission([PERMISSION.EMPLOYEE_HISTORY])) {
+                        actions.push(<GridActionsCellItem
+                            key="log-item"
+                            icon={<History />}
+                            label="log"
+                        // onClick={handleEmployeeEditPage(row)}
+                        />)
+                    }
+                    return actions;
+                }
+
+            },] : [])
+
         ],
         [handleEmployeeEditPage, handelDeleteEmployee],
     );
@@ -214,8 +232,8 @@ export default function List() {
         <PageContainer
             title={pageTitle}
             marginTop='20px'
-            actions={
-                <Stack direction="row" alignItems="center" spacing={1}>
+            actions={hasPermission([PERMISSION.EMPLOYEE_CREATE]) &&
+                (<Stack direction="row" alignItems="center" spacing={1}>
                     <Button
                         variant="contained"
                         onClick={handleCreateClick}
@@ -223,7 +241,7 @@ export default function List() {
                     >
                         افزودن پرسنل
                     </Button>
-                </Stack>
+                </Stack>)
             }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>

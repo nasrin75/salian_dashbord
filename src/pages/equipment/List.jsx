@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { DataGrid, GridActionsCellItem, gridClasses } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
-import History from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
@@ -13,10 +12,13 @@ import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteEquipment, getEquipments } from '../../api/EquipmentApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const INITIAL_PAGE_SIZE = 10;
 
 export default function List() {
+    const { hasPermission } = useAuth();
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -168,6 +170,9 @@ export default function List() {
         [],
     );
 
+    const isAlow = hasPermission([PERMISSION.EQUIPMENT_EDIT]) ||
+        hasPermission([PERMISSION.EQUIPMENT_DELETE]);
+console.log('isAlow',isAlow)
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'شماره ', width: 240, align: 'right', },
@@ -175,27 +180,35 @@ export default function List() {
             { field: 'type', headerName: 'نوع قطعه', width: 140, align: 'right' },
             { field: 'usedCount', headerName: 'تعداداستفاده شده', width: 140, align: 'right' },
             { field: 'unusedCount', headerName: 'تعداداستفاده نشده', width: 240, align: 'right' },
-            {
+            ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
                 flex: 1,
                 align: 'center',
-                getActions: ({ row }) => [
-                    <GridActionsCellItem
-                        key="edit-item"
-                        icon={<EditIcon />}
-                        label="Edit"
-                        onClick={handleEquipmentEditPage(row.id)}
-                    />,
-                    <GridActionsCellItem
-                        key="delete-item"
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handelDeleteEquipment(row)}
-                    />,
-                ],
-            },
+                getActions: ({ row }) => {
+                    const actions = [];
+                    if (hasPermission([PERMISSION.EQUIPMENT_EDIT])) {
+                        actions.push(<GridActionsCellItem
+                            key="edit-item"
+                            icon={<EditIcon />}
+                            label="Edit"
+                            onClick={handleEquipmentEditPage(row.id)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.EQUIPMENT_DELETE])) {
+                        actions.push(<GridActionsCellItem
+                            key="delete-item"
+                            icon={<DeleteIcon />}
+                            label="Delete"
+                            onClick={handelDeleteEquipment(row)}
+                        />)
+                    }
+
+                    return actions;
+                }
+            },] : [])
         ],
         [handleEquipmentEditPage, handelDeleteEquipment],
     );
@@ -206,8 +219,8 @@ export default function List() {
         <PageContainer
             title={pageTitle}
             marginTop='20px'
-            actions={
-                <Stack direction="row" alignItems="center" spacing={1}>
+            actions={hasPermission([PERMISSION.EQUIPMENT_LIST]) &&
+                (<Stack direction="row" alignItems="center" spacing={1}>
                     <Button
                         variant="contained"
                         onClick={handleCreateClick}
@@ -215,7 +228,7 @@ export default function List() {
                     >
                         افزودن قطعه
                     </Button>
-                </Stack>
+                </Stack>)
             }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>

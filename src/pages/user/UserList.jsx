@@ -14,11 +14,8 @@ import { toast } from 'react-toastify';
 import { getUsers, deleteUser } from '../../api/UserApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import PermissionModal from '../../components/user/PermissionModal';
-import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
-import { getPermissions } from '../../api/PermissionApi';
-import AddPermissionForm from '../../components/user/AssignPermissionForm';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const INITIAL_PAGE_SIZE = 10;
 const style = {
@@ -35,10 +32,7 @@ const style = {
 export default function UserList() {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const { hasPermission } = useAuth();
 
   const navigate = useNavigate();
 
@@ -150,14 +144,14 @@ export default function UserList() {
     },
     [navigate],
   );
- const handelPermissions = useCallback(
-  
+  const handelPermissions = useCallback(
+
     (userID) => () => {
       navigate(`/user/assignPermission/${userID}`);
     },
     [navigate],
   );
- 
+
   const handelDeleteUser = useCallback(
     (user) => async () => {
 
@@ -196,6 +190,11 @@ export default function UserList() {
     [],
   );
 
+  const isAlow = hasPermission([PERMISSION.USER_EDIT]) ||
+    hasPermission([PERMISSION.USER_DELETE]) ||
+    hasPermission([PERMISSION.USER_ADD_PERMISSION]) ||
+    hasPermission([PERMISSION.USER_HISTORY]);
+
   const columns = useMemo(
     () => [
       { field: 'username', headerName: 'نام کاربری', width: 240, align: 'right' },
@@ -210,56 +209,63 @@ export default function UserList() {
         align: 'right',
         renderCell: params => params.row.status == 'Active' ? 'فعال' : 'غیرفعال'
       },
-      {
+      ...(isAlow ? [{
         field: '',
         headerName: 'عملیات',
         type: 'actions',
         flex: 1,
         align: 'center',
-        getActions: ({ row }) => [
-          <GridActionsCellItem
-            key="edit-item"
-            icon={<EditIcon />}
-            label="Edit"
-            onClick={handleUserEditPage(row.id)}
-          />,
-          <GridActionsCellItem
-            key="delete-item"
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handelDeleteUser(row)}
-          />,
-          <GridActionsCellItem
-            key="permission-item"
-            icon={<VpnKeyOutlined />}
-            label="permissions"
-            onClick={handelPermissions(row.id)}
-          />,
-          <GridActionsCellItem
-            key="log-item"
-            icon={<History />}
-            label="log"
-          // onClick={handelDeleteEmployee(row)}
-          />,
-        ],
-      },
+        getActions: ({ row }) => {
+          const actions = [];
+          if (hasPermission([PERMISSION.USER_EDIT])) {
+            actions.push(<GridActionsCellItem
+              key="edit-item"
+              icon={<EditIcon />}
+              label="Edit"
+              onClick={handleUserEditPage(row.id)}
+            />)
+          }
+
+          if (hasPermission([PERMISSION.USER_DELETE])) {
+            actions.push(<GridActionsCellItem
+              key="delete-item"
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={handelDeleteUser(row)}
+            />)
+          }
+          if (hasPermission([PERMISSION.USER_ADD_PERMISSION])) {
+            actions.push(<GridActionsCellItem
+              key="permission-item"
+              icon={<VpnKeyOutlined />}
+              label="permissions"
+              onClick={handelPermissions(row.id)}
+            />)
+          }
+          if (hasPermission([PERMISSION.USER_HISTORY])) {
+            actions.push(<GridActionsCellItem
+              key="log-item"
+              icon={<History />}
+              label="log"
+            // onClick={handelDeleteEmployee(row)}
+            />)
+          }
+          return actions;
+        }
+      },] : [])
     ],
     [handleUserEditPage, handelDeleteUser],
   );
 
   const pageTitle = 'کاربران';
-  // {
-  //   if (!openPermissionModal) {
-  //     return (<PermissionModal open={openPermissionModal} />)
-  //   }
-  // }
+
   return (
 
     <PageContainer
       title={pageTitle}
       marginTop='20px'
-      actions={
-        <Stack direction="row" alignItems="center" spacing={1}>
+      actions={hasPermission([PERMISSION.USER_CREATE]) &&
+        (<Stack direction="row" alignItems="center" spacing={1}>
           <Button
             variant="contained"
             onClick={handleCreateClick}
@@ -267,7 +273,7 @@ export default function UserList() {
           >
             افزودن کاربر
           </Button>
-        </Stack>
+        </Stack>)
       }
     >
 

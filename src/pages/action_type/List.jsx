@@ -12,6 +12,8 @@ import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteActionType, getActionTypes } from '../../api/ActionTypeApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -19,7 +21,7 @@ export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-
+    const { hasPermission } = useAuth();
     const dialogs = useDialogs();
 
     const [paginationModel, setPaginationModel] = useState({
@@ -168,6 +170,8 @@ export default function List() {
         }),
         [],
     );
+    const isAlow = hasPermission([PERMISSION.ACTION_TYPE_EDIT]) ||
+        hasPermission([PERMISSION.ACTION_TYPE_DELETE]);
 
     const columns = useMemo(
         () => [
@@ -175,27 +179,34 @@ export default function List() {
             { field: 'enName', headerName: 'عنوان انگلیسی', width: 240, align: 'right' },
             { field: 'isShow', headerName: 'نمایش', width: 240, align: 'center', type: "boolean" },
             { field: 'operationCount', headerName: 'تعداد عملیات', width: 140, align: 'center' },
-            {
+            ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
                 flex: 1,
                 align: 'center',
-                getActions: ({ row }) => [
-                    <GridActionsCellItem
-                        key="edit-item"
-                        icon={<EditIcon />}
-                        label="Edit"
-                        onClick={handleActionTypeEditPage(row.id)}
-                    />,
-                    <GridActionsCellItem
-                        key="delete-item"
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handelDeleteActionType(row)}
-                    />,
-                ],
-            },
+                getActions: ({ row }) => {
+                    const actions = [];
+                    if (hasPermission([PERMISSION.ACTION_TYPE_EDIT])) {
+                        actions.push(<GridActionsCellItem
+                            key="edit-item"
+                            icon={<EditIcon />}
+                            label="Edit"
+                            onClick={handleActionTypeEditPage(row.id)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.ACTION_TYPE_DELETE])) {
+                        actions.push(<GridActionsCellItem
+                            key="delete-item"
+                            icon={<DeleteIcon />}
+                            label="Delete"
+                            onClick={handelDeleteActionType(row)}
+                        />)
+                    }
+                    return actions;
+                }
+            },] : [])
         ],
         [handleActionTypeEditPage, handelDeleteActionType],
     );
@@ -206,8 +217,8 @@ export default function List() {
         <PageContainer
             title={pageTitle}
             marginTop='20px'
-            actions={
-                <Stack direction="row" alignItems="center" spacing={1}>
+            actions={hasPermission([PERMISSION.ACTION_TYPE_CREATE]) &&
+                (<Stack direction="row" alignItems="center" spacing={1}>
                     <Button
                         variant="contained"
                         onClick={handleCreateClick}
@@ -215,7 +226,7 @@ export default function List() {
                     >
                         افزودن عملیات
                     </Button>
-                </Stack>
+                </Stack>)
             }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>

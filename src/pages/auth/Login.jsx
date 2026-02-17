@@ -19,6 +19,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -122,7 +123,6 @@ export default function Login(props) {
     setIsSendOtp(true)
   }
 
-  console.log('dsfdfid', auth.token, !auth.token)
   {
     {
       if (!auth.token) {
@@ -256,7 +256,7 @@ export default function Login(props) {
           </SignInContainer>
         </AppTheme>)
       } else {
-        return <Navigate to="/inventories" />
+        return <Navigate to={APP_ROUTES.INVENTORY_LIST_PATH+'?equipment=ALL'} />
       }
     }
   }

@@ -51,7 +51,7 @@ function AssignPermissionForm(props) {
 
     setSelectedPermissions(prev => {
       //because don't update selectedPermissions use this way
-      const newPermissions = checked  ? [...prev, Number(id)] : prev.filter(x => x !== id)
+      const newPermissions = checked ? [...prev, Number(id)] : prev.filter(x => x !== id)
       onFieldChange("permissionIds", newPermissions)
       console.log('after', newPermissions)
       return newPermissions;

@@ -12,6 +12,8 @@ import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteLocation, getLocations } from '../../api/LocationApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -19,6 +21,7 @@ export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const { hasPermission } = useAuth();
 
     const dialogs = useDialogs();
 
@@ -169,32 +172,42 @@ export default function List() {
         [],
     );
 
+    const isAlow = hasPermission([PERMISSION.LOCATION_EDIT]) ||
+        hasPermission([PERMISSION.LOCATION_DELETE]);
+
     const columns = useMemo(
         () => [
             { field: 'title', headerName: 'نام', width: 240, align: 'right', },
             { field: 'abbreviation', headerName: 'مخفف', width: 140, align: 'right' },
             { field: 'isShow', headerName: 'نمایش', width: 140, align: 'right', type: "boolean" },
-            {
+            ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
                 flex: 1,
                 align: 'center',
-                getActions: ({ row }) => [
-                    <GridActionsCellItem
-                        key="edit-item"
-                        icon={<EditIcon />}
-                        label="Edit"
-                        onClick={handleLocationEditPage(row.id)}
-                    />,
-                    <GridActionsCellItem
-                        key="delete-item"
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handelDeleteLocation(row)}
-                    />,
-                ],
-            },
+                getActions: ({ row }) => {
+                    const actions = [];
+                    if (hasPermission([PERMISSION.LOCATION_EDIT])) {
+                        actions.push(<GridActionsCellItem
+                            key="edit-item"
+                            icon={<EditIcon />}
+                            label="Edit"
+                            onClick={handleLocationEditPage(row.id)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.LOCATION_DELETE])) {
+                        actions.push(<GridActionsCellItem
+                            key="delete-item"
+                            icon={<DeleteIcon />}
+                            label="Delete"
+                            onClick={handelDeleteLocation(row)}
+                        />)
+                    }
+                    return actions;
+                }
+            },] : [])
         ],
         [handleLocationEditPage, handelDeleteLocation],
     );
@@ -205,8 +218,8 @@ export default function List() {
         <PageContainer
             title={pageTitle}
             marginTop='20px'
-            actions={
-                <Stack direction="row" alignItems="center" spacing={1}>
+            actions={hasPermission([PERMISSION.LOCATION_CREATE]) &&
+                (<Stack direction="row" alignItems="center" spacing={1}>
                     <Button
                         variant="contained"
                         onClick={handleCreateClick}
@@ -214,7 +227,7 @@ export default function List() {
                     >
                         افزودن بخش
                     </Button>
-                </Stack>
+                </Stack>)
             }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>

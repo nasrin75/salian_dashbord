@@ -15,6 +15,8 @@ import { deleteInventory, getInventories } from '../../api/InventoryApi';
 import { useSearchParams } from "react-router-dom";
 import dayjs from 'dayjs';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -22,7 +24,7 @@ export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-
+    const { hasPermission } = useAuth();
     const dialogs = useDialogs();
 
     const [paginationModel, setPaginationModel] = useState({
@@ -190,6 +192,10 @@ export default function List() {
         [],
     );
 
+    const isAlow = hasPermission([PERMISSION.INVENTORY_EDIT]) ||
+        hasPermission([PERMISSION.INVENTORY_DELETE]) ||
+        hasPermission([PERMISSION.INVENTORY_HISTORY]);
+        
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'ID', width: 100, align: 'right', },
@@ -264,34 +270,42 @@ export default function List() {
                 valueFormatter: params => dayjs(params).format("YYYY/MM/DD h:m"),
             },
             { field: 'description', headerName: 'توضیحات', width: 140, align: 'right' },
-            {
+            ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
-                // flex: 1,
-                width: 240,
+                flex: 1,
                 align: 'center',
-                getActions: ({ row }) => [
-                    <GridActionsCellItem
-                        key="edit-item"
-                        icon={<EditIcon />}
-                        label="Edit"
-                        onClick={handleInventoryEditPage(row.id)}
-                    />,
-                    <GridActionsCellItem
-                        key="delete-item"
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handelDeleteInventory(row)}
-                    />,
-                    <GridActionsCellItem
-                        key="log-item"
-                        icon={<History />}
-                        label="log"
-                    // onClick={handleInventoryEditPage(row)}
-                    />,
-                ],
-            },
+                getActions: ({ row }) => {
+                    const actions = [];
+                    if (hasPermission([PERMISSION.INVENTORY_EDIT])) {
+                        actions.push(<GridActionsCellItem
+                            key="edit-item"
+                            icon={<EditIcon />}
+                            label="Edit"
+                            onClick={handleInventoryEditPage(row.id)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.INVENTORY_DELETE])) {
+                        actions.push(<GridActionsCellItem
+                            key="delete-item"
+                            icon={<DeleteIcon />}
+                            label="Delete"
+                            onClick={handelDeleteInventory(row)}
+                        />)
+                    }
+                    if (hasPermission([PERMISSION.INVENTORY_HISTORY])) {
+                        actions.push(<GridActionsCellItem
+                            key="log-item"
+                            icon={<History />}
+                            label="log"
+                        // onClick={handleInventoryEditPage(row)}
+                        />)
+                    }
+                    return actions;
+                }
+            },] : [])
         ],
         [handleInventoryEditPage, handelDeleteInventory],
     );
@@ -302,8 +316,8 @@ export default function List() {
         <PageContainer
             title={pageTitle}
             marginTop='20px'
-            actions={
-                <Stack direction="row" alignItems="center" spacing={1}>
+            actions={hasPermission([PERMISSION.INVENTORY_CREATE]) &&
+                (<Stack direction="row" alignItems="center" spacing={1}>
                     <Button
                         variant="contained"
                         onClick={handleCreateClick}
@@ -311,7 +325,7 @@ export default function List() {
                     >
                         افزودن به انبار
                     </Button>
-                </Stack>
+                </Stack>)
             }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>

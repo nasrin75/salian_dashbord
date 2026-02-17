@@ -12,10 +12,13 @@ import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteFeature, getFeatures } from '../../api/FeatureApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const INITIAL_PAGE_SIZE = 10;
 
 export default function List() {
+    const { hasPermission } = useAuth();
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -168,32 +171,41 @@ export default function List() {
         }),
         [],
     );
+    const isAlow = hasPermission([PERMISSION.FEATURE_EDIT]) ||
+        hasPermission([PERMISSION.FEATURE_DELETE]);
 
     const columns = useMemo(
         () => [
             { field: 'name', headerName: 'عنوان', width: 240, align: 'right', },
             { field: 'equipments', headerName: 'نام قطعات', width: 240, align: 'right', },
-            {
+            ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
                 flex: 1,
                 align: 'center',
-                getActions: ({ row }) => [
-                    <GridActionsCellItem
-                        key="edit-item"
-                        icon={<EditIcon />}
-                        label="Edit"
-                        onClick={handleFeatureEditPage(row.id)}
-                    />,
-                    <GridActionsCellItem
-                        key="delete-item"
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handelDeleteFeature(row)}
-                    />,
-                ],
-            },
+                getActions: ({ row }) => {
+                    const actions = [];
+                    if (hasPermission([PERMISSION.FEATURE_EDIT])) {
+                        actions.push(<GridActionsCellItem
+                            key="edit-item"
+                            icon={<EditIcon />}
+                            label="Edit"
+                            onClick={handleFeatureEditPage(row.id)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.FEATURE_DELETE])) {
+                        actions.push(<GridActionsCellItem
+                            key="delete-item"
+                            icon={<DeleteIcon />}
+                            label="Delete"
+                            onClick={handelDeleteFeature(row)}
+                        />)
+                    }
+                    return actions;
+                }
+            },] : [])
         ],
         [handleFeatureEditPage, handelDeleteFeature],
     );
@@ -204,8 +216,8 @@ export default function List() {
         <PageContainer
             title={pageTitle}
             marginTop='20px'
-            actions={
-                <Stack direction="row" alignItems="center" spacing={1}>
+            actions={hasPermission([PERMISSION.FEATURE_LIST]) &&
+                (<Stack direction="row" alignItems="center" spacing={1}>
                     <Button
                         variant="contained"
                         onClick={handleCreateClick}
@@ -213,7 +225,7 @@ export default function List() {
                     >
                         افزودن ویژگی
                     </Button>
-                </Stack>
+                </Stack>)
             }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>

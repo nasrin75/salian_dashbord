@@ -13,10 +13,13 @@ import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deletePermission, getPermissions } from '../../api/PermissionApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const INITIAL_PAGE_SIZE = 10;
 
 export default function List() {
+    const { hasPermission } = useAuth();
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -169,28 +172,9 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'name', headerName: 'عنوان', width: 240, align: 'right', },
-            {
-                field: '',
-                headerName: 'عملیات',
-                type: 'actions',
-                flex: 1,
-                align: 'center',
-                getActions: ({ row }) => [
-                    <GridActionsCellItem
-                        key="edit-item"
-                        icon={<EditIcon />}
-                        label="Edit"
-                        onClick={handlePermissionEditPage(row.id)}
-                    />,
-                    <GridActionsCellItem
-                        key="delete-item"
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handelDeletePermission(row)}
-                    />,
-                ],
-            },
+            { field: 'name', headerName: 'عنوان', width: 440, align: 'right', },
+            { field: 'title', headerName: 'عنوان فارسی', width: 440, align: 'right', },
+            { field: 'category', headerName: 'دسته بندی', width: 440, align: 'right', },
         ],
         [handlePermissionEditPage, handelDeletePermission],
     );
@@ -201,17 +185,17 @@ export default function List() {
         <PageContainer
             title={pageTitle}
             marginTop='20px'
-            actions={
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <Button
-                        variant="contained"
-                        onClick={handleCreateClick}
-                        startIcon={<AddIcon />}
-                    >
-                        افزودن دسترسی
-                    </Button>
-                </Stack>
-            }
+        // actions={hasPermission(["permission.create"]) &&
+        //     (<Stack direction="row" alignItems="center" spacing={1}>
+        //         <Button
+        //             variant="contained"
+        //             onClick={handleCreateClick}
+        //             startIcon={<AddIcon />}
+        //         >
+        //             افزودن دسترسی
+        //         </Button>
+        //     </Stack>)
+        // }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>
 

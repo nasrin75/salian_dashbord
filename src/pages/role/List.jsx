@@ -13,10 +13,13 @@ import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { deleteRole, getRoles } from '../../api/RoleApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const INITIAL_PAGE_SIZE = 10;
 
 export default function List() {
+    const { hasPermission } = useAuth();
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -132,6 +135,14 @@ export default function List() {
         [navigate],
     );
 
+    const assignPermissionToRle = useCallback(
+        (roleID) => () => {
+            navigate(`/setting/role/assignPermission/${roleID}`);
+        },
+        [navigate],
+    );
+
+
     const handelDeleteRole = useCallback(
         (role) => async () => {
 
@@ -170,37 +181,49 @@ export default function List() {
         [],
     );
 
+    const isAlow = hasPermission([PERMISSION.ROLE_EDIT]) ||
+        hasPermission([PERMISSION.ROLE_DELETE]);
+
     const columns = useMemo(
         () => [
             { field: 'faName', headerName: 'عنوان فارسی', width: 240, align: 'right', },
             { field: 'enName', headerName: 'عنوان انگلیسی', width: 240, align: 'right' },
-            {
+            ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
                 flex: 1,
                 align: 'center',
-                getActions: ({ row }) => [
-                    <GridActionsCellItem
-                        key="edit-item"
-                        icon={<EditIcon />}
-                        label="Edit"
-                        onClick={handleRoleEditPage(row.id)}
-                    />,
-                    <GridActionsCellItem
-                        key="delete-item"
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handelDeleteRole(row)}
-                    />,
-                    <GridActionsCellItem
-                        key="permission-item"
-                        icon={<VpnKeyOutlined />}
-                        label="permissions"
-                    // onClick={handelDeleteEmployee(row)}
-                    />,
-                ],
-            },
+                getActions: ({ row }) => {
+                    const actions = [];
+                    if (hasPermission([PERMISSION.ROLE_EDIT])) {
+                        actions.push(<GridActionsCellItem
+                            key="edit-item"
+                            icon={<EditIcon />}
+                            label="Edit"
+                            onClick={handleRoleEditPage(row.id)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.ROLE_DELETE])) {
+                        actions.push(<GridActionsCellItem
+                            key="delete-item"
+                            icon={<DeleteIcon />}
+                            label="Delete"
+                            onClick={handelDeleteRole(row)}
+                        />)
+                    }
+                    if (hasPermission([PERMISSION.ROLE_ADD_PERMISSION])) {
+                        actions.push(<GridActionsCellItem
+                            key="permission-item"
+                            icon={<VpnKeyOutlined />}
+                            label="permissions"
+                            onClick={assignPermissionToRle(row)}
+                        />)
+                    }
+                    return actions;
+                }
+            },] : [])
         ],
         [handleRoleEditPage, handelDeleteRole],
     );
@@ -211,8 +234,8 @@ export default function List() {
         <PageContainer
             title={pageTitle}
             marginTop='20px'
-            actions={
-                <Stack direction="row" alignItems="center" spacing={1}>
+            actions={hasPermission([PERMISSION.ROLE_CREATE]) &&
+                (<Stack direction="row" alignItems="center" spacing={1}>
                     <Button
                         variant="contained"
                         onClick={handleCreateClick}
@@ -220,7 +243,7 @@ export default function List() {
                     >
                         افزودن نقش
                     </Button>
-                </Stack>
+                </Stack>)
             }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>

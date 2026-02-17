@@ -21,7 +21,9 @@ import {
 } from '../../../mixins';
 import DashboardSidebarContext from '../../../context/DashboardSidebarContext';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { getEquipments, getInventorySubMenu } from '../../../api/EquipmentApi';
+import { getInventorySubMenu } from '../../../api/EquipmentApi';
+import useAuth from '../../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../../utlis/constants/Permissions';
 
 function DashboardSidebar({
   expanded = true,
@@ -30,6 +32,7 @@ function DashboardSidebar({
   container,
 }) {
   const theme = useTheme();
+  const { hasPermission } = useAuth();
 
   const { pathname } = useLocation();
 
@@ -134,114 +137,142 @@ function DashboardSidebar({
               width: mini ? MINI_DRAWER_WIDTH : 'auto',
             }}
           >
-            <DashboardSidebarPageItem
-              id="inventory"
-              title="انبار"
-              icon={<SettingsOutlined />}
-              href="/inventories"
-              selected={!!matchPath('/inventory', pathname)}
-              defaultExpanded={!!matchPath('/inventory', pathname)}
-              expanded={expandedItemIds.includes('inventory')}
-              nestedNavigation={
-                <List
-                  dense
-                  sx={{
-                    padding: 0,
-                    my: 1,
-                    pl: mini ? 0 : 1,
-                    minWidth: 240,
-                  }}
-                >
-                  <DashboardSidebarPageItem
-                    id="/inventories"
-                    title="انبار"
-                    href="/inventories?equipment=ALL"
-                    selected={!!matchPath("/inventories?equipment=ALL", pathname)}
-                  />
-                  {inventorySubMenu.map(subMenu => {
-                    return <DashboardSidebarPageItem
-                      id={subMenu}
-                      title={subMenu}
-                      href={`/inventories?equipment=${subMenu}`}
-                      selected={!!matchPath(`/inventories?equipment=${subMenu}`, pathname)}
+            {
+              hasPermission([PERMISSION.INVENTORY_LIST]) && (<DashboardSidebarPageItem
+                id="inventory"
+                title="انبار"
+                icon={<SettingsOutlined />}
+                href="/inventories?equipment=ALL"
+                selected={!!matchPath('/inventory', pathname)}
+                defaultExpanded={!!matchPath('/inventory', pathname)}
+                expanded={expandedItemIds.includes('inventory')}
+                nestedNavigation={
+                  <List
+                    dense
+                    sx={{
+                      padding: 0,
+                      my: 1,
+                      pl: mini ? 0 : 1,
+                      minWidth: 240,
+                    }}
+                  >
+                    <DashboardSidebarPageItem
+                      id="/inventories"
+                      title="انبار"
+                      href="/inventories?equipment=ALL"
+                      selected={!!matchPath("/inventories?equipment=ALL", pathname)}
                     />
-                  })}
-                </List>
-              }
-            />
-            <DashboardSidebarPageItem
-              id="users"
-              title="کاربران"
-              icon={<PersonIcon />}
-              href="/users"
-              selected={!!matchPath('/user/*', pathname) || pathname === '/'}
-            />
-            <DashboardSidebarPageItem
-              id="employees"
-              title="پرسنل"
-              icon={<Diversity3Outlined />}
-              href="/employees"
-              selected={!!matchPath('/employee/*', pathname) || pathname === '/'}
-            />
-            <DashboardSidebarPageItem
-              id="equipments"
-              title="قطعات"
-              icon={<BuildCircleOutlined />}
-              href="/equipments"
-              selected={!!matchPath('/equipment/*', pathname) || pathname === '/'}
-            />
-            {/* <DashboardSidebarHeaderItem>Example items</DashboardSidebarHeaderItem> */}
-            <DashboardSidebarPageItem
-              id="setting"
-              title="تنظیمات"
-              icon={<SettingsOutlined />}
-              href="/reports"
-              selected={!!matchPath('/setting', pathname)}
-              defaultExpanded={!!matchPath('/setting', pathname)}
-              expanded={expandedItemIds.includes('setting')}
-              nestedNavigation={
-                <List
-                  dense
-                  sx={{
-                    padding: 0,
-                    my: 1,
-                    pl: mini ? 0 : 1,
-                    minWidth: 240,
-                  }}
-                >
-                  <DashboardSidebarPageItem
-                    id="locations"
-                    title="بخش ها"
-                    href="/setting/locations"
-                    selected={!!matchPath('/setting/locations', pathname)}
-                  />
-                  <DashboardSidebarPageItem
-                    id="actionTypes"
-                    title="نوع عملیات"
-                    href="/setting/actionTypes"
-                    selected={!!matchPath('/setting/actionTypes', pathname)}
-                  />
-                  <DashboardSidebarPageItem
-                    id="roles"
-                    title="نقش ها"
-                    href="/setting/roles"
-                    selected={!!matchPath('/setting/roles', pathname)}
-                  />
-                  <DashboardSidebarPageItem
-                    id="permissions"
-                    title="دسترسی ها"
-                    href="/setting/permissions"
-                    selected={!!matchPath('/setting/permissions', pathname)}
-                  />
-                  <DashboardSidebarPageItem
-                    id="features"
-                    title="ویژگی قطعات"
-                    href="/setting/features"
-                    selected={!!matchPath('/settings/features', pathname)}
-                  />
-                </List>
-              }
-            />
+                    {inventorySubMenu.map(subMenu => {
+                      return <DashboardSidebarPageItem
+                        id={subMenu}
+                        title={subMenu}
+                        href={`/inventories?equipment=${subMenu}`}
+                        selected={!!matchPath(`/inventories?equipment=${subMenu}`, pathname)}
+                      />
+                    })}
+                  </List>
+                }
+              />)
+            }
+
+            {
+              hasPermission([PERMISSION.USER_LIST]) && (<DashboardSidebarPageItem
+                id="users"
+                title="کاربران"
+                icon={<PersonIcon />}
+                href="/users"
+                selected={!!matchPath('/user/*', pathname) || pathname === '/'}
+              />)
+            }
+
+            {
+              hasPermission([PERMISSION.EMPLOYEE_LIST]) && (<DashboardSidebarPageItem
+                id="employees"
+                title="پرسنل"
+                icon={<Diversity3Outlined />}
+                href="/employees"
+                selected={!!matchPath('/employee/*', pathname) || pathname === '/'}
+              />)
+            }
+
+            {
+              hasPermission([PERMISSION.EQUIPMENT_LIST]) && (
+                <DashboardSidebarPageItem
+                  id="equipments"
+                  title="قطعات"
+                  icon={<BuildCircleOutlined />}
+                  href="/equipments"
+                  selected={!!matchPath('/equipment/*', pathname) || pathname === '/'}
+                />
+              )
+            }
+            {
+              hasPermission([PERMISSION.LOCATION_LIST, PERMISSION.ACTION_TYPE_LIST, PERMISSION.ROLE_LIST, PERMISSION.PERMISSION_LIST, PERMISSION.FEATURE_LIST]) && (
+                <DashboardSidebarPageItem
+                  id="setting"
+                  title="تنظیمات"
+                  icon={<SettingsOutlined />}
+                  href="/reports"
+                  selected={!!matchPath('/setting', pathname)}
+                  defaultExpanded={!!matchPath('/setting', pathname)}
+                  expanded={expandedItemIds.includes('setting')}
+                  nestedNavigation={
+                    <List
+                      dense
+                      sx={{
+                        padding: 0,
+                        my: 1,
+                        pl: mini ? 0 : 1,
+                        minWidth: 240,
+                      }}
+                    >
+                      {
+                        hasPermission([PERMISSION.LOCATION_LIST]) && (<DashboardSidebarPageItem
+                          id="locations"
+                          title="بخش ها"
+                          href="/setting/locations"
+                          selected={!!matchPath('/setting/locations', pathname)}
+                        />)
+                      }
+                      {
+                        hasPermission([PERMISSION.ACTION_TYPE_LIST]) && (<DashboardSidebarPageItem
+                          id="actionTypes"
+                          title="نوع عملیات"
+                          href="/setting/actionTypes"
+                          selected={!!matchPath('/setting/actionTypes', pathname)}
+                        />)
+                      }
+                      {
+                        hasPermission([PERMISSION.ROLE_LIST]) && (<DashboardSidebarPageItem
+                          id="roles"
+                          title="نقش ها"
+                          href="/setting/roles"
+                          selected={!!matchPath('/setting/roles', pathname)}
+                        />)
+                      }
+
+                      {
+                        hasPermission([PERMISSION.PERMISSION_LIST]) && (<DashboardSidebarPageItem
+                          id="permissions"
+                          title="دسترسی ها"
+                          href="/setting/permissions"
+                          selected={!!matchPath('/setting/permissions', pathname)}
+                        />)
+                      }
+                      {
+                        hasPermission([PERMISSION.FEATURE_LIST]) && (<DashboardSidebarPageItem
+                          id="features"
+                          title="ویژگی قطعات"
+                          href="/setting/features"
+                          selected={!!matchPath('/settings/features', pathname)}
+                        />)
+                      }
+
+                    </List>
+                  }
+                />)
+            }
+
             <DashboardSidebarPageItem
               id="profile"
               title="پروفایل"
