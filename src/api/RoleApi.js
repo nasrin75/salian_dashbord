@@ -1,6 +1,6 @@
 import Api from "./Api"
 
-export const getRoles = () =>{
+export const getRoles = () => {
     return Api.get('role');
 }
 
@@ -17,4 +17,11 @@ export const createRole = (data) => {
 
 export const updateRole = (data) => {
     return Api.put('/role/edit', data)
+}
+
+export const getRolePermissions = (roleID) => {
+    return Api.post(`/role/${roleID}/permissions`)
+}
+export const assignRolePermission = (data) => {
+return Api.post('/role/permission/add', data)
 }

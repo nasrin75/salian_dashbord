@@ -33,6 +33,7 @@ import { RouterProvider } from 'react-router-dom';
 import UserCreate from '../pages/user/UserCreate';
 import { APP_ROUTES } from '../utlis/constants/routePath';
 import AssignPermission from '../pages/user/AssignPermission';
+import AssignRolePermission from '../pages/role/AssignPermission';
 
 const Routes = () => {
 
@@ -70,6 +71,7 @@ const Routes = () => {
             { path: APP_ROUTES.ROLE_LIST_PATH, element: <RoleList /> },
             { path: APP_ROUTES.ROLE_CREATE_PATH, element: <RoleCreate /> },
             { path: APP_ROUTES.ROLE_EDIT_PATH, element: <RoleEdit /> },
+            { path: APP_ROUTES.ROLE_ASSIGN_PERMISSION_PATH, element: <AssignRolePermission /> },
 
             //Permissions
             { path: APP_ROUTES.PERMISSION_LIST_PATH, element: <PermissionList /> },

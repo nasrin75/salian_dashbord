@@ -43,6 +43,7 @@ export const APP_ROUTES = {
     ROLE_LIST_PATH: '/setting/roles',
     ROLE_CREATE_PATH: '/setting/role/create',
     ROLE_EDIT_PATH: '/setting/role/edit/:roleID',
+    ROLE_ASSIGN_PERMISSION_PATH : '/setting/role/:roleID/assignPermission',
 
     //Permissions
     PERMISSION_LIST_PATH: '/setting/permissions',

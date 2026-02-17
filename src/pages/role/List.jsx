@@ -137,7 +137,7 @@ export default function List() {
 
     const assignPermissionToRle = useCallback(
         (roleID) => () => {
-            navigate(`/setting/role/assignPermission/${roleID}`);
+            navigate(`/setting/role/${roleID}/assignPermission`);
         },
         [navigate],
     );
@@ -218,7 +218,7 @@ export default function List() {
                             key="permission-item"
                             icon={<VpnKeyOutlined />}
                             label="permissions"
-                            onClick={assignPermissionToRle(row)}
+                            onClick={assignPermissionToRle(row.id)}
                         />)
                     }
                     return actions;
