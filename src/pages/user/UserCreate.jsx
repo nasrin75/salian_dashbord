@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Divider from '@mui/material/Divider';
 import { userValidate } from '../../validation/UserValidation';
 import { createUser } from '../../api/UserApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 const INITIAL_FORM_VALUES = {
   Username:'',
@@ -18,7 +19,7 @@ const INITIAL_FORM_VALUES = {
   LoginTypes:[],
 };
 
-export default function UserCreate() {
+const UserCreate = () => {
   const navigate = useNavigate();
 
 
@@ -97,7 +98,7 @@ const handleFormFieldChange = React.useCallback(
 
           toast.success("کاربر با موفقیت ایجاد شد.")
 
-          navigate('/users');
+          navigate(APP_ROUTES.USER_LIST_PATH);
         })
   
   }, [formValues, navigate, setFormErrors]);
@@ -116,3 +117,5 @@ const handleFormFieldChange = React.useCallback(
     </PageContainer>
   );
 }
+
+export default UserCreate;

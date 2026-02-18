@@ -1,4 +1,3 @@
-import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -14,6 +13,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import FormLabel from '@mui/material/FormLabel';
 import { getRoles } from '../../api/RoleApi';
+import { useCallback, useEffect, useState } from 'react';
 
 function EditForm(props) {
   const {
@@ -27,10 +27,10 @@ function EditForm(props) {
   const formValues = formState.values;
   const formErrors = formState.errors;
 
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [roles, setRoles] = React.useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [roles, setRoles] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
 
     getRoles()
       .then((data) => {
@@ -39,7 +39,7 @@ function EditForm(props) {
       .catch(err => console.log(err))
 
   }, [])
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
 
@@ -63,18 +63,29 @@ function EditForm(props) {
       }).join(',');
     }
  
-  const handleLoginTypeChange = (value, checked) => {
-    const current = formValues.LoginTypes || []
-    let updated;
-    if (checked) {
-      updated = [...current, value]
-    } else {
-      updated = current.filter(x => x !== value)
-    }
+     const handleLoginTypeChange = (value, checked) => {
+    const current = formValues.loginTypes || [];
+    const updated = checked ? [...current, value] : current.filter(x => x !== value);
+    // if (checked) {
+    //   updated = [...current, value]
+    // } else {
+    //   updated = current.filter(x => x !== value)
+    // }
     onFieldChange("LoginTypes", updated)
   }
 
-  const handleReset = React.useCallback(() => {
+  // const handleLoginTypeChange = (value, checked) => {
+  //   const current = formValues.loginTypes || [];
+  //   let updated;
+  //   if (checked) {
+  //     updated = [...current, value]
+  //   } else {
+  //     updated = current.filter(x => x !== value)
+  //   }
+  //   onFieldChange("LoginTypes", updated)
+  // }
+
+  const handleReset = useCallback(() => {
     if (onReset) {
       onReset(formValues);
     }
@@ -94,73 +105,73 @@ function EditForm(props) {
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.username ?? ''}
-              onChange={(e) => onFieldChange("Username", e.target.value)}
-              name="Username"
+              onChange={(e) => onFieldChange("username", e.target.value)}
+              name="username"
               label="نام کاربری"
-              error={!!formErrors.Username}
-              helperText={formErrors.Username ?? ' '}
+              error={!!formErrors.username}
+              helperText={formErrors.username ?? ' '}
               fullWidth
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.password ?? ''}
-              onChange={(e) => onFieldChange("Password", e.target.value)}
-              name="Password"
+              onChange={(e) => onFieldChange("password", e.target.value)}
+              name="password"
               label="رمزعبور"
-              error={!!formErrors.Password}
-              helperText={formErrors.Password ?? ' '}
+              error={!!formErrors.password}
+              helperText={formErrors.password ?? ' '}
               fullWidth
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.email ?? ''}
-              onChange={(e) => onFieldChange("Email", e.target.value)}
-              name="Email"
+              onChange={(e) => onFieldChange("email", e.target.value)}
+              name="email"
               label="ایمیل"
-              error={!!formErrors.Email}
-              helperText={formErrors.Email ?? ' '}
+              error={!!formErrors.email}
+              helperText={formErrors.email ?? ' '}
               fullWidth
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.mobile ?? ''}
-              onChange={(e) => onFieldChange("Mobile", e.target.value)}
-              name="Mobile"
+              onChange={(e) => onFieldChange("mobile", e.target.value)}
+              name="mobile"
               label="موبایل"
-              error={!!formErrors.Mobile}
-              helperText={formErrors.Mobile ?? ' '}
+              error={!!formErrors.mobile}
+              helperText={formErrors.mobile ?? ' '}
               fullWidth
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
               value={formatWhitListIp(formValues.ipWhiteLists)}
-              onChange={(e) => onFieldChange("IpWhiteLists", e.target.value)}
-              name="IpWhiteLists"
+              onChange={(e) => onFieldChange("ipWhiteLists", e.target.value)}
+              name="ipWhiteLists"
               label="IP WhiteList"
-              error={!!formErrors.IpWhiteLists}
-              helperText={formErrors.IpWhiteLists ?? ' '}
+              error={!!formErrors.ipWhiteLists}
+              helperText={formErrors.ipWhiteLists ?? ' '}
               fullWidth
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <FormControl>
               <FormControlLabel
-                name="IsCheckIp"
+                name="isCheckIp"
                 control={
                   <Checkbox
                     size="large"
                     checked={formValues.isCheckIp ?? false}
-                    onChange={(e) => onFieldChange("IsCheckIp", e.target.value, "checkbox")}
+                    onChange={(e) => onFieldChange("isCheckIp", e.target.checked)}
                   />
                 }
                 label="IP چک شود ؟"
               />
-              <FormHelperText error={!!formErrors.IsCheckIp}>
-                {formErrors.IsCheckIp ?? ' '}
+              <FormHelperText error={!!formErrors.isCheckIp}>
+                {formErrors.isCheckIp ?? ' '}
               </FormHelperText>
             </FormControl>
           </Grid>
@@ -170,14 +181,14 @@ function EditForm(props) {
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
-                name="Status"
-                onChange={(e) => onFieldChange("Status", e.target.value, "radio")}
+                name="status"
+                onChange={(e) => onFieldChange("status", e.target.value, "radio")}
               >
                 <FormControlLabel value="1" control={<Radio checked={formValues.status == '1' ?? false} />} label="فعال" />
                 <FormControlLabel value="0" control={<Radio checked={formValues.status == '0' ?? false} />} label="غیرفعال" />
               </RadioGroup>
-              <FormHelperText error={!!formErrors.Status}>
-                {formErrors.Status ?? ' '}
+              <FormHelperText error={!!formErrors.status}>
+                {formErrors.status ?? ' '}
               </FormHelperText>
             </FormControl>
           </Grid>
@@ -188,8 +199,8 @@ function EditForm(props) {
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
-                name="RoleId"
-                onChange={(e) => onFieldChange("RoleId", e.target.value, "radio")}
+                name="roleId"
+                onChange={(e) => onFieldChange("roleId", e.target.value, "radio")}
               >
                 {
                   roles.map(role => {
@@ -210,22 +221,22 @@ function EditForm(props) {
               <FormGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
-                name="LoginTypes"
+                name="loginTypes"
               >
                 <FormControlLabel value="otp" control={<Checkbox
-                  checked={formValues.loginTypes?.includes("otp")}
+                  checked={formValues.loginTypes?.includes("otp") || false}
                   onChange={(e) => handleLoginTypeChange("otp", e.target.checked)
                   } />} label="OTP" />
                 <FormControlLabel value="password" control={<Checkbox
-                  checked={formValues.loginTypes?.includes("password")}
+                  checked={formValues.loginTypes?.includes("password") || false}
                   onChange={(e) => handleLoginTypeChange("password", e.target.checked)
-                  } />} label="Password" checked />
+                  } />} label="Password" />
                 <FormControlLabel value="email" control={<Checkbox
-                  checked={formValues.loginTypes?.includes("email")}
+                  checked={formValues.loginTypes?.includes("email") || false}
                   onChange={(e) => handleLoginTypeChange("email", e.target.checked)
                   } />} label="Email" />
                 <FormControlLabel value="push" control={<Checkbox
-                  checked={formValues.loginTypes?.includes("push")}
+                  checked={formValues.loginTypes?.includes("push") || false}
                   onChange={(e) => handleLoginTypeChange("push", e.target.checked)
                   } />} label="Push" />
               </FormGroup>
@@ -261,7 +272,7 @@ EditForm.propTypes = {
       email: PropTypes.string,
       mobile: PropTypes.string,
       password: PropTypes.string,
-      LoginTypes: PropTypes.string
+      LoginTypes: PropTypes.arrayOf(PropTypes.string)
     }).isRequired,
     values: PropTypes.shape({
       username: PropTypes.string,
@@ -271,7 +282,7 @@ EditForm.propTypes = {
       role: PropTypes.number,
       status: PropTypes.number,
       IsCheckIp: PropTypes.bool,
-      LoginTypes: PropTypes.string
+      LoginTypes: PropTypes.arrayOf(PropTypes.string)
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,

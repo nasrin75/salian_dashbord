@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useNavigate, useParams } from 'react-router';
 import EditForm from '../../components/user/EditForm';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { updateUser, userDetails } from '../../api/UserApi';
-import { userValidate } from '../../validation/UserValidation';
+import { userEditFormValidate } from '../../validation/UserValidation';
 import Divider from '@mui/material/Divider';
+import { useNavigate,useParams } from 'react-router-dom';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
 
 function UserEditForm({ initialValues, onSubmit }) {
   const { userId } = useParams();
@@ -21,13 +22,26 @@ function UserEditForm({ initialValues, onSubmit }) {
   }));
   const formValues = formState.values;
   const formErrors = formState.errors;
-  console.log('UserEditForm', formState)
+  console.log('UserEditForm',formValues)
+
   const setFormValues = React.useCallback((newFormValues) => {
     setFormState((previousState) => ({
       ...previousState,
       values: newFormValues,
     }));
   }, []);
+
+  React.useEffect(()=>{
+    if(initialValues){
+      setFormState({
+        values:{
+          ...initialValues,
+          loginTypes:initialValues.loginTypes || []
+        },
+        errors:{}
+      })
+    }
+  },[initialValues])
 
   const setFormErrors = React.useCallback((newFormErrors) => {
     setFormState((previousState) => ({
@@ -36,30 +50,56 @@ function UserEditForm({ initialValues, onSubmit }) {
     }));
   }, []);
 
-  const handleFormFieldChange = React.useCallback(
-    (name, value) => {
-      const validateField = async (values) => {
-        const { issues } = userValidate(values);
-        setFormErrors({
-          ...formErrors,
-          [name]: issues?.find((issue) => issue.path?.[0] === name)?.message,
-        });
-      };
+  const handleFormFieldChange =(name, value) => {
 
-      const newFormValues = { ...formValues, [name]: value };
+        setFormState(prev =>({
+        ...prev,
+        values:{
+          ...prev.values,
+          [name]: value
+        }
+      }));
+      console.log('newFormValues',formState)
 
-      setFormValues(newFormValues);
-      validateField(newFormValues);
-    },
-    [formValues, formErrors, setFormErrors, setFormValues],
-  );
+      // setFormValues(newFormValues);
+      // validateField(newFormValues);
+    };
+
+    console.log('state loginType',formState.values.loginTypes)
+  // const handleFormFieldChange = React.useCallback(
+  //   (name, value) => {
+  //     const validateField = async (values) => {
+  //       const { issues } = userEditFormValidate(values);
+  //       setFormErrors({
+  //         ...formErrors,
+  //         [name]: issues?.find((issue) => issue.path?.[0] === name)?.message,
+  //       });
+  //     };
+
+  //     // const newFormValues = { ...formValues, [name]: value };
+  //     //     setFormValues(newFormValues);
+  //     // validateField(newFormValues);
+  //    const newFormValues = setFormState(prev =>({
+  //       ...prev,
+  //       values:{
+  //         ...prev.values,
+  //         [name]: value
+  //       }
+  //     }));
+  //     console.log('newFormValues',formState)
+
+  //     // setFormValues(newFormValues);
+  //     // validateField(newFormValues);
+  //   },
+  //   //[formValues, formErrors, setFormErrors, setFormValues],
+  // );
 
   const handleFormReset = React.useCallback(() => {
     setFormValues(initialValues);
   }, [initialValues, setFormValues]);
 
   const handleFormSubmit = React.useCallback(async () => {
-    const { issues } = userValidate(formValues);
+    const { issues } = userEditFormValidate(formValues);
     if (issues && issues.length > 0) {
       setFormErrors(
         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
@@ -72,9 +112,9 @@ function UserEditForm({ initialValues, onSubmit }) {
       await onSubmit(formValues);
       toast.success("کاربر با موفقیت ویرایش شد.")
 
-      // navigate('/user');
+       navigate(APP_ROUTES.USER_LIST_PATH);
     } catch (editError) {
-      toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+      //toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
     }
   }, [formValues, navigate, onSubmit, setFormErrors]);
 
@@ -89,16 +129,16 @@ function UserEditForm({ initialValues, onSubmit }) {
   );
 }
 
-UserEditForm.propTypes = {
-  initialValues: PropTypes.shape({
-    age: PropTypes.number,
-    isFullTime: PropTypes.bool,
-    joinDate: PropTypes.string,
-    name: PropTypes.string,
-    role: PropTypes.oneOf(['Development', 'Finance', 'Market']),
-  }).isRequired,
-  onSubmit: PropTypes.func.isRequired,
-};
+// UserEditForm.propTypes = {
+//   initialValues: PropTypes.shape({
+//     age: PropTypes.number,
+//     isFullTime: PropTypes.bool,
+//     joinDate: PropTypes.string,
+//     name: PropTypes.string,
+//     role: PropTypes.oneOf(['Development', 'Finance', 'Market']),
+//   }).isRequired,
+//   onSubmit: PropTypes.func.isRequired,
+// };
 
 export default function UserEdit() {
   const { userId } = useParams();
@@ -118,7 +158,6 @@ export default function UserEdit() {
         setUser(data.data['result'])
         setIsLoading(false);
       })
-      .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
     setIsLoading(false);
   }, [userId]);
@@ -126,6 +165,7 @@ export default function UserEdit() {
   React.useEffect(() => {
     loadData();
   }, [loadData]);
+
 
   const handleSubmit = React.useCallback(
     async (formValues) => {
@@ -135,7 +175,6 @@ export default function UserEdit() {
           setUser('handlesubmit', data.data['result'])
           setIsLoading(false);
         })
-        .catch(() => toast.error("مشکلی در گرفتن اطلاعات رخ داده است."))
 
       // const updatedData = await updateEmployee(Number(userId), formValues);
       // setUser(updatedData);

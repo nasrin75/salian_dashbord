@@ -6,7 +6,7 @@ import { toggleButtonClasses } from '@mui/material/ToggleButton';
 import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
-import { gray, brand } from '../themePrimitives';
+import { gray, brand, green } from '../themePrimitives';
 
 /* eslint-disable import/prefer-default-export */
 export const inputsCustomizations = {
@@ -57,31 +57,31 @@ export const inputsCustomizations = {
             },
             style: {
               color: 'white',
-              backgroundColor: gray[900],
-              backgroundImage: `linear-gradient(to bottom, ${gray[700]}, ${gray[800]})`,
-              boxShadow: `inset 0 1px 0 ${gray[600]}, inset 0 -1px 0 1px hsl(220, 0%, 0%)`,
-              border: `1px solid ${gray[700]}`,
+              backgroundColor: green[900],
+              backgroundImage: `linear-gradient(to bottom, ${green[700]}, ${green[800]})`,
+              boxShadow: `inset 0 1px 0 ${green[600]}, inset 0 -1px 0 1px hsl(116, 25%, 12%)`,
+              border: `1px solid ${green[700]}`,
               '&:hover': {
                 backgroundImage: 'none',
-                backgroundColor: gray[700],
+                backgroundColor: green[700],
                 boxShadow: 'none',
               },
               '&:active': {
-                backgroundColor: gray[800],
+                backgroundColor: green[800],
               },
               ...theme.applyStyles('dark', {
                 color: 'black',
-                backgroundColor: gray[50],
-                backgroundImage: `linear-gradient(to bottom, ${gray[100]}, ${gray[50]})`,
+                backgroundColor: green[50],
+                backgroundImage: `linear-gradient(to bottom, ${green[100]}, ${green[50]})`,
                 boxShadow: 'inset 0 -1px 0  hsl(220, 30%, 80%)',
-                border: `1px solid ${gray[50]}`,
+                border: `1px solid ${green[50]}`,
                 '&:hover': {
                   backgroundImage: 'none',
-                  backgroundColor: gray[300],
+                  backgroundColor: green[300],
                   boxShadow: 'none',
                 },
                 '&:active': {
-                  backgroundColor: gray[400],
+                  backgroundColor: green[400],
                 },
               }),
             },
@@ -125,13 +125,13 @@ export const inputsCustomizations = {
               },
               ...theme.applyStyles('dark', {
                 backgroundColor: gray[800],
-                borderColor: gray[700],
+                borderColor: green[700],
                 '&:hover': {
-                  backgroundColor: gray[900],
+                  backgroundColor: green[900],
                   borderColor: gray[600],
                 },
                 '&:active': {
-                  backgroundColor: gray[900],
+                  backgroundColor: green[900],
                 },
               }),
             },
@@ -183,10 +183,10 @@ export const inputsCustomizations = {
               ...theme.applyStyles('dark', {
                 color: gray[50],
                 '&:hover': {
-                  backgroundColor: gray[700],
+                  backgroundColor: green[700],
                 },
                 '&:active': {
-                  backgroundColor: alpha(gray[700], 0.7),
+                  backgroundColor: alpha(green[700], 0.7),
                 },
               }),
             },
@@ -240,13 +240,13 @@ export const inputsCustomizations = {
         },
         ...theme.applyStyles('dark', {
           backgroundColor: gray[800],
-          borderColor: gray[700],
+          borderColor: green[700],
           '&:hover': {
-            backgroundColor: gray[900],
+            backgroundColor: green[900],
             borderColor: gray[600],
           },
           '&:active': {
-            backgroundColor: gray[900],
+            backgroundColor: green[900],
           },
         }),
         variants: [
@@ -346,9 +346,9 @@ export const inputsCustomizations = {
           },
         },
         ...theme.applyStyles('dark', {
-          borderColor: alpha(gray[700], 0.8),
+          borderColor: alpha(green[700], 0.8),
           boxShadow: '0 0 0 1.5px hsl(210, 0%, 0%) inset',
-          backgroundColor: alpha(gray[900], 0.8),
+          backgroundColor: alpha(green[900], 0.8),
           '&:hover': {
             borderColor: brand[300],
           },

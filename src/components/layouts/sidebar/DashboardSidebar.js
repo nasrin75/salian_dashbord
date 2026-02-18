@@ -1,4 +1,4 @@
-import * as React from 'react';
+
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -6,13 +6,12 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
-
+import Diversity3Outlined from '@mui/icons-material/Diversity3Outlined'
+import BuildCircleOutlined from '@mui/icons-material/BuildCircleOutlined'
 import PersonIcon from '@mui/icons-material/Person';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
+import SettingsOutlined from '@mui/icons-material/SettingsOutlined';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import { matchPath, useLocation } from 'react-router';
-import DashboardSidebarContext from '../../../context/DashboardSidebarContext';
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../../../constants';
 import DashboardSidebarPageItem from '../sidebar/DashboardSidebarPageItem';
 
@@ -20,6 +19,11 @@ import {
   getDrawerSxTransitionMixin,
   getDrawerWidthTransitionMixin,
 } from '../../../mixins';
+import DashboardSidebarContext from '../../../context/DashboardSidebarContext';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { getInventorySubMenu } from '../../../api/EquipmentApi';
+import useAuth from '../../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../../utlis/constants/Permissions';
 
 function DashboardSidebar({
   expanded = true,
@@ -28,18 +32,26 @@ function DashboardSidebar({
   container,
 }) {
   const theme = useTheme();
+  const { hasPermission } = useAuth();
 
   const { pathname } = useLocation();
 
-  const [expandedItemIds, setExpandedItemIds] = React.useState([]);
+  const [expandedItemIds, setExpandedItemIds] = useState([]);
 
   const isOverSmViewport = useMediaQuery(theme.breakpoints.up('sm'));
   const isOverMdViewport = useMediaQuery(theme.breakpoints.up('md'));
 
-  const [isFullyExpanded, setIsFullyExpanded] = React.useState(expanded);
-  const [isFullyCollapsed, setIsFullyCollapsed] = React.useState(!expanded);
+  const [isFullyExpanded, setIsFullyExpanded] = useState(expanded);
+  const [isFullyCollapsed, setIsFullyCollapsed] = useState(!expanded);
+  const [inventorySubMenu, setInventorySubMenu] = useState([])
 
-  React.useEffect(() => {
+  useEffect(() => {
+    getInventorySubMenu()
+      .then(data => setInventorySubMenu(data.data['result']))
+      .catch(err => console.log(err))
+  }, [])
+
+  useEffect(() => {
     if (expanded) {
       const drawerWidthTransitionTimeout = setTimeout(() => {
         setIsFullyExpanded(true);
@@ -50,10 +62,10 @@ function DashboardSidebar({
 
     setIsFullyExpanded(true);
 
-    return () => {};
+    return () => { };
   }, [expanded, theme.transitions.duration.enteringScreen]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!expanded) {
       const drawerWidthTransitionTimeout = setTimeout(() => {
         setIsFullyCollapsed(true);
@@ -64,26 +76,26 @@ function DashboardSidebar({
 
     setIsFullyCollapsed(false);
 
-    return () => {};
+    return () => { };
   }, [expanded, theme.transitions.duration.leavingScreen]);
 
   const mini = !disableCollapsibleSidebar && !expanded;
 
-  const handleSetSidebarExpanded = React.useCallback(
+  const handleSetSidebarExpanded = useCallback(
     (newExpanded) => () => {
       setExpanded(newExpanded);
     },
     [setExpanded],
   );
 
-  const handlePageItemClick = React.useCallback(
+  const handlePageItemClick = useCallback(
     (itemId, hasNestedNavigation) => {
       if (hasNestedNavigation && !mini) {
         setExpandedItemIds((previousValue) =>
           previousValue.includes(itemId)
             ? previousValue.filter(
-                (previousValueItemId) => previousValueItemId !== itemId,
-              )
+              (previousValueItemId) => previousValueItemId !== itemId,
+            )
             : [...previousValue, itemId],
         );
       } else if (!isOverSmViewport && !hasNestedNavigation) {
@@ -96,19 +108,19 @@ function DashboardSidebar({
   const hasDrawerTransitions =
     isOverSmViewport && (!disableCollapsibleSidebar || isOverMdViewport);
 
-  const getDrawerContent = React.useCallback(
+  const getDrawerContent = useCallback(
     (viewport) => (
-      <React.Fragment>
+      <Fragment>
         <Toolbar />
         <Box
           component="nav"
           aria-label={`${viewport.charAt(0).toUpperCase()}${viewport.slice(1)}`}
           sx={{
-            height: '100%',
+            height: '100vh',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            overflow: 'auto',
+            overflow: 'hidden',
             scrollbarGutter: mini ? 'stable' : 'auto',
             overflowX: 'hidden',
             pt: !mini ? 0 : 2,
@@ -125,24 +137,150 @@ function DashboardSidebar({
               width: mini ? MINI_DRAWER_WIDTH : 'auto',
             }}
           >
-            {/* <DashboardSidebarHeaderItem>کاربران</DashboardSidebarHeaderItem> */}
+            {
+              hasPermission([PERMISSION.INVENTORY_LIST]) && (<DashboardSidebarPageItem
+                id="inventory"
+                title="انبار"
+                icon={<SettingsOutlined />}
+                href="/inventories?equipment=ALL"
+                selected={!!matchPath('/inventory', pathname)}
+                defaultExpanded={!!matchPath('/inventory', pathname)}
+                expanded={expandedItemIds.includes('inventory')}
+                nestedNavigation={
+                  <List
+                    dense
+                    sx={{
+                      padding: 0,
+                      my: 1,
+                      pl: mini ? 0 : 1,
+                      minWidth: 240,
+                    }}
+                  >
+                    <DashboardSidebarPageItem
+                      id="/inventories"
+                      title="انبار"
+                      href="/inventories?equipment=ALL"
+                      selected={!!matchPath("/inventories?equipment=ALL", pathname)}
+                    />
+                    {inventorySubMenu.map(subMenu => {
+                      return <DashboardSidebarPageItem
+                        id={subMenu}
+                        title={subMenu}
+                        href={`/inventories?equipment=${subMenu}`}
+                        selected={!!matchPath(`/inventories?equipment=${subMenu}`, pathname)}
+                      />
+                    })}
+                  </List>
+                }
+              />)
+            }
+
+            {
+              hasPermission([PERMISSION.USER_LIST]) && (<DashboardSidebarPageItem
+                id="users"
+                title="کاربران"
+                icon={<PersonIcon />}
+                href="/users"
+                selected={!!matchPath('/user/*', pathname) || pathname === '/'}
+              />)
+            }
+
+            {
+              hasPermission([PERMISSION.EMPLOYEE_LIST]) && (<DashboardSidebarPageItem
+                id="employees"
+                title="پرسنل"
+                icon={<Diversity3Outlined />}
+                href="/employees"
+                selected={!!matchPath('/employee/*', pathname) || pathname === '/'}
+              />)
+            }
+
+            {
+              hasPermission([PERMISSION.EQUIPMENT_LIST]) && (
+                <DashboardSidebarPageItem
+                  id="equipments"
+                  title="قطعات"
+                  icon={<BuildCircleOutlined />}
+                  href="/equipments"
+                  selected={!!matchPath('/equipment/*', pathname) || pathname === '/'}
+                />
+              )
+            }
+            {
+              hasPermission([PERMISSION.LOCATION_LIST, PERMISSION.ACTION_TYPE_LIST, PERMISSION.ROLE_LIST, PERMISSION.PERMISSION_LIST, PERMISSION.FEATURE_LIST]) && (
+                <DashboardSidebarPageItem
+                  id="setting"
+                  title="تنظیمات"
+                  icon={<SettingsOutlined />}
+                  href="/reports"
+                  selected={!!matchPath('/setting', pathname)}
+                  defaultExpanded={!!matchPath('/setting', pathname)}
+                  expanded={expandedItemIds.includes('setting')}
+                  nestedNavigation={
+                    <List
+                      dense
+                      sx={{
+                        padding: 0,
+                        my: 1,
+                        pl: mini ? 0 : 1,
+                        minWidth: 240,
+                      }}
+                    >
+                      {
+                        hasPermission([PERMISSION.LOCATION_LIST]) && (<DashboardSidebarPageItem
+                          id="locations"
+                          title="بخش ها"
+                          href="/setting/locations"
+                          selected={!!matchPath('/setting/locations', pathname)}
+                        />)
+                      }
+                      {
+                        hasPermission([PERMISSION.ACTION_TYPE_LIST]) && (<DashboardSidebarPageItem
+                          id="actionTypes"
+                          title="نوع عملیات"
+                          href="/setting/actionTypes"
+                          selected={!!matchPath('/setting/actionTypes', pathname)}
+                        />)
+                      }
+                      {
+                        hasPermission([PERMISSION.ROLE_LIST]) && (<DashboardSidebarPageItem
+                          id="roles"
+                          title="نقش ها"
+                          href="/setting/roles"
+                          selected={!!matchPath('/setting/roles', pathname)}
+                        />)
+                      }
+
+                      {
+                        hasPermission([PERMISSION.PERMISSION_LIST]) && (<DashboardSidebarPageItem
+                          id="permissions"
+                          title="دسترسی ها"
+                          href="/setting/permissions"
+                          selected={!!matchPath('/setting/permissions', pathname)}
+                        />)
+                      }
+                      {
+                        hasPermission([PERMISSION.FEATURE_LIST]) && (<DashboardSidebarPageItem
+                          id="features"
+                          title="ویژگی قطعات"
+                          href="/setting/features"
+                          selected={!!matchPath('/settings/features', pathname)}
+                        />)
+                      }
+
+                    </List>
+                  }
+                />)
+            }
+
             <DashboardSidebarPageItem
-              id="users"
-              title="کاربران"
-              icon={<PersonIcon />}
-              href="/users"
-              selected={!!matchPath('/user/*', pathname) || pathname === '/'}
-            />
-            
-            {/* <DashboardSidebarHeaderItem>Example items</DashboardSidebarHeaderItem> */}
-            <DashboardSidebarPageItem
-              id="reports"
-              title="Reports"
-              icon={<BarChartIcon />}
-              href="/reports"
-              selected={!!matchPath('/reports', pathname)}
-              defaultExpanded={!!matchPath('/reports', pathname)}
-              expanded={expandedItemIds.includes('reports')}
+              id="profile"
+              title="پروفایل"
+              icon={<AccountCircle />}
+              href="/profile"
+              selected={!!matchPath('/profile', pathname)}
+              defaultExpanded={!!matchPath('/profile', pathname)}
+              expanded={expandedItemIds.includes('profile')}
               nestedNavigation={
                 <List
                   dense
@@ -154,37 +292,22 @@ function DashboardSidebar({
                   }}
                 >
                   <DashboardSidebarPageItem
-                    id="sales"
-                    title="Sales"
-                    icon={<DescriptionIcon />}
-                    href="/reports/sales"
-                    selected={!!matchPath('/reports/sales', pathname)}
-                  />
-                  <DashboardSidebarPageItem
-                    id="traffic"
-                    title="Traffic"
-                    icon={<DescriptionIcon />}
-                    href="/reports/traffic"
-                    selected={!!matchPath('/reports/traffic', pathname)}
+                    id="profile-setting"
+                    title="تنظیمات"
+                    href="/profile/setting"
+                    selected={!!matchPath('/profile/setting', pathname)}
                   />
                 </List>
               }
             />
-            <DashboardSidebarPageItem
-              id="integrations"
-              title="Integrations"
-              icon={<LayersIcon />}
-              href="/integrations"
-              selected={!!matchPath('/integrations', pathname)}
-            />
           </List>
         </Box>
-      </React.Fragment>
+      </Fragment>
     ),
     [mini, hasDrawerTransitions, isFullyExpanded, expandedItemIds, pathname],
   );
 
-  const getDrawerSharedSx = React.useCallback(
+  const getDrawerSharedSx = useCallback(
     (isTemporary) => {
       const drawerWidth = mini ? MINI_DRAWER_WIDTH : DRAWER_WIDTH;
 
@@ -206,7 +329,7 @@ function DashboardSidebar({
     [expanded, mini],
   );
 
-  const sidebarContextValue = React.useMemo(() => {
+  const sidebarContextValue = useMemo(() => {
     return {
       onPageItemClick: handlePageItemClick,
       mini,

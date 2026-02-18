@@ -1,0 +1,279 @@
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import { DataGrid, GridActionsCellItem, gridClasses } from '@mui/x-data-grid';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
+import PageContainer from '../../components/PageContainer';
+import { toast } from 'react-toastify';
+import { deleteActionType, getActionTypes } from '../../api/ActionTypeApi';
+import { APP_ROUTES } from '../../utlis/constants/routePath';
+import useAuth from '../../hooks/useAuth/useAuth';
+import { PERMISSION } from '../../utlis/constants/Permissions';
+
+const INITIAL_PAGE_SIZE = 10;
+
+export default function List() {
+    const { pathname } = useLocation();
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const { hasPermission } = useAuth();
+    const dialogs = useDialogs();
+
+    const [paginationModel, setPaginationModel] = useState({
+        page: searchParams.get('page') ? Number(searchParams.get('page')) : 0,
+        pageSize: searchParams.get('pageSize')
+            ? Number(searchParams.get('pageSize'))
+            : INITIAL_PAGE_SIZE,
+    });
+    const [filterModel, setFilterModel] = useState(
+        searchParams.get('filter')
+            ? JSON.parse(searchParams.get('filter') ?? '')
+            : { items: [] },
+    );
+    const [sortModel, setSortModel] = useState(
+        searchParams.get('sort') ? JSON.parse(searchParams.get('sort') ?? '') : [],
+    );
+
+    const [actionTypes, setActionTypes] = useState([]);
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    const handlePaginationModelChange = useCallback(
+        (model) => {
+            setPaginationModel(model);
+
+            searchParams.set('page', String(model.page));
+            searchParams.set('pageSize', String(model.pageSize));
+
+            const newSearchParamsString = searchParams.toString();
+
+            navigate(
+                `${pathname}${newSearchParamsString ? '?' : ''}${newSearchParamsString}`,
+            );
+        },
+        [navigate, pathname, searchParams],
+    );
+
+    const handleFilterModelChange = useCallback(
+        (model) => {
+            setFilterModel(model);
+
+            if (
+                model.items.length > 0 ||
+                (model.quickFilterValues && model.quickFilterValues.length > 0)
+            ) {
+                searchParams.set('filter', JSON.stringify(model));
+            } else {
+                searchParams.delete('filter');
+            }
+
+            const newSearchParamsString = searchParams.toString();
+
+            navigate(
+                `${pathname}${newSearchParamsString ? '?' : ''}${newSearchParamsString}`,
+            );
+        },
+        [navigate, pathname, searchParams],
+    );
+
+    const handleSortModelChange = useCallback(
+        (model) => {
+            setSortModel(model);
+
+            if (model.length > 0) {
+                searchParams.set('sort', JSON.stringify(model));
+            } else {
+                searchParams.delete('sort');
+            }
+
+            const newSearchParamsString = searchParams.toString();
+
+            navigate(
+                `${pathname}${newSearchParamsString ? '?' : ''}${newSearchParamsString}`,
+            );
+        },
+        [navigate, pathname, searchParams],
+    );
+
+    const loadData = useCallback(async () => {
+        setIsLoading(true);
+
+        getActionTypes()
+            .then(data => {
+                setActionTypes(data.data['result'])
+
+                setIsLoading(false)
+
+            }).catch((err) => {
+                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+                toast.error(message);
+            })
+
+        setIsLoading(false);
+    }, [paginationModel, sortModel, filterModel, searchParams]);
+
+    useEffect(() => {
+        loadData();
+    }, [loadData]);
+
+
+    const handleCreateClick = useCallback(() => {
+        navigate(APP_ROUTES.ACTION_TYPE_CREATE_PATH);
+    }, [navigate]);
+
+    const handleActionTypeEditPage = useCallback(
+        (actionTypeID) => () => {
+            navigate(`/setting/actionType/edit/${actionTypeID}`);
+        },
+        [navigate],
+    );
+
+    const handelDeleteActionType = useCallback(
+        (actionType) => async () => {
+
+            const confirmed = await dialogs.confirm(
+                `آبا از حذف عملیات  ${actionType.faName} مطمئنید?`,
+                {
+                    title: `حذف عملیات?`,
+                    severity: 'خطا',
+                    okText: 'حذف',
+                    cancelText: 'انصراف',
+                },
+            );
+
+            if (confirmed) {
+                setIsLoading(true);
+
+                deleteActionType(actionType.id)
+                    .then(() => {
+                        loadData();
+                        toast.success("عملیات با موفقیت حذف شد.")
+                        setIsLoading(false)
+
+                    }).catch(() =>
+                        toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+                    )
+                setIsLoading(false);
+            }
+        },
+        [dialogs, loadData],
+    );
+
+    const initialState = useMemo(
+        () => ({
+            pagination: { paginationModel: { pageSize: INITIAL_PAGE_SIZE } },
+        }),
+        [],
+    );
+    const isAlow = hasPermission([PERMISSION.ACTION_TYPE_EDIT]) ||
+        hasPermission([PERMISSION.ACTION_TYPE_DELETE]);
+
+    const columns = useMemo(
+        () => [
+            { field: 'faName', headerName: 'عنوان فارسی', width: 240, align: 'right', },
+            { field: 'enName', headerName: 'عنوان انگلیسی', width: 240, align: 'right' },
+            { field: 'isShow', headerName: 'نمایش', width: 240, align: 'center', type: "boolean" },
+            { field: 'operationCount', headerName: 'تعداد عملیات', width: 140, align: 'center' },
+            ...(isAlow ? [{
+                field: '',
+                headerName: 'عملیات',
+                type: 'actions',
+                flex: 1,
+                align: 'center',
+                getActions: ({ row }) => {
+                    const actions = [];
+                    if (hasPermission([PERMISSION.ACTION_TYPE_EDIT])) {
+                        actions.push(<GridActionsCellItem
+                            key="edit-item"
+                            icon={<EditIcon />}
+                            label="Edit"
+                            onClick={handleActionTypeEditPage(row.id)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.ACTION_TYPE_DELETE])) {
+                        actions.push(<GridActionsCellItem
+                            key="delete-item"
+                            icon={<DeleteIcon />}
+                            label="Delete"
+                            onClick={handelDeleteActionType(row)}
+                        />)
+                    }
+                    return actions;
+                }
+            },] : [])
+        ],
+        [handleActionTypeEditPage, handelDeleteActionType],
+    );
+
+    const pageTitle = 'عملیات ها';
+
+    return (
+        <PageContainer
+            title={pageTitle}
+            marginTop='20px'
+            actions={hasPermission([PERMISSION.ACTION_TYPE_CREATE]) &&
+                (<Stack direction="row" alignItems="center" spacing={1}>
+                    <Button
+                        variant="contained"
+                        onClick={handleCreateClick}
+                        startIcon={<AddIcon />}
+                    >
+                        افزودن عملیات
+                    </Button>
+                </Stack>)
+            }
+        >
+            <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>
+
+                <DataGrid
+                    rows={actionTypes}
+                    rowCount={actionTypes.length}
+                    columns={columns}
+                    align="center"
+                    pagination
+                    // sortingMode="server"
+                    // filterMode="server"
+                    // paginationMode="server"
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={handlePaginationModelChange}
+                    sortModel={sortModel}
+                    onSortModelChange={handleSortModelChange}
+                    filterModel={filterModel}
+                    onFilterModelChange={handleFilterModelChange}
+                    disableRowSelectionOnClick
+                    loading={isLoading}
+                    initialState={initialState}
+                    showToolbar
+                    pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
+                    sx={{
+                        [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {
+                            outline: 'transparent',
+                        },
+                        [`& .${gridClasses.columnHeader}:focus-within, & .${gridClasses.cell}:focus-within`]:
+                        {
+                            outline: 'none',
+                        },
+                        [`& .${gridClasses.row}:hover`]: {
+                            cursor: 'pointer',
+                        },
+                    }}
+                    slotProps={{
+                        loadingOverlay: {
+                            variant: 'circular-progress',
+                            noRowsVariant: 'circular-progress',
+                        },
+                        baseIconButton: {
+                            size: 'small',
+                        },
+                    }}
+                />
+            </Box>
+        </PageContainer>
+    );
+}

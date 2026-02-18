@@ -3,10 +3,12 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import { Outlet } from 'react-router';
+import { Navigate, Outlet } from 'react-router';
 import DashboardHeader from './layouts/header/DashboardHeader';
 import DashboardSidebar from './layouts/sidebar/DashboardSidebar';
 import SitemarkIcon from './SitemarkIcon';
+import useAuth from '../hooks/useAuth/useAuth';
+import Login from '../pages/auth/Login';
 
 export default function DashboardLayout() {
   const theme = useTheme();
@@ -45,7 +47,31 @@ export default function DashboardLayout() {
   );
 
   const layoutRef = React.useRef(null);
-
+  const {token} = useAuth();
+  
+  if (!token) {
+    return (
+      <Box
+        ref={layoutRef}
+        sx={{
+          position: 'relative',
+          //display: 'flex',
+          overflow: 'hidden',
+          height: '100%',
+          width: '100%',
+        }}
+      >
+        <DashboardHeader
+          logo=""
+          title=""
+          isLogin="true"
+          menuOpen=""
+          onToggleMenu=""
+        />
+        <Login />
+      </Box>
+    )
+  }
   return (
     <Box
       ref={layoutRef}
@@ -63,7 +89,7 @@ export default function DashboardLayout() {
         menuOpen={isNavigationExpanded}
         onToggleMenu={handleToggleHeaderMenu}
       />
-     
+
       <Box
         sx={{
           display: 'flex',
@@ -72,7 +98,7 @@ export default function DashboardLayout() {
           minWidth: 0,
         }}
       >
-        <Toolbar sx={{ displayPrint: 'none' ,dir:'rtl'}} />
+        <Toolbar sx={{ displayPrint: 'none', dir: 'rtl' }} />
         <Box
           component="main"
           sx={{
@@ -87,7 +113,7 @@ export default function DashboardLayout() {
         </Box>
       </Box>
 
-       <DashboardSidebar
+      <DashboardSidebar
         expanded={isNavigationExpanded}
         setExpanded={setIsNavigationExpanded}
         container={layoutRef?.current ?? undefined}
