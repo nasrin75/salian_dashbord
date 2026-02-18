@@ -170,9 +170,8 @@ export default function List() {
         [],
     );
 
-    const isAlow = hasPermission([PERMISSION.EQUIPMENT_EDIT]) ||
-        hasPermission([PERMISSION.EQUIPMENT_DELETE]);
-console.log('isAlow',isAlow)
+    const isAlow = hasPermission([PERMISSION.EQUIPMENT_EDIT, PERMISSION.EQUIPMENT_DELETE]);
+    
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'شماره ', width: 240, align: 'right', },

@@ -174,10 +174,8 @@ export default function List() {
         }),
         [],
     );
-    const isAlow = hasPermission([PERMISSION.EMPLOYEE_EDIT]) ||
-        hasPermission([PERMISSION.EMPLOYEE_DELETE]) ||
-        hasPermission([PERMISSION.EMPLOYEE_HISTORY]);
-        
+    const isAlow = hasPermission([PERMISSION.EMPLOYEE_EDIT, PERMISSION.EMPLOYEE_DELETE, PERMISSION.EMPLOYEE_HISTORY]);
+
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'کدپرسنلی ', width: 240, align: 'right', },

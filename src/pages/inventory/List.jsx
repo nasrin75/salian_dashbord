@@ -192,10 +192,9 @@ export default function List() {
         [],
     );
 
-    const isAlow = hasPermission([PERMISSION.INVENTORY_EDIT]) ||
-        hasPermission([PERMISSION.INVENTORY_DELETE]) ||
-        hasPermission([PERMISSION.INVENTORY_HISTORY]);
-        
+    const isAlow = hasPermission([PERMISSION.INVENTORY_EDIT, PERMISSION.INVENTORY_DELETE, PERMISSION.INVENTORY_HISTORY]);
+
+
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'ID', width: 100, align: 'right', },

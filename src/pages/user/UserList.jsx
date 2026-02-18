@@ -190,10 +190,7 @@ export default function UserList() {
     [],
   );
 
-  const isAlow = hasPermission([PERMISSION.USER_EDIT]) ||
-    hasPermission([PERMISSION.USER_DELETE]) ||
-    hasPermission([PERMISSION.USER_ADD_PERMISSION]) ||
-    hasPermission([PERMISSION.USER_HISTORY]);
+  const isAlow = hasPermission([PERMISSION.USER_EDIT, PERMISSION.USER_DELETE, PERMISSION.USER_ADD_PERMISSION, PERMISSION.USER_HISTORY]);
 
   const columns = useMemo(
     () => [
