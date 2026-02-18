@@ -172,8 +172,7 @@ export default function List() {
         [],
     );
 
-    const isAlow = hasPermission([PERMISSION.LOCATION_EDIT]) ||
-        hasPermission([PERMISSION.LOCATION_DELETE]);
+    const isAlow = hasPermission([PERMISSION.LOCATION_EDIT, PERMISSION.LOCATION_DELETE]);
 
     const columns = useMemo(
         () => [

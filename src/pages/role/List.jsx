@@ -181,8 +181,7 @@ export default function List() {
         [],
     );
 
-    const isAlow = hasPermission([PERMISSION.ROLE_EDIT]) ||
-        hasPermission([PERMISSION.ROLE_DELETE]);
+    const isAlow = hasPermission([PERMISSION.ROLE_EDIT, PERMISSION.ROLE_DELETE]);
 
     const columns = useMemo(
         () => [

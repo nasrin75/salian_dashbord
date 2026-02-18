@@ -171,8 +171,7 @@ export default function List() {
         }),
         [],
     );
-    const isAlow = hasPermission([PERMISSION.FEATURE_EDIT]) ||
-        hasPermission([PERMISSION.FEATURE_DELETE]);
+    const isAlow = hasPermission([PERMISSION.FEATURE_EDIT, PERMISSION.FEATURE_DELETE]);
 
     const columns = useMemo(
         () => [
