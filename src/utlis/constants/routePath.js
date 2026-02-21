@@ -3,13 +3,13 @@ export const API_ROUTES = [
 ]
 
 export const APP_ROUTES = {
-    LOGIN_PATH: 'login',
+    LOGIN_PATH: '/login',
     //User
-    USER_LIST_PATH: 'users',
-    USER_CREATE_PATH: 'user/create',
-    USER_EDIT_PATH: 'user/edit/:userId',
-    USER_PERMISSION : 'user/permission',
-    USER_ASSIGN_PERMISSION_PATH:'user/assignPermission/:userID',
+    USER_LIST_PATH: '/users',
+    USER_CREATE_PATH: '/user/create',
+    USER_EDIT_PATH: '/user/edit/:userId',
+    USER_PERMISSION : '/user/permission',
+    USER_ASSIGN_PERMISSION_PATH:'/user/assignPermission/:userID',
 
     //Employee
     EMPLOYEE_LIST_PATH: '/employees',

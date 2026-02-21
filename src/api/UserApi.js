@@ -14,7 +14,7 @@ export const userDetails = (userID) => {
     return Api.get(`/user/${userID}`)
 }
 export const updateUser = (data) => {
-    return Api.get("/user/edit", data)
+    return Api.put("/user/edit", data)
 }
 export const getUserPermissions = (userID) => {
     return Api.post(`/user/permissions?userId=${userID}`)

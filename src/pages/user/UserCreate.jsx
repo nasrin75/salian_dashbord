@@ -94,8 +94,6 @@ const handleFormFieldChange = React.useCallback(
 
         createUser(JSON.stringify(formValues))
         .then(() => {
-          console.log("create",formValues)
-
           toast.success("کاربر با موفقیت ایجاد شد.")
 
           navigate(APP_ROUTES.USER_LIST_PATH);

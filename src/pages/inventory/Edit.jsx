@@ -91,7 +91,7 @@ function InventoryEditForm({ initialValues, onSubmit }) {
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate(APP_ROUTES.INVENTORY_LIST_PATH);
+            navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -103,7 +103,7 @@ function InventoryEditForm({ initialValues, onSubmit }) {
             onFieldChange={handleFormFieldChange}
             onSubmit={handleFormSubmit}
             onReset={handleFormReset}
-            submitButtonLabel="Save"
+            submitButtonLabel="ذخیره"
         />
     );
 }
@@ -141,7 +141,7 @@ export default function Edit() {
                 .then(data => { 
                     setInventory(data.data['result'])
                     setIsLoading(false);
-                    navigate(APP_ROUTES.INVENTORY_LIST_PATH);
+                    navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
                 })
         },
         [inventoryID],
