@@ -77,7 +77,7 @@ function CreateForm(props) {
           })),
         };
 
-        console.log("payload", payload);
+        
         await onSubmit(payload);
       } finally {
         setIsSubmitting(false);
