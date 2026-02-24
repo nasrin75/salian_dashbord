@@ -60,16 +60,7 @@ const AuthProvider = ({ children }) => {
                 console.log(permissions)
             });
     }
-    // const hasPermission = async (permissionName) => {
-    //     let allUserPermission = localStorage.getItem('permissions');
-    //     if (allUserPermission === null) {
-    //         allUserPermission = permissions;
-    //     }
-    //     const has = role.toString().toLowerCase() == 'admin' ? true : allUserPermission?.includes(permissionName);
-    //     //const has = permissions.includes(permissionName)
-    //     return false;
-    //     //console.log("hasPermission333", has)
-    // }
+
     const hasPermission = (rights) => localStorage.getItem('role')?.toString().toLowerCase() == 'admin' ? true : rights.some(right => localStorage.getItem('permissions')?.includes(right));
     // Provide the authentication context to the children components
     return (

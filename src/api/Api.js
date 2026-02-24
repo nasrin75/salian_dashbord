@@ -2,6 +2,8 @@ import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { APP_ROUTES } from "../utlis/constants/routePath";
+import { ResponseMessage } from "../Response/ResponseMessage";
+
 
 const Api = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -35,6 +37,10 @@ Api.interceptors.response.use(
     // This function runs for ALL error responses (non-2xx status codes) or network errors.
     if (error.response) {
       switch (error.response.status) {
+        case 400:
+          //console.log("Apiiiii",Translation(error.response.data.message))
+
+          break;
         case 401:
           toast.error("لطفا دوباره وارد شوید")
           localStorage.clear('token')

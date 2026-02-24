@@ -1,7 +1,8 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, forwardRef } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridActionsCellItem, gridClasses } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ManageHistoryRounded from '@mui/icons-material/ManageHistoryRounded';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
@@ -10,15 +11,20 @@ import { deleteHistory, getHistories } from '../../api/HistoryApi';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
 import dayjs from 'dayjs';
+import Slide from '@mui/material/Slide';
+import DetailsModal from '../../components/History/DetailsModal';
 
 const INITIAL_PAGE_SIZE = 10;
-
+const Transition = forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { hasPermission } = useAuth();
-
+    const [openModal, setOpenModal] = useState(false)
+    const [selectedRow, setSelectedRow] = useState({})
     const dialogs = useDialogs();
 
     const [paginationModel, setPaginationModel] = useState({
@@ -40,6 +46,9 @@ export default function List() {
 
     const [isLoading, setIsLoading] = useState(true);
 
+    const closeModal = () => {
+        setOpenModal(false)
+    }
     const handlePaginationModelChange = useCallback(
         (model) => {
             setPaginationModel(model);
@@ -96,12 +105,13 @@ export default function List() {
         },
         [navigate, pathname, searchParams],
     );
-    const handleRowClick = useCallback(
-        ({ row }) => {
-            navigate(`/${row.entity.toLowerCase()}/edit/${row.entityId}`);
-        },
-        [navigate],
-    );
+
+    const handleHistoryDetails = (row) => {
+        setOpenModal(true)
+        
+        setSelectedRow(row)
+    };
+
     const loadData = useCallback(async () => {
         setIsLoading(true);
 
@@ -127,7 +137,7 @@ export default function List() {
         (history) => async () => {
 
             const confirmed = await dialogs.confirm(
-                `آبا از حذف تاریخچه  ${history.title} مطمئنید?`,
+                `آبا از حذف تاریخچه  ${history.id} مطمئنید?`,
                 {
                     title: `حذف تاریخچه?`,
                     severity: 'خطا',
@@ -161,7 +171,7 @@ export default function List() {
         [],
     );
 
-    const isAlow = hasPermission([PERMISSION.HISTORY_DELETE]);
+    const isAlow = hasPermission([PERMISSION.HISTORY_DELETE, PERMISSION.HISTORY_DETAILS]);
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'شناسه', width: 240, align: 'right', },
@@ -190,7 +200,7 @@ export default function List() {
                 align: 'right',
                 renderCell: params => {
                     let entityName = params.row.entity.toString().toLowerCase();
-console.log(entityName)
+
                     switch (entityName) {
                         case 'inventories':
                             entityName = "انبار";
@@ -241,6 +251,16 @@ console.log(entityName)
                             icon={<DeleteIcon />}
                             label="Delete"
                             onClick={handelDeleteHistory(row)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.HISTORY_DETAILS])) {
+
+                        actions.push(<GridActionsCellItem
+                            key="details-item"
+                            icon={<ManageHistoryRounded />}
+                            label="details"
+                            onClick={() => handleHistoryDetails(row)}
                         />)
                     }
                     return actions;
@@ -302,7 +322,11 @@ console.log(entityName)
                         },
                     }}
                 />
+
             </Box>
+            <DetailsModal open={openModal} close={closeModal} data={selectedRow} />
+
+
         </PageContainer>
     );
 }

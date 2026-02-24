@@ -207,6 +207,17 @@ function DashboardSidebar({
               )
             }
             {
+              hasPermission([PERMISSION.HISTORY_LIST]) && (
+                <DashboardSidebarPageItem
+                  id="histories"
+                  title="تاریخچه"
+                  icon={<BuildCircleOutlined />}
+                  href="/histories"
+                  //selected={!!matchPath('/history/*', pathname) || pathname === '/'}
+                />
+              )
+            }
+            {
               hasPermission([PERMISSION.LOCATION_LIST, PERMISSION.ACTION_TYPE_LIST, PERMISSION.ROLE_LIST, PERMISSION.PERMISSION_LIST, PERMISSION.FEATURE_LIST]) && (
                 <DashboardSidebarPageItem
                   id="setting"

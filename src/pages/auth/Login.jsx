@@ -80,20 +80,14 @@ export default function Login(props) {
   const handleClickOpen = () => {
     setOpen(true);
   };
-  //console.log('isshow:: ', isShowOtpInput);
+
   const handleClose = () => {
     setOpen(false);
   };
 
-  console.log({
-    username: username,
-    password: password,
-    IsOtp: isShowOtpInput,
-    haveSendOtp: isSendOtp
-  });
   const handleSubmit = (event) => {
     event.preventDefault();
-    //console.log('auth: ',auth)
+
     const data = new FormData(event.currentTarget);
     const resp = auth.loginAction({
       Username: username,
@@ -216,7 +210,6 @@ export default function Login(props) {
                         color={passwordError ? 'error' : 'primary'}
 
                       />
-                      {/* <Button  variant="text">ارسال کد</Button> */}
                       <Button
                         onClick={() => sendOtp()}
                         size='small'

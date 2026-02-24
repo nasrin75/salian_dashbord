@@ -60,9 +60,10 @@ body {
     /* border: hsl(45, 94%, 20%) !important;
      color: #fff !important; */
 }
-/* .css-1p8i14v-MuiButtonBase-root-MuiButton-root{
-    color: #fff;
-} */
+
+.css-82712u-MuiPaper-root-MuiDialog-paper{
+    max-width: inherit !important;
+}
 @media (min-width: 1200px) {
     .css-1hco7h0-MuiContainer-root {
         max-width: 90% !important;

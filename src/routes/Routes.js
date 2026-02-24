@@ -25,6 +25,8 @@ import ProfileSetting from '../pages/profile/Setting';
 import Inventory from '../pages/inventory/List';
 import InventoryCreate from '../pages/inventory/Create';
 import InventoryEdit from '../pages/inventory/Edit';
+import History from '../pages/history/List';
+import HistoryDetails from '../pages/history/Details';
 import Login from '../pages/auth/Login';
 import { createBrowserRouter } from 'react-router';
 import ProtectedRoutes from './ProtectedRoutes';
@@ -91,6 +93,9 @@ const Routes = () => {
             { path: APP_ROUTES.INVENTORY_CREATE_PATH, element: <InventoryCreate /> },
             { path: APP_ROUTES.INVENTORY_EDIT_PATH, element: <InventoryEdit /> },
 
+            //History
+            { path: APP_ROUTES.HISTORY_LIST_PATH, element: <History /> },
+            { path: APP_ROUTES.HISTORY_DETAILS_PATH, element: <HistoryDetails /> },
         ],
     }];
 

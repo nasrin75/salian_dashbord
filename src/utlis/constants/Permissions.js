@@ -44,4 +44,8 @@ export const PERMISSION = {
     FEATURE_CREATE: "feature.create",
     FEATURE_EDIT: "feature.edit",
     FEATURE_DELETE: "feature.delete",
+    //History
+    HISTORY_LIST: "history.list",
+    HISTORY_DELETE: "history.delete",
+    HISTORY_DETAILS: "history.details"
 }

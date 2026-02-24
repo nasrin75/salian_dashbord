@@ -7,7 +7,7 @@ export const APP_ROUTES = {
     //User
     USER_LIST_PATH: '/users',
     USER_CREATE_PATH: '/user/create',
-    USER_EDIT_PATH: '/user/edit/:userId',
+    USER_EDIT_PATH: '/users/edit/:userId',
     USER_PERMISSION : '/user/permission',
     USER_ASSIGN_PERMISSION_PATH:'/user/assignPermission/:userID',
 
@@ -54,4 +54,8 @@ export const APP_ROUTES = {
     FEATURE_LIST_PATH: '/setting/features',
     FEATURE_CREATE_PATH: '/setting/feature/create',
     FEATURE_EDIT_PATH: '/setting/feature/edit/:featureID',
+
+    //Histories
+    HISTORY_LIST_PATH: '/histories',
+    HISTORY_DETAILS_PATH: '/history/:historyID',
 }
