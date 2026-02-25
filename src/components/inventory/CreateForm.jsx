@@ -77,7 +77,7 @@ function CreateForm(props) {
           })),
         };
 
-        
+
         await onSubmit(payload);
       } finally {
         setIsSubmitting(false);
@@ -97,12 +97,16 @@ function CreateForm(props) {
     try {
       const formData = new FormData();
       formData.append("file", file);
+      const token = localStorage.getItem("token");
 
       const res = await fetch(process.env.REACT_APP_API_BASE_URL + "/upload", {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
       });
-      console.log(process.env.REACT_APP_API_BASE_URL + "/upload");
+
       const data = await res.json();
 
       //send image name that is created after uploaded file
