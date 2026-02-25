@@ -7,7 +7,7 @@ import { resetPassword } from '../../api/AuthApi';
 import { useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import UseTranslation from '../../hooks/useTranslate/UseTranslation';
+import useTranslate from '../../hooks/useTranslate/useTranslate';
 
 const SendResetPasswordEmail = (props) => {
     const {
@@ -16,23 +16,21 @@ const SendResetPasswordEmail = (props) => {
     } = props
 
     const [isLoading, setIsLoading] = useState(false)
-    //const { Translation} = UseTranslation()
+    //const { Translation} = useTranslate()
     
     //send token to email
     const sendEmail = () => {
         setIsLoading(true)
         resetPassword(emailAddress)
             .then((resp) => {
-                //console.log("SuccessSendEmail", Translation(resp.data['message']))
                 toast.success("کد یکبار مصرف به ایمیل شما ارسال شد")
                 setIsLoading(false)
                 
             })
-            //.catch((err) => {
-// console.log("ERRR", Translation(err))
-//                 toast.error("کاربری با این ایمیل یافت نشد.")
-//                 setIsLoading(false)
-//             })
+            .catch((err) => {
+                toast.error("کاربری با این ایمیل یافت نشد.")
+                setIsLoading(false)
+            })
     }
     return (
         <>

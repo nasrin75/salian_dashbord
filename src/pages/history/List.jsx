@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { DataGrid, GridActionsCellItem, gridClasses } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ManageHistoryRounded from '@mui/icons-material/ManageHistoryRounded';
-import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
@@ -13,6 +13,7 @@ import { PERMISSION } from '../../utlis/constants/Permissions';
 import dayjs from 'dayjs';
 import Slide from '@mui/material/Slide';
 import DetailsModal from '../../components/History/DetailsModal';
+import useTranslate from '../../hooks/useTranslate/useTranslate';
 
 const INITIAL_PAGE_SIZE = 10;
 const Transition = forwardRef(function Transition(props, ref) {
@@ -23,6 +24,7 @@ export default function List() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { hasPermission } = useAuth();
+    const { getMessage } = useTranslate()
     const [openModal, setOpenModal] = useState(false)
     const [selectedRow, setSelectedRow] = useState({})
     const dialogs = useDialogs();
@@ -108,14 +110,19 @@ export default function List() {
 
     const handleHistoryDetails = (row) => {
         setOpenModal(true)
-        
+
         setSelectedRow(row)
     };
 
     const loadData = useCallback(async () => {
         setIsLoading(true);
 
-        getHistories()
+        const request = {
+            'entityName': searchParams.get('entityName'),
+            'entityId': searchParams.get('entityId'),
+        };
+
+        getHistories(request)
             .then(data => {
                 setHistories(data.data['result'])
 
@@ -181,53 +188,28 @@ export default function List() {
                 width: 140,
                 align: 'right',
                 renderCell: params => {
-                    switch (params.row.actionType) {
-                        case 'login':
-                            return "ورود به پنل";
-                        case 'update':
-                            return "ویرایش";
-                        case 'delete':
-                            return "حذف";
-                        case 'create':
-                            return "افزودن";
-                    }
+                    return getMessage(params.row.actionType)
                 }
             },
             {
                 field: 'entity',
                 headerName: 'بخش',
-                width: 140,
+                width: 240,
                 align: 'right',
                 renderCell: params => {
-                    let entityName = params.row.entity.toString().toLowerCase();
+                    const mgs = params.row.newData?.Status != null
+                        ? getMessage(params.row.entity) + " ( " + getMessage(params.row.newData?.Status) + " )"
+                        : getMessage(params.row.entity);
 
-                    switch (entityName) {
-                        case 'inventories':
-                            entityName = "انبار";
-                            break;
-                        case 'users':
-                            entityName = "کاربران";
-                            break;
-                        case 'employees':
-                            entityName = "پرسنل";
-                            break;
-                        case 'equipments':
-                            entityName = "قطعات";
-                            break;
-                        case 'roles':
-                            entityName = "نقش ها";
-                            break;
-                        case 'permissions':
-                            entityName = "دسترسی ها";
-                            break;
-                        case 'inventoryfeatures':
-                            entityName = "ویژگی قطعات";
-                            break;
-                    }
-                    return <a href="${params.row.id}">{entityName}</a>
+                    return <Link className='link' to={`${params.row.id}`}>{mgs}</Link>
                 }
             },
-            { field: 'user', headerName: 'کاربر', width: 140, align: 'right' },
+            {
+                field: 'user', headerName: 'کاربر', width: 140, align: 'right',
+                renderCell: params => {
+                    return <Link className='link' to={`users?userId=${params.row.userId}`}> {params.row.user}</Link>
+                }
+            },
             { field: 'ip', headerName: 'IP', width: 140, align: 'right' },
             {
                 field: 'createdAt',
@@ -299,6 +281,7 @@ export default function List() {
                     loading={isLoading}
                     initialState={initialState}
                     showToolbar
+                    localeText={{ noRowsLabel: "موردی یافت نشد" }}
                     pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
                     sx={{
                         [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {

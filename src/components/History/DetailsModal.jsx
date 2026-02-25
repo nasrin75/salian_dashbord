@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Slide from '@mui/material/Slide';
@@ -9,11 +8,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import { forwardRef, useTransition } from 'react';
+import { forwardRef } from 'react';
 import { Table } from 'reactstrap';
 import { green, red } from '../../shared-theme/themePrimitives';
 import Divider from '@mui/material/Divider';
 import DialogTitle from '@mui/material/DialogTitle';
+import useTranslate from '../../hooks/useTranslate/useTranslate';
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -52,7 +52,7 @@ export default function DetailsModal(props) {
     open, close, data
   } = props
 
-  const { getMessage } = useTransition();
+  const { getMessage } = useTranslate();
 
   if (data.newData) {
     return (
@@ -74,8 +74,8 @@ export default function DetailsModal(props) {
               <TableHead>
                 <StyledTableRow>
                   {
-                    Object.entries(data.newData).map((val, key) => {
-                      return <StyledTableCell align="right">{val[0]}</StyledTableCell>
+                    Object.entries(data.newData).map((val) => {
+                      return <StyledTableCell align="right">{getMessage(val[0])}</StyledTableCell>
                     })
                   }
                 </StyledTableRow>
@@ -84,8 +84,8 @@ export default function DetailsModal(props) {
 
                 <StyledTableRow>
                   {
-                    Object.entries(data.newData).map((val, key) => {
-                      return <StyledTableCell align="right">{val[1]}</StyledTableCell>
+                    Object.entries(data.newData).map((val) => {
+                      return <StyledTableCell align="right">{getMessage(val[1])}</StyledTableCell>
                     })
                   }
                 </StyledTableRow>
@@ -100,7 +100,7 @@ export default function DetailsModal(props) {
               <TableHead>
                 <StyledTableRow>
                   {
-                    Object.entries(data.oldData).map((val, key) => {
+                    Object.entries(data.oldData).map((val) => {
                       return <BeforeDataStyledTableCell align="right">{getMessage(val[0])}</BeforeDataStyledTableCell>
                     })
                   }
@@ -110,8 +110,8 @@ export default function DetailsModal(props) {
 
                 <StyledTableRow>
                   {
-                    Object.entries(data.oldData).map((val, key) => {
-                      return <BeforeDataStyledTableCell align="right">{val[1]}</BeforeDataStyledTableCell>
+                    Object.entries(data.oldData).map((val) => {
+                      return <BeforeDataStyledTableCell align="right">{getMessage(val[1])}</BeforeDataStyledTableCell>
                     })
                   }
                 </StyledTableRow>
