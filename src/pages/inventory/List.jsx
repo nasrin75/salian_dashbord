@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { DataGrid, GridActionsCellItem, gridClasses, GRID_DATE_COL_DEF, GridEditDateCell, getGridDateOperators } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, gridClasses } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
 import History from '@mui/icons-material/History';
 import EditIcon from '@mui/icons-material/Edit';
@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
+import useTranslate from '../../hooks/useTranslate/useTranslate';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -26,6 +27,7 @@ export default function List() {
     const navigate = useNavigate();
     const { hasPermission } = useAuth();
     const dialogs = useDialogs();
+    const { getMessage } = useTranslate();
 
     const [paginationModel, setPaginationModel] = useState({
         page: searchParams.get('page') ? Number(searchParams.get('page')) : 0,
@@ -132,7 +134,7 @@ export default function List() {
 
     const handleInventoryEditPage = useCallback(
         (inventoryID) => () => {
-            console.log(inventoryID)
+
             navigate(`/inventory/edit/${inventoryID}`);
         },
         [navigate],
@@ -192,6 +194,13 @@ export default function List() {
         [],
     );
 
+    const handleInventoryHistoty = useCallback(
+        (inventoryID) => () => {
+            navigate(APP_ROUTES.HISTORY_LIST_PATH + `?entityId=${inventoryID}&entityName=Inventories`)
+            // navigate(`/inventory/${inventoryID}/history`)
+        }, [navigate]
+    )
+
     const isAlow = hasPermission([PERMISSION.INVENTORY_EDIT, PERMISSION.INVENTORY_DELETE, PERMISSION.INVENTORY_HISTORY]);
 
 
@@ -210,20 +219,7 @@ export default function List() {
                 width: 140,
                 align: 'right',
                 renderCell: params => {
-                    switch (params.row.status) {
-                        case 'backFromCharge':
-                            return "برگشت از شارژ";
-                        case 'useless':
-                            return "اسقاطی";
-                        case 'unuse':
-                            return "استفاده نشده";
-                        case 'inuse':
-                            return "استفاده شده";
-                        case 'sendToCharge':
-                            return "ارسال جهت شارژ";
-                        case 'repair':
-                            return "تعمیر";
-                    }
+                    return getMessage(params.row.status)
                 }
             },
             { field: 'user', headerName: 'کاربر', width: 140, align: 'right' },
@@ -299,7 +295,7 @@ export default function List() {
                             key="log-item"
                             icon={<History />}
                             label="log"
-                        // onClick={handleInventoryEditPage(row)}
+                            onClick={handleInventoryHistoty(row.id)}
                         />)
                     }
                     return actions;
@@ -349,6 +345,7 @@ export default function List() {
                     loading={isLoading}
                     initialState={initialState}
                     showToolbar
+                    localeText={{ noRowsLabel: "موردی یافت نشد" }}
                     pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
                     sx={{
                         [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {

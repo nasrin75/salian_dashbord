@@ -117,8 +117,11 @@ export default function UserList() {
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
-
-    getUsers()
+   
+    const request = {
+      'userId': searchParams.get("userId")
+    }
+    getUsers(request)
       .then(data => {
         setUsers(data.data['result'])
 
@@ -295,6 +298,7 @@ export default function UserList() {
           loading={isLoading}
           initialState={initialState}
           showToolbar
+          localeText={{ noRowsLabel: "موردی یافت نشد" }}
           pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
           sx={{
             [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {
