@@ -50,20 +50,25 @@ body {
     background-color: hsl(120, 81%, 14%) !important;
 }
 
-.otp-btn{
+.otp-btn {
     background-color: hsl(45, 90%, 40%) !important;
     border: hsl(45, 94%, 20%) !important;
-     color: #fff !important;
+    color: #fff !important;
 }
-.otp-btn:hover{
+
+.otp-btn:hover {
     background-color: hsl(45, 83%, 35%) !important;
     /* border: hsl(45, 94%, 20%) !important;
      color: #fff !important; */
 }
 
-.css-82712u-MuiPaper-root-MuiDialog-paper{
+.css-82712u-MuiPaper-root-MuiDialog-paper {
     max-width: inherit !important;
 }
+.link{
+    text-decoration: none !important;
+}
+
 @media (min-width: 1200px) {
     .css-1hco7h0-MuiContainer-root {
         max-width: 90% !important;

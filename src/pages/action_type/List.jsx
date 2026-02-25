@@ -249,6 +249,7 @@ export default function List() {
                     loading={isLoading}
                     initialState={initialState}
                     showToolbar
+                    localeText={{ noRowsLabel: "موردی یافت نشد" }}
                     pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
                     sx={{
                         [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {
