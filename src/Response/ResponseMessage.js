@@ -19,17 +19,102 @@ export const ResponseMessage = [
     {
         'key': 'status',
         'mgs': "وضعیت",
-    }, 
+    },
     {
         'key': 'UpdatedAt',
-        'mgs': 'تاریخ آخرین ویرایش',
+        'mgs': 'تاریخ بروزرسانی',
     },
-     {
+    {
         'key': 'ItParentNumber',
-        'mgs': 'It Parent Number',
+        'mgs': 'شماره IT Parent',
     },
-     {
+    {
         'key': 'EmployeeId',
         'mgs': 'پرسنل',
+    },
+    {
+
+        'key': 'backFromCharge',
+        'mgs': "برگشت از شارژ"
+    },
+    {
+        'key': 'useless',
+        'mgs': "اسقاطی"
+    },
+    {
+        'key': 'unuse',
+        'mgs': "استفاده نشده"
+    },
+    {
+        'key': 'inuse',
+        'mgs': "استفاده شده"
+    },
+    {
+        'key': 'sendToCharge',
+        'mgs': "ارسال جهت شارژ"
+    },
+    {
+        'key': 'repair',
+        'mgs': "تعمیر"
+    },
+    {
+        'key': 'login',
+        'mgs': "ورود به پنل"
+    },
+    {
+        'key': 'update',
+        'mgs': "ویرایش"
+    },
+    {
+        'key': 'delete',
+        'mgs': "حذف"
+    },
+    {
+        'key': 'create',
+        'mgs': "افزودن"
+    },
+    {
+        'key': 'ExpireWarrantyDate',
+        'mgs': "تاریخ اتمام گارانتی"
+    },
+    {
+        'key': 'locationId',
+        'mgs': "ایدی بخش"
+    },
+    {
+        'key': 'inventories',
+        'mgs': "انبار"
+    },
+    {
+        'key': 'users',
+        'mgs': "کاربران"
+    },
+    {
+        'key': 'employees',
+        'mgs': "پرسنل"
+    },
+    {
+        'key': 'equipments',
+        'mgs': "قطعات"
+    },
+    {
+        'key': 'roles',
+        'mgs': "نقش ها"
+    },
+    {
+        'key': 'permissions',
+        'mgs': "دسترسی ها"
+    },
+    {
+        'key': 'inventoryfeatures',
+        'mgs': "ویژگی قطعات انبار"
+    },
+    {
+        'key':'PermissionEntityUserEntity',
+        'mgs':'دسترسی به کاربر',
+    },
+    {
+        'key':'PermissionEntityRoleEntity',
+        'mgs':'دسترسی به نقش',
     }
 ]

@@ -25,6 +25,7 @@ import ProfileSetting from '../pages/profile/Setting';
 import Inventory from '../pages/inventory/List';
 import InventoryCreate from '../pages/inventory/Create';
 import InventoryEdit from '../pages/inventory/Edit';
+import InventoryHistory from '../pages/inventory/History';
 import History from '../pages/history/List';
 import HistoryDetails from '../pages/history/Details';
 import Login from '../pages/auth/Login';
@@ -92,6 +93,7 @@ const Routes = () => {
             { path: APP_ROUTES.INVENTORY_LIST_PATH, element: <Inventory /> },
             { path: APP_ROUTES.INVENTORY_CREATE_PATH, element: <InventoryCreate /> },
             { path: APP_ROUTES.INVENTORY_EDIT_PATH, element: <InventoryEdit /> },
+            { path: APP_ROUTES.INVENTORY_HISTORY_PATH, element: <InventoryHistory /> },
 
             //History
             { path: APP_ROUTES.HISTORY_LIST_PATH, element: <History /> },
