@@ -71,7 +71,7 @@ function PermissionEditForm({ initialValues, onSubmit,userID }) {
     // );
 const handleFormFieldChange = useCallback(
   (name, value, type = "text") => {
-console.log("handleFormFieldChange :: ",name,value)
+
     let finalValue = value;
 
     const newFormValues = {

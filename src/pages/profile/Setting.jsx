@@ -73,9 +73,9 @@ function SettingEditForm({ initialValues, onSubmit }) {
     }, [initialValues, setFormValues]);
 
     const handleFormSubmit = useCallback(async () => {
-        console.log('before-handleFormSubmit', formValues)
+        
         const { issues } = EditValidation(formValues);
-        console.log('issue-handleFormSubmit', issues)
+        
         if (issues && issues.length > 0) {
             setFormErrors(
                 Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
@@ -83,7 +83,7 @@ function SettingEditForm({ initialValues, onSubmit }) {
             return;
         }
         setFormErrors({});
-        console.log('after-handleFormSubmit', formValues)
+        
         try {
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")

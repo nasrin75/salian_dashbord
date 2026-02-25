@@ -49,7 +49,6 @@ function PermissionEditForm({ initialValues, onSubmit }) {
 
     const handleFormFieldChange = useCallback(
         (name, value) => {
-            console.log("handleFormFieldChange :: ", name, value)
 
             const newFormValues = {
                 ...formValues,
@@ -109,7 +108,7 @@ export default function AssignPermission() {
 
     const handleSubmit = useCallback(
         async (formValues) => {
-            console.log("handleSubmit", formValues)
+
             const request = {
                 roleId: roleID,
                 permissionIds: formValues.permissionIds,
