@@ -1,7 +1,7 @@
 import Api from "./Api";
 
-export const getUsers = () => {
-    return Api.get('/user')
+export const getUsers = (request) => {
+    return Api.post('/user', request)
 }
 
 export const createUser = (data) => {
