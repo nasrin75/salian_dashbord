@@ -7,7 +7,7 @@ export const APP_ROUTES = {
     //User
     USER_LIST_PATH: '/users',
     USER_CREATE_PATH: '/user/create',
-    USER_EDIT_PATH: '/users/edit/:userId',
+    USER_EDIT_PATH: '/user/edit/:userId',
     USER_PERMISSION : '/user/permission',
     USER_ASSIGN_PERMISSION_PATH:'/user/assignPermission/:userID',
 
@@ -25,6 +25,7 @@ export const APP_ROUTES = {
     INVENTORY_LIST_PATH: '/inventories',
     INVENTORY_CREATE_PATH: '/inventory/create',
     INVENTORY_EDIT_PATH: '/inventory/edit/:inventoryID',
+    INVENTORY_HISTORY_PATH: '/inventory/:inventoryID/history',
 
     //Profile
     PROFILE_SETTING_PATH: '/profile/setting',
