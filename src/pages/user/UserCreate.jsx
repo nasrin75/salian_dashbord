@@ -47,7 +47,6 @@ const UserCreate = () => {
 
 const handleFormFieldChange = React.useCallback(
   (name, value, type = "text") => {
-  console.log(name, value,type);
 
     let finalValue = value;
 
@@ -81,9 +80,9 @@ const handleFormFieldChange = React.useCallback(
   [formValues, formErrors],
 );
   const handleFormSubmit = React.useCallback(async () => {
-    console.log('handleFormSubmit',formValues)
+    
     const { issues } = userValidate(formValues);
-    console.log('ISSUEhandleFormSubmit',issues)
+    
     if (issues && issues.length > 0) {
       setFormErrors(
         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),

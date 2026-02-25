@@ -22,7 +22,6 @@ function UserEditForm({ initialValues, onSubmit }) {
   }));
   const formValues = formState.values;
   const formErrors = formState.errors;
-  console.log('UserEditForm',formValues)
 
   const setFormValues = React.useCallback((newFormValues) => {
     setFormState((previousState) => ({
@@ -59,13 +58,11 @@ function UserEditForm({ initialValues, onSubmit }) {
           [name]: value
         }
       }));
-      console.log('newFormValues',formState)
 
       // setFormValues(newFormValues);
       // validateField(newFormValues);
     };
 
-    console.log('state loginType',formState.values.loginTypes)
   // const handleFormFieldChange = React.useCallback(
   //   (name, value) => {
   //     const validateField = async (values) => {
@@ -151,10 +148,8 @@ export default function UserEdit() {
     setError(null);
     setIsLoading(true);
 
-    console.log('sssss', Number(userId))
     userDetails(userId)
       .then(data => {
-        console.log('dtaaaa', userId, data.data['result'])
         setUser(data.data['result'])
         setIsLoading(false);
       })
@@ -171,7 +166,6 @@ export default function UserEdit() {
     async (formValues) => {
       updateUser(formValues)
         .then(data => {
-          console.log('handlesubmit', userId)
           setUser('handlesubmit', data.data['result'])
           setIsLoading(false);
         })
