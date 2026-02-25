@@ -1,18 +1,21 @@
+import { isNumber } from "@mui/x-data-grid/internals";
 import { ResponseMessage } from "../../Response/ResponseMessage"
-import TranslationContext from "./TranslationContext"
+import TranslationContext from "./TranslateContext"
 
-const TranslationProvider = ({ children }) => {
+const TranslateProvider = ({ children }) => {
 
     const getMessage = (message) => {
+        console.log('mgs',message);
+        if( message === undefined || message == null || isNumber(message)){
+            return message;
+        }
         const resp = ResponseMessage.find((item) => item.key.toUpperCase() == message.toUpperCase());
         return resp === undefined || resp == null || resp.length <= 0  ? message : resp.mgs;
     }
-    console.log(getMessage("TOKEN_TIME_REMAINED"))
-
 
     return <TranslationContext.Provider value={{ getMessage }}>
         {children}
     </TranslationContext.Provider>
 }
 
-export default TranslationProvider;
+export default TranslateProvider;
