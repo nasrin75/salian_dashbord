@@ -99,13 +99,6 @@ export default function Login(props) {
       event.preventDefault();
       return;
     }
-
-    // console.log({
-    //   username: username,
-    //   password: password,
-    //   IsOtp: isShowOtpInput,
-    //   //SendOtp:setIsSendOtp
-    // });
   };
 
   const handleLoginType = (e, type = "password") => {

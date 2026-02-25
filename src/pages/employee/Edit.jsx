@@ -111,10 +111,9 @@ export default function Edit() {
         setError(null);
         setIsLoading(true);
 
-        console.log('sssss', employeeID)
         EmployeeDetails(employeeID)
             .then(data => {
-                console.log('dtaaaa', employeeID, data.data['result'])
+                
                 setEmployee(data.data['result'])
                 setIsLoading(false);
             })
@@ -131,7 +130,7 @@ export default function Edit() {
         async (formValues) => {
             updateEmployee(formValues)
                 .then(data => {
-                    console.log('handlesubmit', employeeID)
+                    
                     setEmployee('handlesubmit', data.data['result'])
                     setIsLoading(false);
                      navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);

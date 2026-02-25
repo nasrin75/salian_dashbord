@@ -17,8 +17,6 @@ const AuthProvider = ({ children }) => {
         setToken_(newToken)
     }
 
-
-
     // send username and password to verify user and get token
     const loginAction = useCallback(
         async (data) => {
@@ -26,7 +24,6 @@ const AuthProvider = ({ children }) => {
                 .then(data => {
                     const result = data.data['result'];
 
-                    console.log('result', result)
                     const token = result.token;
                     setToken(token)
                     StoreTokenInLocalStorage(token)
@@ -56,12 +53,12 @@ const AuthProvider = ({ children }) => {
                 setPermissions(permissionNames)
 
                 localStorage.setItem("permissions", permissionNames)
-
-                console.log(permissions)
             });
     }
 
-    const hasPermission = (rights) => localStorage.getItem('role')?.toString().toLowerCase() == 'admin' ? true : rights.some(right => localStorage.getItem('permissions')?.includes(right));
+    const hasPermission = (rights) => localStorage.getItem('role')?.toString().toLowerCase() == 'admin' ? true 
+    : rights.some(right => localStorage.getItem('permissions')?.includes(right));
+
     // Provide the authentication context to the children components
     return (
         <AuthContext.Provider value={{ token, setToken, loginAction, permissions, hasPermission }}>

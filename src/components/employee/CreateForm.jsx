@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { getLocations } from '../../api/LocationApi';
 import MenuItem from '@mui/material/MenuItem';
+import { toast } from 'react-toastify';
 
 function CreateForm(props) {
     const {
@@ -35,7 +36,7 @@ function CreateForm(props) {
             .then((data) => {
                 setLocations(data.data['result'])
             })
-            .catch(err => console.log(err))
+            .catch(err => toast.error("مشکلی در گرفتن لیست بخش ها رخ داده است."))
 
     }, [])
 

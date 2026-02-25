@@ -21,7 +21,6 @@ function LocationEditForm({ initialValues, onSubmit }) {
     }));
     const formValues = formState.values;
     const formErrors = formState.errors;
-    console.log('LocationEditForm', formValues)
 
     const setFormValues = useCallback((newFormValues) => {
         setFormState((previousState) => ({

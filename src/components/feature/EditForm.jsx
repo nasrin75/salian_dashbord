@@ -41,7 +41,6 @@ function EditForm(props) {
       if(formValues?.equipments){
         setEquipmentIds(formValues.equipments.map(x=>x.id))
       }
-      console.log(formValues.equipments)
   }, [])
 
     useEffect(() => {
@@ -49,7 +48,7 @@ function EditForm(props) {
       if(formValues?.equipments){
         setEquipmentIds(formValues.equipments.map(x=>x.id))
       }
-      console.log('setvalues',formValues.equipments)
+      
   }, [formValues])
 
 
@@ -79,8 +78,6 @@ function EditForm(props) {
     const {
       target: { value },
     } = event;
-
-    console.log('handleEquipmentIds', value)
 
     setEquipmentIds(
       // On autofill we get a stringified value.

@@ -45,7 +45,6 @@ function AssignPermissionForm(props) {
       .catch(() => toast.error("مشکلی در گرفتن لیست دسترسی ها رخ داده است"))
   }, [])
 
-  console.log('before', selectedPermissions)
   // 
   const handlePermissionSelection = (id, checked) => {
 
@@ -53,7 +52,7 @@ function AssignPermissionForm(props) {
       //because don't update selectedPermissions use this way
       const newPermissions = checked ? [...prev, Number(id)] : prev.filter(x => x !== id)
       onFieldChange("permissionIds", newPermissions)
-      console.log('after', newPermissions)
+
       return newPermissions;
     })
   }

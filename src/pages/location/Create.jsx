@@ -63,7 +63,7 @@ export default function Create() {
         [formValues, formErrors],
     );
     const handleFormSubmit = React.useCallback(async () => {
-        console.log('locationCreate',formValues)
+        
         const { issues } = CreateValidation(formValues);
         if (issues && issues.length > 0) {
             setFormErrors(

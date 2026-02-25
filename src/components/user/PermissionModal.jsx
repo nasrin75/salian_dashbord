@@ -29,8 +29,7 @@ const PermissionModal = (props) => {
     const {
         open, close,allPermissions
     } = props
-    //const [permissions, setPermissions] = useState([]);
-console.log("allPermissions ==",props.allPermissions);
+
     return (
         <Modal
             open={open}
