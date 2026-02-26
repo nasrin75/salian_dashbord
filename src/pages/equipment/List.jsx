@@ -126,7 +126,7 @@ export default function List() {
 
     const handleEquipmentEditPage = useCallback(
         (equipmentID) => () => {
-            
+
             navigate(`/equipment/edit/${equipmentID}`);
         },
         [navigate],
@@ -166,21 +166,31 @@ export default function List() {
     const initialState = useMemo(
         () => ({
             pagination: { paginationModel: { pageSize: INITIAL_PAGE_SIZE } },
+            columns: {
+                columnVisibilityModel: {
+                    // Hide columns, the other columns will remain visible
+                }
+            }
         }),
         [],
     );
 
     const isAlow = hasPermission([PERMISSION.EQUIPMENT_EDIT, PERMISSION.EQUIPMENT_DELETE]);
-    
+
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'شماره ', width: 240, align: 'right', },
             { field: 'name', headerName: 'نام قطعه', width: 140, align: 'right' },
             { field: 'type', headerName: 'نوع قطعه', width: 140, align: 'right' },
-            { field: 'usedCount', headerName: 'تعداداستفاده شده', width: 140, align: 'right' },
-            { field: 'unusedCount', headerName: 'تعداداستفاده نشده', width: 240, align: 'right' },
+            { field: 'usedCount', headerName: 'تعداداستفاده شده', width: 160, align: 'right' },
+            { field: 'unsedCount', headerName: 'تعداداستفاده نشده', width: 160, align: 'right' },
+            { field: 'sendToChargeCount', headerName: 'ارسال جهت شارژ', width: 160, align: 'right' },
+            { field: 'backFromChargeCount', headerName: 'برگشت از شارژ', width: 160, align: 'right' },
+            { field: 'repairCount', headerName: 'تعمیر', width: 100, align: 'right' },
+            { field: 'uselessCount', headerName: 'اسقاطی', width: 100, align: 'right' },
             ...(isAlow ? [{
                 field: '',
+                width: 340,
                 headerName: 'عملیات',
                 type: 'actions',
                 flex: 1,

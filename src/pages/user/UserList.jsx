@@ -117,7 +117,7 @@ export default function UserList() {
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
-   
+
     const request = {
       'userId': searchParams.get("userId")
     }
@@ -155,6 +155,11 @@ export default function UserList() {
     [navigate],
   );
 
+  const handleInventoryHistoty = useCallback(
+    (userID) => () => {
+      navigate(APP_ROUTES.HISTORY_LIST_PATH + `?entityId=${userID}&entityName=Users`)
+    }, [navigate]
+  )
   const handelDeleteUser = useCallback(
     (user) => async () => {
 
@@ -247,7 +252,7 @@ export default function UserList() {
               key="log-item"
               icon={<History />}
               label="log"
-            // onClick={handelDeleteEmployee(row)}
+              onClick={handleInventoryHistoty(row.id)}
             />)
           }
           return actions;

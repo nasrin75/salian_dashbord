@@ -197,7 +197,6 @@ export default function List() {
     const handleInventoryHistoty = useCallback(
         (inventoryID) => () => {
             navigate(APP_ROUTES.HISTORY_LIST_PATH + `?entityId=${inventoryID}&entityName=Inventories`)
-            // navigate(`/inventory/${inventoryID}/history`)
         }, [navigate]
     )
 
