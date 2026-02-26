@@ -110,11 +110,105 @@ export const ResponseMessage = [
         'mgs': "ویژگی قطعات انبار"
     },
     {
-        'key':'PermissionEntityUserEntity',
-        'mgs':'دسترسی به کاربر',
+        'key': 'PermissionEntityUserEntity',
+        'mgs': 'دسترسی به کاربر',
     },
     {
-        'key':'PermissionEntityRoleEntity',
-        'mgs':'دسترسی به نقش',
+        'key': 'PermissionEntityRoleEntity',
+        'mgs': 'دسترسی به نقش',
+    },
+    {
+        'key': 'PropertyNumber',
+        'mgs': 'شماره اموال'
+    },
+    {
+        'key': 'SerialNumber',
+        'mgs': 'شماره سریال'
+    },
+    {
+        'key': 'InvoiceNumber',
+        'mgs': 'شماره فاکتور'
+    },
+    {
+        'key': 'InvoiceImage',
+        'mgs': 'تصویر فاکتور'
+    },
+    {
+        'key': 'Description',
+        'mgs': 'توضیحات'
+    },
+    {
+        'key': 'ModelName',
+        'mgs': 'مدل'
+    },
+    {
+        'key': 'Capacity',
+        'mgs': 'Capacity'
+    },
+    {
+        'key': 'Size',
+        'mgs': 'سایز'
+    },
+    {
+        'key': 'DeletedAt',
+        'mgs': 'تاریخ حذف'
+    },
+    {
+        'key': 'Email',
+        'mgs': 'ایمیل'
+    },
+    {
+        'key': 'Username',
+        'mgs': 'نام کاربری'
+    },
+    {
+        'key': 'Password',
+        'mgs': 'رمزعبور'
+    },
+    {
+        'key': 'RoleFaName',
+        'mgs': 'نام نقش'
+    },
+    {
+        'key': 'RoleId',
+        'mgs': 'آیدی نقش'
+    },
+    {
+        'key': 'Mobile',
+        'mgs': 'موبایل'
+    },
+    {
+        'key': 'EmployeeName',
+        'mgs': 'پرسنل'
+    },
+    {
+        'key': 'EquipmentId',
+        'mgs': 'آیدی قطعه'
+    },
+    {
+        'key': 'EquipmentName',
+        'mgs': 'نام قطعه'
+    },
+    {
+        'key': 'ItNumber',
+        'mgs': 'شماره IT'
+    },
+    {
+        'key': 'LocationTitle',
+        'mgs': 'بخش'
+    },
+    {
+        'key': "UserUsername",
+        'mgs': "کاربر"
+    },
+    {
+        'key': "CreatedAt",
+        'mgs': "تاریخ ایجاد"
+    },
+    {
+        'key': 'IsCheckIp',
+        'mgs': 'چک IP',
     }
+
+
 ]
