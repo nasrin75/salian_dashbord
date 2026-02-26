@@ -73,8 +73,8 @@ export default function DetailsModal(props) {
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
               <TableHead>
                 <StyledTableRow>
-                  {
-                    Object.entries(data.newData).map((val) => {
+                  {data.newData &&
+                    Object.entries(data.newData)?.map((val) => {
                       return <StyledTableCell align="right">{getMessage(val[0])}</StyledTableCell>
                     })
                   }
@@ -83,8 +83,8 @@ export default function DetailsModal(props) {
               <TableBody>
 
                 <StyledTableRow>
-                  {
-                    Object.entries(data.newData).map((val) => {
+                  {data.newData &&
+                    Object.entries(data.newData)?.map((val) => {
                       return <StyledTableCell align="right">{getMessage(val[1])}</StyledTableCell>
                     })
                   }
@@ -99,8 +99,8 @@ export default function DetailsModal(props) {
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
               <TableHead>
                 <StyledTableRow>
-                  {
-                    Object.entries(data.oldData).map((val) => {
+                  {data.oldData &&
+                    Object.entries(data.oldData)?.map((val) => {
                       return <BeforeDataStyledTableCell align="right">{getMessage(val[0])}</BeforeDataStyledTableCell>
                     })
                   }
@@ -109,9 +109,9 @@ export default function DetailsModal(props) {
               <TableBody>
 
                 <StyledTableRow>
-                  {
-                    Object.entries(data.oldData).map((val) => {
-                      return <BeforeDataStyledTableCell align="right">{getMessage(val[1])}</BeforeDataStyledTableCell>
+                  {data.oldData &&
+                    Object.entries(data.oldData)?.map((val) => {
+                      return <BeforeDataStyledTableCell align="right">{val[1] && getMessage(val[1])}</BeforeDataStyledTableCell>
                     })
                   }
                 </StyledTableRow>
