@@ -68,7 +68,7 @@ export default function DetailsModal(props) {
         sx={{ flexGrow: 1, width: '100%' }}
       >
         <DialogContent dividers>
-          <DialogTitle>دیتاهای جدید</DialogTitle>
+          <DialogTitle>دیتاهای جدید  ( {getMessage(data.actionType)} )</DialogTitle>
           <TableContainer >
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
               <TableHead>
