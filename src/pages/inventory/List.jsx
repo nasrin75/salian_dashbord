@@ -30,6 +30,7 @@ export default function List() {
     const dialogs = useDialogs();
     const { getMessage } = useTranslate();
     const [allFeatureNames, setAllFeatureNames] = useState([]);
+    const [visibilityColumns, setVisibilityColumns] = useState({});
 
     const [paginationModel, setPaginationModel] = useState({
         page: searchParams.get('page') ? Number(searchParams.get('page')) : 0,
@@ -107,6 +108,31 @@ export default function List() {
         [navigate, pathname, searchParams],
     );
 
+    // features columns
+    useEffect(() => {
+        getFeaturesName()
+            .then(data => {
+                setAllFeatureNames(data.data['result'])
+                console.log('getFeaturesName', data.data['result'])
+            })
+            .catch(err => toast.error("مشکلی در گرفتن نام ویژگی ها رخ داده است."))
+    }, []);
+
+    const featureColumns = useMemo(() => {
+        return allFeatureNames.map(featureName => ({
+            field: featureName,
+            headerName: featureName,
+            width: 200,
+            align: 'right',
+            renderCell: (params) => {
+                const features = params.row.features || [];
+                const item = features.find(f => f.name === featureName);
+                return item ? <span>{item.value}</span> : <span>-</span>;
+            },
+        }));
+    }, [allFeatureNames])
+
+    // End features columns
 
     const loadData = useCallback(async () => {
         setIsLoading(true);
@@ -118,41 +144,37 @@ export default function List() {
                 setIsLoading(false)
 
             }).catch((err) => {
-                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
-                toast.error(message);
+                toast.error("مشکلی در گرفتن اطلاعات رخ داده است");
             })
 
         setIsLoading(false);
-    }, [paginationModel, sortModel, filterModel, searchParams]);
+    }, [paginationModel, sortModel, filterModel, searchParams, allFeatureNames, featureColumns]);
 
     useEffect(() => {
         loadData();
     }, [loadData]);
 
-    // features columns
     useEffect(() => {
-        getFeaturesName()
-            .then(data => {
-                setAllFeatureNames(data.data['result'])
-                console.log('getFeaturesName', data.data['result'])
-            })
-            .catch(err => toast.error("مشکلی در گرفتن نام ویژگی ها رخ داده است."))
-    }, [])
+        // Hide columns, the other columns will remain visible
+        const visibilityColumns = {
+            location: false,
+            user: false,
+            expireWarrantyDate: false,
+            deliveryDate: false,
+            size: false,
+            capacity: false,
+            invoiceNumber: false,
+            invoiceImage: false,
+            description: false,
+        }
 
+        allFeatureNames.forEach(featureName => {
+            { visibilityColumns[featureName] = false }
+        })
 
-    const featureColumns = allFeatureNames.map(featureName => ({
-        field: featureName,
-        headerName: featureName,
-        width: 200,
-        align: 'right',
-        renderCell: (params) => {
-            const features = params.row.features || [];
-            const item = features.find(f => f.name === featureName);
-            return item ? <span>{item.value}</span> : <span>-</span>;
-        },
-    }));
-    // End features columns
+        setVisibilityColumns(visibilityColumns);
 
+    }, [allFeatureNames])
     const handleCreateClick = useCallback(() => {
         navigate(APP_ROUTES.INVENTORY_CREATE_PATH);
     }, [navigate]);
@@ -201,20 +223,6 @@ export default function List() {
             pagination: {
                 paginationModel: { pageSize: INITIAL_PAGE_SIZE }
             },
-            columns: {
-                columnVisibilityModel: {
-                    // Hide columns, the other columns will remain visible
-                    location: false,
-                    user: false,
-                    expireWarrantyDate: false,
-                    deliveryDate: false,
-                    size: false,
-                    capacity: false,
-                    invoiceNumber: false,
-                    invoiceImage: false,
-                    description: false,
-                }
-            }
         }),
         [],
     );
@@ -287,6 +295,15 @@ export default function List() {
                 type: 'date',
                 valueFormatter: params => dayjs(params).format("YYYY/MM/DD h:m"),
             },
+            // {
+            //     field: 'updatedAt',
+            //     headerName: 'آخرین بروزرسانی (میلادی)',
+            //     width: 240,
+            //     align: 'right',
+            //     type: 'date',
+            //     valueFormatter: params =>parse(params).format("YYYY/MM/DD h:m"),
+
+            // },
             { field: 'description', headerName: 'توضیحات', width: 140, align: 'right' },
             ...(isAlow ? [{
                 field: '',
@@ -356,6 +373,9 @@ export default function List() {
                     align="center"
                     pagination
                     disableVirtualization
+                    columnVisibilityModel={visibilityColumns}
+                    onColumnVisibilityModelChange={setVisibilityColumns}
+                    getRowId={(row) => row.id}
                     // sortingMode="server"
                     // filterMode="server"
                     // paginationMode="server"

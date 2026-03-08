@@ -17,3 +17,7 @@ export const createFeature = (data) => {
 export const updateFeature = (data) => {
     return Api.put('/feature/edit', data)
 }
+
+export const getFeaturesName = () => {
+    return Api.get('/feature/featuresName')
+}
