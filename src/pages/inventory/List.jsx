@@ -18,6 +18,7 @@ import { APP_ROUTES } from '../../utlis/constants/routePath';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
 import useTranslate from '../../hooks/useTranslate/useTranslate';
+import { getFeaturesName } from '../../api/FeatureApi';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -28,6 +29,7 @@ export default function List() {
     const { hasPermission } = useAuth();
     const dialogs = useDialogs();
     const { getMessage } = useTranslate();
+    const [allFeatureNames, setAllFeatureNames] = useState([]);
 
     const [paginationModel, setPaginationModel] = useState({
         page: searchParams.get('page') ? Number(searchParams.get('page')) : 0,
@@ -127,6 +129,29 @@ export default function List() {
         loadData();
     }, [loadData]);
 
+    // features columns
+    useEffect(() => {
+        getFeaturesName()
+            .then(data => {
+                setAllFeatureNames(data.data['result'])
+                console.log('getFeaturesName', data.data['result'])
+            })
+            .catch(err => toast.error("مشکلی در گرفتن نام ویژگی ها رخ داده است."))
+    }, [])
+
+
+    const featureColumns = allFeatureNames.map(featureName => ({
+        field: featureName,
+        headerName: featureName,
+        width: 200,
+        align: 'right',
+        renderCell: (params) => {
+            const features = params.row.features || [];
+            const item = features.find(f => f.name === featureName);
+            return item ? <span>{item.value}</span> : <span>-</span>;
+        },
+    }));
+    // End features columns
 
     const handleCreateClick = useCallback(() => {
         navigate(APP_ROUTES.INVENTORY_CREATE_PATH);
@@ -201,11 +226,9 @@ export default function List() {
     )
 
     const isAlow = hasPermission([PERMISSION.INVENTORY_EDIT, PERMISSION.INVENTORY_DELETE, PERMISSION.INVENTORY_HISTORY]);
-
-
     const columns = useMemo(
         () => [
-            { field: 'id', headerName: 'ID', width: 100, align: 'right', },
+            { field: 'id', headerName: 'ID', width: 100, align: 'right' },
             { field: 'employee', headerName: 'مالک', width: 140, align: 'right' },
             { field: 'location', headerName: 'بخش', width: 140, align: 'right' },
             { field: 'propertyNumber', headerName: 'شماره اموال', width: 140, align: 'right' },
@@ -219,7 +242,7 @@ export default function List() {
                 align: 'right',
                 renderCell: params => {
                     return getMessage(params.row.status)
-                }
+                },
             },
             { field: 'user', headerName: 'کاربر', width: 140, align: 'right' },
             { field: 'serialNumber', headerName: 'شماره سریال', width: 140, align: 'right' },
@@ -250,11 +273,12 @@ export default function List() {
                             <img src={
                                 process.env.REACT_APP_BASE_URL +
                                 `/images/inventory/${params.row?.invoiceImage}`
-                            } width={100} />
+                            } alt="Invoice" width={100} />
                         </div>
                     )
                 }
             },
+            ...featureColumns,
             {
                 field: 'updatedAt',
                 headerName: 'آخرین بروزرسانی',
@@ -268,7 +292,7 @@ export default function List() {
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
-                width: 240,
+                width: 140,
                 align: 'center',
                 getActions: ({ row }) => {
                     const actions = [];
@@ -301,7 +325,8 @@ export default function List() {
                 }
             },] : [])
         ],
-        [handleInventoryEditPage, handelDeleteInventory],
+
+        [handleInventoryEditPage, handelDeleteInventory, isAlow, hasPermission, PERMISSION, getMessage, dayjs, EditIcon, DeleteIcon, History, process.env.REACT_APP_BASE_URL],
     );
 
     const pageTitle = 'انبار';
@@ -326,7 +351,7 @@ export default function List() {
 
                 <DataGrid
                     rows={inventories}
-                    rowCount={inventories.length}
+                    //rowCount={inventories.length}
                     columns={columns}
                     align="center"
                     pagination
