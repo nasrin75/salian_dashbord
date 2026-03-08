@@ -14,7 +14,7 @@ import { deleteEquipment, getEquipments } from '../../api/EquipmentApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
-
+import { ExportExcel } from '@mui/x-data-grid-premium';
 const INITIAL_PAGE_SIZE = 10;
 
 export default function List() {
@@ -169,6 +169,10 @@ export default function List() {
             columns: {
                 columnVisibilityModel: {
                     // Hide columns, the other columns will remain visible
+                    sendToChargeCount: false,
+                    backFromChargeCount: false,
+                    repairCount: false,
+                    uselessCount: false,
                 }
             }
         }),
@@ -241,7 +245,6 @@ export default function List() {
             }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>
-
                 <DataGrid
                     rows={equipments}
                     rowCount={equipments.length}
