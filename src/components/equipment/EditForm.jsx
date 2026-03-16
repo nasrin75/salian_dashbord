@@ -76,10 +76,17 @@ function EditForm(props) {
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
+                value={
+                  formValues.type === 'internal'
+                    ? '1'
+                    : formValues.type === 'external'
+                    ? '2'
+                    : formValues.type 
+                }
                 onChange={(e) => onFieldChange("type", e.target.value, "radio")}
               >
-                <FormControlLabel value="1" control={<Radio checked={formValues.type == ("internal" || formValues.type == '1') ?? false} />} label="Internal" />
-                <FormControlLabel value="2" control={<Radio checked={formValues.type == ("external" || formValues.type == '2') ?? false} />} label="External" />
+                <FormControlLabel value="1" control={<Radio />} label="Internal" />
+                <FormControlLabel value="2" control={<Radio />} label="External" />
               </RadioGroup>
               <FormHelperText error={!!formErrors.type}>
                 {formErrors.type ?? ' '}

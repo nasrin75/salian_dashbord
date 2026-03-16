@@ -108,36 +108,55 @@ function DashboardSidebar({
   const hasDrawerTransitions =
     isOverSmViewport && (!disableCollapsibleSidebar || isOverMdViewport);
 
-  const getDrawerContent = useCallback(
-    (viewport) => (
-      <Fragment>
-        <Toolbar />
-        <Box
-          component="nav"
-          aria-label={`${viewport.charAt(0).toUpperCase()}${viewport.slice(1)}`}
-          sx={{
-            height: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            overflow: 'hidden',
-            scrollbarGutter: mini ? 'stable' : 'auto',
-            overflowX: 'hidden',
-            pt: !mini ? 0 : 2,
-            ...(hasDrawerTransitions
-              ? getDrawerSxTransitionMixin(isFullyExpanded, 'padding')
-              : {}),
-          }}
-        >
-          <List
-            dense
+    const getDrawerContent = useCallback(
+      (viewport) => (
+        <Fragment>
+          <Toolbar />
+          <Box
+            component="nav"
+            aria-label={`${viewport.charAt(0).toUpperCase()}${viewport.slice(1)}`}
             sx={{
-              padding: mini ? 0 : 0.5,
-              mb: 4,
-              width: mini ? MINI_DRAWER_WIDTH : 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              overflowY: 'auto', 
+              scrollbarGutter: mini ? 'stable' : 'auto',
+              overflowX: 'hidden',
+              pt: !mini ? 0 : 2,
+              ...(hasDrawerTransitions
+                ? getDrawerSxTransitionMixin(isFullyExpanded, 'padding')
+                : {}),
             }}
           >
-            {
+            {!mini && ( 
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              py: 2, 
+            }}
+          >
+            <img
+              src="./Assets/images/logo.png" 
+              alt="Dashboard Logo"
+              style={{
+                height: '48px', 
+                width: 'auto',
+                objectFit: 'contain', 
+              }}
+            />
+          </Box>
+        )}
+            <List
+              dense
+              sx={{
+                padding: mini ? 0 : 0.5,
+                mb: 4,
+                width: mini ? MINI_DRAWER_WIDTH : 'auto',
+                flexGrow: 1, 
+              }}
+            >
+             {
               hasPermission([PERMISSION.INVENTORY_LIST]) && (<DashboardSidebarPageItem
                 id="inventory"
                 title="انبار"
@@ -218,6 +237,16 @@ function DashboardSidebar({
               )
             }
             {
+              hasPermission([PERMISSION.NOTIFICATION_LIST]) && (
+                <DashboardSidebarPageItem
+                  id="notifications"
+                  title="اطلاع رسانی"
+                  icon={<BuildCircleOutlined />}
+                  href="/notifications"
+                />
+              )
+            }
+            {
               hasPermission([PERMISSION.LOCATION_LIST, PERMISSION.ACTION_TYPE_LIST, PERMISSION.ROLE_LIST, PERMISSION.PERMISSION_LIST, PERMISSION.FEATURE_LIST]) && (
                 <DashboardSidebarPageItem
                   id="setting"
@@ -278,8 +307,7 @@ function DashboardSidebar({
                           selected={!!matchPath('/settings/features', pathname)}
                         />)
                       }
-
-                    </List>
+                           </List>
                   }
                 />)
             }
@@ -311,12 +339,13 @@ function DashboardSidebar({
                 </List>
               }
             />
-          </List>
-        </Box>
-      </Fragment>
-    ),
-    [mini, hasDrawerTransitions, isFullyExpanded, expandedItemIds, pathname],
-  );
+            </List>
+          </Box>
+        </Fragment>
+      ),
+      [mini, hasDrawerTransitions, isFullyExpanded, expandedItemIds, pathname, theme.mixins.toolbar.minHeight], // Toolbar height را اینجا اضافه کنید اگر لازم بود
+    );
+  
 
   const getDrawerSharedSx = useCallback(
     (isTemporary) => {
@@ -329,7 +358,6 @@ function DashboardSidebar({
         ...getDrawerWidthTransitionMixin(expanded),
         ...(isTemporary ? { position: 'absolute' } : {}),
         [`& .MuiDrawer-paper`]: {
-          position: 'absolute',
           width: drawerWidth,
           boxSizing: 'border-box',
           backgroundImage: 'none',

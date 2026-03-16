@@ -227,7 +227,6 @@ export default function EmployeeList() {
         field: 'actions',
         type: 'actions',
         flex: 1,
-        align: 'right',
         getActions: ({ row }) => [
           <GridActionsCellItem
             key="edit-item"

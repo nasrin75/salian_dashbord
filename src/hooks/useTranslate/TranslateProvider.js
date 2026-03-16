@@ -8,14 +8,14 @@ const TranslateProvider = ({ children }) => {
          if( !message  || typeof(message) !== 'string'){
             return message;
         }
-        console.log('mgs',message);
+        
         if( message === undefined || message == null || isNumber(message)){
             return message;
         }
         
         const resp = ResponseMessage.find((item) => item?.key && item?.key.toUpperCase() === message.toUpperCase());
         const result = resp?.mgs || message;
-        console.log("type : ",typeof(result))
+        
         return  result;
     }
 
