@@ -22,3 +22,7 @@ export const getUserPermissions = (userID) => {
 export const getMyPermission = () => {
     return Api.get('/myPermissions')
 }
+
+export const getMee = () => {
+    return Api.get('/user/me')
+}
