@@ -8,13 +8,21 @@ import { feedbackCustomizations } from './customizations/feedback';
 import { navigationCustomizations } from './customizations/navigation';
 import { surfacesCustomizations } from './customizations/surfaces';
 import { colorSchemes, typography, shadows, shape } from './themePrimitives';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
+import rtlPlugin from 'stylis-plugin-rtl';
 
 function AppTheme(props) {
   const { children, disableCustomTheme, themeComponents } = props;
+  const cacheRTL = createCache({
+    key: 'muirtl',
+    stylisPlugins: [rtlPlugin],
+  });
   const theme = React.useMemo(() => {
     return disableCustomTheme
       ? {}
       : createTheme({
+          direction:'rtl',
           cssVariables: {
             colorSchemeSelector: 'data-mui-color-scheme',
             cssVarPrefix: 'template',
@@ -37,9 +45,11 @@ function AppTheme(props) {
     return <React.Fragment>{children}</React.Fragment>;
   }
   return (
-    <ThemeProvider theme={theme} disableTransitionOnChange>
-      {children}
-    </ThemeProvider>
+    <CacheProvider value={cacheRTL}> 
+      <ThemeProvider theme={theme} disableTransitionOnChange>
+        {children}
+      </ThemeProvider>
+    </CacheProvider>
   );
 }
 
