@@ -175,8 +175,8 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'name', headerName: 'عنوان', width: 240, align: 'right', },
-            { field: 'equipments', headerName: 'نام قطعات', width: 240, align: 'right', },
+            { field: 'name', headerName: 'عنوان', width: 240},
+            { field: 'equipments', headerName: 'نام قطعات', width: 240 },
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',

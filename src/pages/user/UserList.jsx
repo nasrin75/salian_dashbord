@@ -202,16 +202,15 @@ export default function UserList() {
 
   const columns = useMemo(
     () => [
-      { field: 'username', headerName: 'نام کاربری', width: 240, align: 'right' },
-      { field: 'mobile', headerName: 'موبایل', width: 140, align: 'right' },
-      { field: 'email', headerName: 'ایمیل', width: 240, align: 'right' },
-      { field: 'role', headerName: 'نقش', width: 140, align: 'right' },
+      { field: 'username', headerName: 'نام کاربری', width: 240},
+      { field: 'mobile', headerName: 'موبایل', width: 140},
+      { field: 'email', headerName: 'ایمیل', width: 240},
+      { field: 'role', headerName: 'نقش', width: 140},
       {
         field: 'status',
         headerName: 'وضعیت',
         width: 140,
         type: 'string',
-        align: 'right',
         renderCell: params => params.row.status == 'Active' ? 'فعال' : 'غیرفعال'
       },
       ...(isAlow ? [{

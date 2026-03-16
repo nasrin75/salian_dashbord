@@ -176,9 +176,9 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'title', headerName: 'نام', width: 240, align: 'right', },
-            { field: 'abbreviation', headerName: 'مخفف', width: 140, align: 'right' },
-            { field: 'isShow', headerName: 'نمایش', width: 140, align: 'right', type: "boolean" },
+            { field: 'title', headerName: 'نام', width: 240 },
+            { field: 'abbreviation', headerName: 'مخفف', width: 140},
+            { field: 'isShow', headerName: 'نمایش', width: 140, type: "boolean" },
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',

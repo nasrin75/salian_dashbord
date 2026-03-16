@@ -172,9 +172,9 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'name', headerName: 'عنوان', width: 440, align: 'right', },
-            { field: 'title', headerName: 'عنوان فارسی', width: 440, align: 'right', },
-            { field: 'category', headerName: 'دسته بندی', width: 440, align: 'right', },
+            { field: 'name', headerName: 'عنوان', width: 440 },
+            { field: 'title', headerName: 'عنوان فارسی', width: 440},
+            { field: 'category', headerName: 'دسته بندی', width: 440},
         ],
         [handlePermissionEditPage, handelDeletePermission],
     );

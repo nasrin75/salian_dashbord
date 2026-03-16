@@ -113,7 +113,6 @@ export default function List() {
         getFeaturesName()
             .then(data => {
                 setAllFeatureNames(data.data['result'])
-                console.log('getFeaturesName', data.data['result'])
             })
             .catch(err => toast.error("مشکلی در گرفتن نام ویژگی ها رخ داده است."))
     }, []);
@@ -123,7 +122,6 @@ export default function List() {
             field: featureName,
             headerName: featureName,
             width: 200,
-            align: 'right',
             renderCell: (params) => {
                 const features = params.row.features || [];
                 const item = features.find(f => f.name === featureName);
@@ -236,45 +234,42 @@ export default function List() {
     const isAlow = hasPermission([PERMISSION.INVENTORY_EDIT, PERMISSION.INVENTORY_DELETE, PERMISSION.INVENTORY_HISTORY]);
     const columns = useMemo(
         () => [
-            { field: 'id', headerName: 'ID', width: 100, align: 'right' },
-            { field: 'employee', headerName: 'مالک', width: 140, align: 'right' },
-            { field: 'location', headerName: 'بخش', width: 140, align: 'right' },
-            { field: 'propertyNumber', headerName: 'شماره اموال', width: 140, align: 'right' },
-            { field: 'brandName', headerName: 'برند', width: 140, align: 'right' },
-            { field: 'modelName', headerName: 'مدل', width: 140, align: 'right' },
-            { field: 'equipment', headerName: 'قطعه', width: 140, align: 'right' },
+            { field: 'id', headerName: 'ID', width: 100 },
+            { field: 'employee', headerName: 'مالک', width: 140},
+            { field: 'location', headerName: 'بخش', width: 140},
+            { field: 'propertyNumber', headerName: 'شماره اموال', width: 140},
+            { field: 'brandName', headerName: 'برند', width: 140},
+            { field: 'modelName', headerName: 'مدل', width: 140},
+            { field: 'equipment', headerName: 'قطعه', width: 140},
             {
                 field: 'status',
                 headerName: 'وضعیت',
                 width: 140,
-                align: 'right',
                 renderCell: params => {
                     return getMessage(params.row.status)
                 },
             },
-            { field: 'user', headerName: 'کاربر', width: 140, align: 'right' },
-            { field: 'serialNumber', headerName: 'شماره سریال', width: 140, align: 'right' },
+            { field: 'user', headerName: 'کاربر', width: 140 },
+            { field: 'serialNumber', headerName: 'شماره سریال', width: 140},
             {
                 field: 'expireWarrantyDate',
                 headerName: 'تاریخ اتمام گارانتی',
                 width: 140,
-                align: 'right',
                 valueFormatter: params => dayjs(params).format("YYYY/MM/DD")
             },
             {
                 field: 'deliveryDate',
                 headerName: 'تاریخ تحویل',
                 width: 140,
-                align: 'right',
                 valueFormatter: params => dayjs(params).format("YYYY/MM/DD")
             },
-            { field: 'size', headerName: 'سایز', width: 140, align: 'right' },
-            { field: 'capacity', headerName: 'capacity', width: 140, align: 'right' },
-            { field: 'itNumber', headerName: 'شماره IT', width: 100, align: 'right' },
-            { field: 'itParentNumber', headerName: 'شماره IT Parent', width: 140, align: 'right' },
-            { field: 'invoiceNumber', headerName: 'شماره فاکتور', width: 140, align: 'right' },
+            { field: 'size', headerName: 'سایز', width: 140},
+            { field: 'capacity', headerName: 'capacity', width: 140},
+            { field: 'itNumber', headerName: 'شماره IT', width: 100},
+            { field: 'itParentNumber', headerName: 'شماره IT Parent', width: 140},
+            { field: 'invoiceNumber', headerName: 'شماره فاکتور', width: 140},
             {
-                field: 'invoiceImage', headerName: 'تصویر فاکتور', width: 140, align: 'right',
+                field: 'invoiceImage', headerName: 'تصویر فاکتور', width: 140,
                 renderCell: (params) => {
                     return (params.row?.invoiceImage &&
                         <div>
@@ -291,7 +286,6 @@ export default function List() {
                 field: 'updatedAt',
                 headerName: 'آخرین بروزرسانی',
                 width: 240,
-                align: 'right',
                 type: 'date',
                 valueFormatter: params => dayjs(params).format("YYYY/MM/DD h:m"),
             },
@@ -299,12 +293,11 @@ export default function List() {
             //     field: 'updatedAt',
             //     headerName: 'آخرین بروزرسانی (میلادی)',
             //     width: 240,
-            //     align: 'right',
             //     type: 'date',
             //     valueFormatter: params =>parse(params).format("YYYY/MM/DD h:m"),
 
             // },
-            { field: 'description', headerName: 'توضیحات', width: 140, align: 'right' },
+            { field: 'description', headerName: 'توضیحات', width: 140},
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',

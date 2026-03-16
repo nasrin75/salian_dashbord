@@ -181,12 +181,11 @@ export default function List() {
     const isAlow = hasPermission([PERMISSION.HISTORY_DELETE, PERMISSION.HISTORY_DETAILS]);
     const columns = useMemo(
         () => [
-            { field: 'id', headerName: 'شناسه', width: 240, align: 'right', },
+            { field: 'id', headerName: 'شناسه', width: 140 },
             {
                 field: 'actionType',
                 headerName: 'عملیات',
                 width: 140,
-                align: 'right',
                 renderCell: params => {
                     return getMessage(params.row.actionType)
                 }
@@ -194,8 +193,7 @@ export default function List() {
             {
                 field: 'entity',
                 headerName: 'بخش',
-                width: 240,
-                align: 'right',
+                width: 140,
                 renderCell: params => {
                     const mgs = params.row.newData?.Status != null
                         ? getMessage(params.row.entity) + " ( " + getMessage(params.row.newData?.Status) + " )"
@@ -205,17 +203,16 @@ export default function List() {
                 }
             },
             {
-                field: 'user', headerName: 'کاربر', width: 140, align: 'right',
+                field: 'user', headerName: 'کاربر', width: 140,
                 renderCell: params => {
                     return <Link className='link' to={`users?userId=${params.row.userId}`}> {params.row.user}</Link>
                 }
             },
-            { field: 'ip', headerName: 'IP', width: 140, align: 'right' },
+            { field: 'ip', headerName: 'IP', width: 140},
             {
                 field: 'createdAt',
                 headerName: 'آخرین بروزرسانی',
                 width: 240,
-                align: 'right',
                 type: 'date',
                 valueFormatter: params => dayjs(params).format("YYYY/MM/DD h:m:s"),
             },
@@ -225,6 +222,7 @@ export default function List() {
                 type: 'actions',
                 flex: 1,
                 align: 'center',
+                width: 140,
                 getActions: ({ row }) => {
                     const actions = [];
                     if (hasPermission([PERMISSION.HISTORY_DELETE])) {

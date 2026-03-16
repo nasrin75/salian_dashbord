@@ -178,10 +178,10 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'id', headerName: 'کدپرسنلی ', width: 240, align: 'right', },
-            { field: 'name', headerName: 'نام', width: 140, align: 'right' },
-            { field: 'email', headerName: 'ایمیل', width: 240, align: 'right' },
-            { field: 'location', headerName: 'موقعیت', width: 140, align: 'right' },
+            { field: 'id', headerName: 'کدپرسنلی ', width: 240},
+            { field: 'name', headerName: 'نام', width: 140},
+            { field: 'email', headerName: 'ایمیل', width: 240},
+            { field: 'location', headerName: 'موقعیت', width: 140},
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
