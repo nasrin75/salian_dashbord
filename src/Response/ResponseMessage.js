@@ -208,7 +208,31 @@ export const ResponseMessage = [
     {
         'key': 'IsCheckIp',
         'mgs': 'چک IP',
-    }
+    },
+    {
+        'key': 'Type',
+        'mgs': 'نوع',
+    },
+    {
+        'key':'IsShowInMenu',
+        'mgs':'نمایش در منو',
+    },
+    {
+        'key':'ٔName',
+        'mgs':'نام',
+    },
+    {
+        'key':'Title',
+        'mgs':'عنوان',
+    },
+    {
+        'key':'Abbreviation',
+        'mgs':'مخفف',
+    },
+    {
+        'key':'IsShow',
+        'mgs':'نمایش دادن',
+}
 
 
 ]
