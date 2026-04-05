@@ -6,7 +6,6 @@ import Toolbar from '@mui/material/Toolbar';
 import { Navigate, Outlet } from 'react-router';
 import DashboardHeader from './layouts/header/DashboardHeader';
 import DashboardSidebar from './layouts/sidebar/DashboardSidebar';
-import SitemarkIcon from './SitemarkIcon';
 import useAuth from '../hooks/useAuth/useAuth';
 import Login from '../pages/auth/Login';
 
@@ -55,6 +54,7 @@ export default function DashboardLayout() {
         ref={layoutRef}
         sx={{
           position: 'relative',
+          
           //display: 'flex',
           overflow: 'hidden',
           height: '100%',
@@ -68,7 +68,7 @@ export default function DashboardLayout() {
           menuOpen=""
           onToggleMenu=""
         />
-        please enter
+        
         <Login />
       </Box>
     )
@@ -78,6 +78,7 @@ export default function DashboardLayout() {
       ref={layoutRef}
       sx={{
         position: 'relative',
+        flexDirection: 'row-reverse',
         display: 'flex',
         overflow: 'hidden',
         height: '100%',
@@ -85,7 +86,6 @@ export default function DashboardLayout() {
       }}
     >
       <DashboardHeader
-        logo={<SitemarkIcon />}
         title=""
         menuOpen={isNavigationExpanded}
         onToggleMenu={handleToggleHeaderMenu}
