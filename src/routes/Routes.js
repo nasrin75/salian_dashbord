@@ -9,9 +9,6 @@ import EquipmentEdit from '../pages/equipment/Edit';
 import LocationList from '../pages/location/List';
 import LocationCreate from '../pages/location/Create';
 import LocationEdit from '../pages/location/Edit';
-import ActionTypeList from '../pages/action_type/List';
-import ActionTypeCreate from '../pages/action_type/Create';
-import ActionTypeEdit from '../pages/action_type/Edit';
 import RoleList from '../pages/role/List';
 import RoleCreate from '../pages/role/Create';
 import RoleEdit from '../pages/role/Edit';
@@ -21,7 +18,7 @@ import PermissionEdit from '../pages/permission/Edit'
 import FeatureList from '../pages/feature/List';
 import FeatureCreate from '../pages/feature/Create';
 import FeatureEdit from '../pages/feature/Edit';
-import ProfileSetting from '../pages/profile/Setting';
+import Profile from '../pages/profile/Profile';
 import Inventory from '../pages/inventory/List';
 import InventoryCreate from '../pages/inventory/Create';
 import InventoryEdit from '../pages/inventory/Edit';
@@ -37,7 +34,11 @@ import UserCreate from '../pages/user/UserCreate';
 import { APP_ROUTES } from '../utlis/constants/routePath';
 import AssignPermission from '../pages/user/AssignPermission';
 import AssignRolePermission from '../pages/role/AssignPermission';
-
+import Notification from '../pages/notification/Notification';
+import Setting from '../pages/settings/Settings';
+import InventoryDuplicate from '../pages/inventory/DuplicateInventory';
+import NotFoundPage from '../pages/NotFound'
+import UnauthorizedPage from '../pages/Unauthorized'
 const Routes = () => {
 
     // user can access this route when is login
@@ -65,11 +66,6 @@ const Routes = () => {
             { path: APP_ROUTES.LOCATION_CREATE_PATH, element: <LocationCreate /> },
             { path: APP_ROUTES.LOCATION_EDIT_PATH, element: <LocationEdit /> },
 
-            //ActionTypes
-            { path: APP_ROUTES.ACTION_TYPE_LIST_PATH, element: <ActionTypeList /> },
-            { path: APP_ROUTES.ACTION_TYPE_CREATE_PATH, element: <ActionTypeCreate /> },
-            { path: APP_ROUTES.ACTION_TYPE_EDIT_PATH, element: <ActionTypeEdit /> },
-
             //Roles
             { path: APP_ROUTES.ROLE_LIST_PATH, element: <RoleList /> },
             { path: APP_ROUTES.ROLE_CREATE_PATH, element: <RoleCreate /> },
@@ -88,16 +84,23 @@ const Routes = () => {
 
 
             //Profile
-            { path: APP_ROUTES.PROFILE_SETTING_PATH, element: <ProfileSetting /> },
+            { path: APP_ROUTES.PROFILE_SETTING_PATH, element: <Profile /> },
             //Inventory
             { path: APP_ROUTES.INVENTORY_LIST_PATH, element: <Inventory /> },
             { path: APP_ROUTES.INVENTORY_CREATE_PATH, element: <InventoryCreate /> },
             { path: APP_ROUTES.INVENTORY_EDIT_PATH, element: <InventoryEdit /> },
             { path: APP_ROUTES.INVENTORY_HISTORY_PATH, element: <InventoryHistory /> },
+            { path: APP_ROUTES.INVENTORY_CREATE_DUPLICATE_PATH, element: <InventoryDuplicate /> },
 
             //History
             { path: APP_ROUTES.HISTORY_LIST_PATH, element: <History /> },
             { path: APP_ROUTES.HISTORY_DETAILS_PATH, element: <HistoryDetails /> },
+
+            //Notification
+            { path: APP_ROUTES.NOTIFICATION_LIST_PATH, element: <Notification /> },
+
+            //Settings
+            { path: APP_ROUTES.SETTING_LIST_PATH, element: <Setting /> },
         ],
     }];
 
@@ -108,6 +111,8 @@ const Routes = () => {
             Component: PublicRoutes,
             children: [
                 { path: APP_ROUTES.LOGIN_PATH, element: <Login /> },
+                { path: APP_ROUTES.NOT_FOUND_PATH, element: <NotFoundPage /> },
+                { path: APP_ROUTES.UNAUTHORIZED_PATH, element: <UnauthorizedPage /> },
             ]
         }
     ];

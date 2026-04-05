@@ -34,11 +34,7 @@ export const PERMISSION = {
     ROLE_EDIT: "role.edit",
     ROLE_DELETE: "role.delete",
     ROLE_ADD_PERMISSION: "role.add_permission",
-    //Action_type
-    ACTION_TYPE_LIST: "action_type.list",
-    ACTION_TYPE_CREATE: "action_type.create",
-    ACTION_TYPE_EDIT: "action_type.edit",
-    ACTION_TYPE_DELETE: "action_type.delete",
+
     //Feature
     FEATURE_LIST: "feature.list",
     FEATURE_CREATE: "feature.create",
@@ -47,5 +43,14 @@ export const PERMISSION = {
     //History
     HISTORY_LIST: "history.list",
     HISTORY_DELETE: "history.delete",
-    HISTORY_DETAILS: "history.details"
+    HISTORY_DETAILS: "history.details",
+
+    //Notification
+    NOTIFICATION_LIST :'notification.list',
+    SEND_SMS_NOTIFICATION :'notification.send.sms',
+    SEND_EMAIL_NOTIFICATION :'notification.send.email',
+    SEND_PUSH_NOTIFICATION :'notification.send.push',
+
+    SETTING_LIST : 'settings.list',
+    SETTING_EDIT : 'settings.edit',
 }

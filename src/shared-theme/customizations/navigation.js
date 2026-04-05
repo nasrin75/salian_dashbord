@@ -7,7 +7,7 @@ import { menuItemClasses } from '@mui/material/MenuItem';
 import { selectClasses } from '@mui/material/Select';
 import { tabClasses } from '@mui/material/Tab';
 import UnfoldMoreRoundedIcon from '@mui/icons-material/UnfoldMoreRounded';
-import { gray, brand } from '../themePrimitives';
+import { green, brand } from '../themePrimitives';
 
 /* eslint-disable import/prefer-default-export */
 export const navigationCustomizations = {
@@ -49,7 +49,7 @@ export const navigationCustomizations = {
           },
         },
         ...theme.applyStyles('dark', {
-          background: gray[900],
+          background: green[900],
           boxShadow:
             'hsla(220, 30%, 5%, 0.7) 0px 4px 16px 0px, hsla(220, 25%, 10%, 0.8) 0px 8px 16px -5px',
         }),
@@ -66,34 +66,34 @@ export const navigationCustomizations = {
       root: ({ theme }) => ({
         borderRadius: (theme.vars || theme).shape.borderRadius,
         border: '1px solid',
-        borderColor: gray[200],
+        borderColor: green[200],
         backgroundColor: (theme.vars || theme).palette.background.paper,
         boxShadow: `inset 0 1px 0 1px hsla(220, 0%, 100%, 0.6), inset 0 -1px 0 1px hsla(220, 35%, 90%, 0.5)`,
         '&:hover': {
-          borderColor: gray[300],
+          borderColor: green[300],
           backgroundColor: (theme.vars || theme).palette.background.paper,
           boxShadow: 'none',
         },
         [`&.${selectClasses.focused}`]: {
           outlineOffset: 0,
-          borderColor: gray[400],
+          borderColor: green[400],
         },
         '&:before, &:after': {
           display: 'none',
         },
         ...theme.applyStyles('dark', {
           borderRadius: (theme.vars || theme).shape.borderRadius,
-          borderColor: gray[700],
+          borderColor: green[700],
           backgroundColor: (theme.vars || theme).palette.background.paper,
-          boxShadow: `inset 0 1px 0 1px ${alpha(gray[700], 0.15)}, inset 0 -1px 0 1px hsla(220, 0%, 0%, 0.7)`,
+          boxShadow: `inset 0 1px 0 1px ${alpha(green[700], 0.15)}, inset 0 -1px 0 1px hsla(220, 0%, 0%, 0.7)`,
           '&:hover': {
-            borderColor: alpha(gray[700], 0.7),
+            borderColor: alpha(green[700], 0.7),
             backgroundColor: (theme.vars || theme).palette.background.paper,
             boxShadow: 'none',
           },
           [`&.${selectClasses.focused}`]: {
             outlineOffset: 0,
-            borderColor: gray[900],
+            borderColor: green[900],
           },
           '&:before, &:after': {
             display: 'none',
@@ -107,7 +107,7 @@ export const navigationCustomizations = {
           display: 'flex',
           alignItems: 'center',
           '&:focus-visible': {
-            backgroundColor: gray[900],
+            backgroundColor: green[900],
           },
         }),
       }),
@@ -194,17 +194,17 @@ export const navigationCustomizations = {
         borderColor: 'transparent',
         ':hover': {
           color: (theme.vars || theme).palette.text.primary,
-          backgroundColor: gray[100],
-          borderColor: gray[200],
+          backgroundColor: green[100],
+          borderColor: green[200],
         },
         [`&.${tabClasses.selected}`]: {
-          color: gray[900],
+          color: green[900],
         },
         ...theme.applyStyles('dark', {
           ':hover': {
             color: (theme.vars || theme).palette.text.primary,
-            backgroundColor: gray[800],
-            borderColor: gray[700],
+            backgroundColor: green[800],
+            borderColor: green[700],
           },
           [`&.${tabClasses.selected}`]: {
             color: '#fff',
@@ -227,7 +227,7 @@ export const navigationCustomizations = {
     styleOverrides: {
       root: ({ theme }) => ({
         color: 'transparent',
-        border: `1px solid ${gray[400]}`,
+        border: `1px solid ${green[400]}`,
         width: 12,
         height: 12,
         borderRadius: '50%',
@@ -243,7 +243,7 @@ export const navigationCustomizations = {
           color: (theme.vars || theme).palette.success.main,
         },
         ...theme.applyStyles('dark', {
-          border: `1px solid ${gray[700]}`,
+          border: `1px solid ${green[700]}`,
           '&.Mui-active': {
             border: 'none',
             color: (theme.vars || theme).palette.primary.light,
