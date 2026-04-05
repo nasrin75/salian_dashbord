@@ -26,7 +26,10 @@ function UserForm(props) {
 
   const formValues = formState.values;
   const formErrors = formState.errors;
-
+  const isEmailFieldEmpty = !formValues.Email;
+  const isMobileFieldEmpty = !formValues.Mobile;
+  const isOtpFieldRelevant = !isMobileFieldEmpty;
+  const isIpCheckActive = formValues.IsCheckIp === true; 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [data, setData] = useState({
     Username: '',
@@ -139,6 +142,7 @@ function UserForm(props) {
               label="IP WhiteList"
               error={!!formErrors.IpWhiteLists}
               helperText={formErrors.IpWhiteLists ?? ' '}
+              disabled={!isIpCheckActive}
               fullWidth
             />
           </Grid>
@@ -149,7 +153,9 @@ function UserForm(props) {
                 control={
                   <Checkbox
                     size="large"
-                    onChange={(e) => onFieldChange("IsCheckIp", e.target.value, "checkbox")}
+                    checked={!!formValues.IsCheckIp}
+                    onChange={(e) => onFieldChange("IsCheckIp", e.target.checked, "checkbox")}
+                    name="IsCheckIp"
                   />
                 }
                 label="IP چک شود ؟"
@@ -209,10 +215,10 @@ function UserForm(props) {
 
               >
                 <FormControlLabel value="otp" control={<Checkbox
-                  checked={formValues.LoginTypes?.includes("otp")}
-                  onChange={(e) => handleLoginTypeChange("otp", e.target.checked)
-
-                  } />} label="OTP" />
+                  checked={formValues.LoginTypes?.includes("otp") ?? false}
+                  onChange={(e) => handleLoginTypeChange("otp", e.target.checked)}
+                  disabled={isMobileFieldEmpty} // OTP disabled if Mobile is empty
+                   />} label="OTP" />
                 <FormControlLabel value="password" control={<Checkbox
                   checked={formValues.LoginTypes?.includes("password")}
                   onChange={(e) => handleLoginTypeChange("password", e.target.checked)
@@ -220,8 +226,9 @@ function UserForm(props) {
                   } />} label="Password" checked />
                 <FormControlLabel value="email" control={<Checkbox
                   checked={formValues.LoginTypes?.includes("email")}
-                  onChange={(e) => handleLoginTypeChange("email", e.target.checked)
-                  } />} label="Email" />
+                  onChange={(e) => handleLoginTypeChange("email", e.target.checked)}
+                  disabled={isEmailFieldEmpty}
+                   />} label="Email" />
                 <FormControlLabel value="push" control={<Checkbox
                   checked={formValues.LoginTypes?.includes("push")}
                   onChange={(e) => handleLoginTypeChange("push", e.target.checked)
