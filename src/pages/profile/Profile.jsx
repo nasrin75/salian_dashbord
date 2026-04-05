@@ -104,7 +104,7 @@ function SettingEditForm({ initialValues, onSubmit }) {
     );
 }
 
-export default function Setting() {
+export default function Profile() {
     const { userID } = 1;//TODO:after create auth edit it
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
