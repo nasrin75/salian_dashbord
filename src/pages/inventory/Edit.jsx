@@ -181,7 +181,7 @@ export default function Edit() {
 
     return (
         <PageContainer
-            title={"ویرایش پرسنل"}
+            title={"ویرایش انبار"}
         >
             <Divider sx={{ marginBottom: "4%" }} />
             <Box sx={{ display: 'flex', flex: 1 }}>{renderEdit}</Box>
