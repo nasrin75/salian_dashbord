@@ -19,10 +19,95 @@ import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
 import useTranslate from '../../hooks/useTranslate/useTranslate';
 import { getFeaturesName } from '../../api/FeatureApi';
+import * as XLSX from 'xlsx';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { IconButton } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+//import { useGridApiRef } from '@mui/x-data-grid';
+import { DataGridPro, useGridApiRef } from '@mui/x-data-grid-pro';
+
 
 const INITIAL_PAGE_SIZE = 10;
+// function ExportCsvButton({ rows }) {
+//     const handleExport = () => {
+//       if (!rows || rows.length === 0) return;
+
+//       const header = Object.keys(rows[0]).join(",");
+//       const csvRows = rows.map(r =>
+//         Object.values(r)
+//           .map(v => `"${String(v).replace(/"/g, '""')}"`)
+//           .join(",")
+//       );
+
+//       const csv = [header, ...csvRows].join("\n");
+
+//       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+//       const url = URL.createObjectURL(blob);
+
+//       const link = document.createElement("a");
+//       link.href = url;
+//       link.download = "export.csv";
+//       link.click();
+
+//       URL.revokeObjectURL(url);
+//     };
+
+//     return (
+//         <Button
+//         variant="contained"
+//         onClick={handleExport}>
+//        Export CSV
+//     </Button>
+//     );
+//   }
+
+
+function ExportExcelButton({ rows = [], selectedRows = [] }) {
+    const handleExport = () => {
+        const safeRows = Array.isArray(rows) ? rows : [];
+        const selectedIds = selectedRows && selectedRows.ids ? Array.from(selectedRows.ids) : [];
+
+        const selectedAsString = selectedIds.map(String);
+
+        const filteredRows =
+            selectedAsString.length > 0
+                ? safeRows.filter((r) => selectedAsString.includes(String(r.id)))
+                : safeRows;
+
+        if (!filteredRows.length) {
+            alert("هیچ رکوردی برای خروجی وجود ندارد");
+            return;
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(filteredRows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "export.xlsx");
+    };
+
+    return (
+        <Button variant="contained" onClick={handleExport}>
+            Export Excel
+        </Button>
+    );
+}
+
+
+
+function Export({ inventories, selectedRows }) {
+    return (
+        <div style={{ display: "flex", gap: "10px", padding: "8px" }}>
+            {/* <ExportCsvButton rows={inventories} /> */}
+            <ExportExcelButton rows={inventories} selectedRows={selectedRows} />
+        </div>
+    );
+}
+
+
 
 export default function List() {
+    const apiRef = useGridApiRef();
+
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -31,6 +116,7 @@ export default function List() {
     const { getMessage } = useTranslate();
     const [allFeatureNames, setAllFeatureNames] = useState([]);
     const [visibilityColumns, setVisibilityColumns] = useState({});
+    const [selectedRows, setSelectedRows] = useState([]);
 
     const [paginationModel, setPaginationModel] = useState({
         page: searchParams.get('page') ? Number(searchParams.get('page')) : 0,
@@ -38,11 +124,23 @@ export default function List() {
             ? Number(searchParams.get('pageSize'))
             : INITIAL_PAGE_SIZE,
     });
-    const [filterModel, setFilterModel] = useState(
-        searchParams.get('filter')
-            ? JSON.parse(searchParams.get('filter') ?? '')
-            : { items: [] },
-    );
+    const [filterModel, setFilterModel] = useState(() => {
+        const raw = searchParams.get('filter');
+        if (raw) {
+            try {
+                const parsed = JSON.parse(raw);
+                return {
+                    items: Array.isArray(parsed.items) ? parsed.items : [],
+                    logicOperator: parsed.logicOperator || 'and',
+                    quickFilterValues: parsed.quickFilterValues || []
+                };
+            } catch {
+                return { items: [], logicOperator: 'and', quickFilterValues: [] };
+            }
+        }
+        return { items: [], logicOperator: 'and', quickFilterValues: [] };
+    });
+
     const [sortModel, setSortModel] = useState(
         searchParams.get('sort') ? JSON.parse(searchParams.get('sort') ?? '') : [],
     );
@@ -67,27 +165,24 @@ export default function List() {
         [navigate, pathname, searchParams],
     );
 
-    const handleFilterModelChange = useCallback(
-        (model) => {
-            setFilterModel(model);
+    const handleFilterModelChange = (model) => {
+        const safeModel = {
+            items: Array.isArray(model.items) ? model.items : [],
+            logicOperator: model.logicOperator || 'and',
+            quickFilterValues: model.quickFilterValues || []
+        };
 
-            if (
-                model.items.length > 0 ||
-                (model.quickFilterValues && model.quickFilterValues.length > 0)
-            ) {
-                searchParams.set('filter', JSON.stringify(model));
-            } else {
-                searchParams.delete('filter');
-            }
+        setFilterModel(safeModel);
 
-            const newSearchParamsString = searchParams.toString();
+        if (safeModel.items.length > 0 || safeModel.quickFilterValues.length > 0) {
+            searchParams.set('filter', JSON.stringify(safeModel));
+        } else {
+            searchParams.delete('filter');
+        }
 
-            navigate(
-                `${pathname}${newSearchParamsString ? '?' : ''}${newSearchParamsString}`,
-            );
-        },
-        [navigate, pathname, searchParams],
-    );
+        navigate(`${pathname}?${searchParams.toString()}`);
+    };
+
 
     const handleSortModelChange = useCallback(
         (model) => {
@@ -185,6 +280,12 @@ export default function List() {
         [navigate],
     );
 
+    const handleDuplicateInventory = useCallback(
+        (inventoryID) => () => {
+            navigate(APP_ROUTES.INVENTORY_CREATE_DUPLICATE_PATH.replace(':inventoryID', inventoryID))
+        },
+        [navigate]
+    )
     const handelDeleteInventory = useCallback(
         (inventory) => async () => {
 
@@ -235,12 +336,12 @@ export default function List() {
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'ID', width: 100 },
-            { field: 'employee', headerName: 'مالک', width: 140},
-            { field: 'location', headerName: 'بخش', width: 140},
-            { field: 'propertyNumber', headerName: 'شماره اموال', width: 140},
-            { field: 'brandName', headerName: 'برند', width: 140},
-            { field: 'modelName', headerName: 'مدل', width: 140},
-            { field: 'equipment', headerName: 'قطعه', width: 140},
+            { field: 'employee', headerName: 'مالک', width: 140 },
+            { field: 'location', headerName: 'بخش', width: 140 },
+            { field: 'propertyNumber', headerName: 'شماره اموال', width: 140 },
+            { field: 'brandName', headerName: 'برند', width: 140 },
+            { field: 'modelName', headerName: 'مدل', width: 140 },
+            { field: 'equipment', headerName: 'قطعه', width: 140 },
             {
                 field: 'status',
                 headerName: 'وضعیت',
@@ -250,7 +351,7 @@ export default function List() {
                 },
             },
             { field: 'user', headerName: 'کاربر', width: 140 },
-            { field: 'serialNumber', headerName: 'شماره سریال', width: 140},
+            { field: 'serialNumber', headerName: 'شماره سریال', width: 140 },
             {
                 field: 'expireWarrantyDate',
                 headerName: 'تاریخ اتمام گارانتی',
@@ -263,11 +364,9 @@ export default function List() {
                 width: 140,
                 valueFormatter: params => dayjs(params).format("YYYY/MM/DD")
             },
-            { field: 'size', headerName: 'سایز', width: 140},
-            { field: 'capacity', headerName: 'capacity', width: 140},
-            { field: 'itNumber', headerName: 'شماره IT', width: 100},
-            { field: 'itParentNumber', headerName: 'شماره IT Parent', width: 140},
-            { field: 'invoiceNumber', headerName: 'شماره فاکتور', width: 140},
+            { field: 'itNumber', headerName: 'شماره IT', width: 100 },
+            { field: 'itParentNumber', headerName: 'شماره IT Parent', width: 140 },
+            { field: 'invoiceNumber', headerName: 'شماره فاکتور', width: 140 },
             {
                 field: 'invoiceImage', headerName: 'تصویر فاکتور', width: 140,
                 renderCell: (params) => {
@@ -285,7 +384,7 @@ export default function List() {
             {
                 field: 'updatedAt',
                 headerName: 'آخرین بروزرسانی',
-                width: 240,
+                width: 140,
                 type: 'date',
                 valueFormatter: params => dayjs(params).format("YYYY/MM/DD h:m"),
             },
@@ -297,15 +396,23 @@ export default function List() {
             //     valueFormatter: params =>parse(params).format("YYYY/MM/DD h:m"),
 
             // },
-            { field: 'description', headerName: 'توضیحات', width: 140},
+            { field: 'description', headerName: 'توضیحات', width: 140 },
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
-                width: 140,
+                width: 240,
                 align: 'center',
                 getActions: ({ row }) => {
                     const actions = [];
+                    if (hasPermission([PERMISSION.INVENTORY_CREATE])) {
+                        actions.push(<GridActionsCellItem
+                            key="edit-item"
+                            icon={<ContentCopyIcon />}
+                            label="Edit"
+                            onClick={handleDuplicateInventory(row.id)}
+                        />)
+                    }
                     if (hasPermission([PERMISSION.INVENTORY_EDIT])) {
                         actions.push(<GridActionsCellItem
                             key="edit-item"
@@ -339,6 +446,7 @@ export default function List() {
         [handleInventoryEditPage, handelDeleteInventory, isAlow, hasPermission, PERMISSION, getMessage, dayjs, EditIcon, DeleteIcon, History, process.env.REACT_APP_BASE_URL],
     );
 
+
     const pageTitle = 'انبار';
 
     return (
@@ -354,6 +462,8 @@ export default function List() {
                     >
                         افزودن به انبار
                     </Button>
+                    <Export inventories={inventories} selectedRows={selectedRows} />
+
                 </Stack>)
             }
         >
@@ -369,6 +479,8 @@ export default function List() {
                     columnVisibilityModel={visibilityColumns}
                     onColumnVisibilityModelChange={setVisibilityColumns}
                     getRowId={(row) => row.id}
+                    checkboxSelection
+                    onRowSelectionModelChange={(newSelection) => setSelectedRows(newSelection)}
                     // sortingMode="server"
                     // filterMode="server"
                     // paginationMode="server"
@@ -396,6 +508,7 @@ export default function List() {
                             cursor: 'pointer',
                         },
                     }}
+
                     slotProps={{
                         loadingOverlay: {
                             variant: 'circular-progress',
@@ -404,6 +517,11 @@ export default function List() {
                         baseIconButton: {
                             size: 'small',
                         },
+                        toolbar: {
+                            inventories: inventories,
+                            selectedRows: selectedRows,
+                            apiRef: apiRef
+                        }
                     }}
                 />
             </Box>
