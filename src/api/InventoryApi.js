@@ -1,6 +1,6 @@
 import Api from "./Api"
 
-export const getInventories = (equipment="ALL") => {
+export const getInventories = (equipment = "ALL") => {
     return Api.get(`/inventory?equipment=${equipment}`);
 }
 export const deleteInventory = (inventoryID) => {
@@ -16,4 +16,8 @@ export const createInventory = (data) => {
 
 export const updateInventory = (data) => {
     return Api.put('/inventory/edit', data)
+}
+
+export const addDuplicateInventory = (data) => {
+    return Api.post('/inventory/addDuplicate', data)
 }
