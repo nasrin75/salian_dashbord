@@ -11,6 +11,12 @@ import Typography from '@mui/material/Typography';
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import { Link } from 'react-router';
 
+const FullWidthContainer = styled(Container)(({ theme }) => ({
+  paddingLeft: theme.spacing(2),
+  paddingRight: theme.spacing(2),
+  maxWidth: 'lg !important',
+
+}));
 const PageContentHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
@@ -33,7 +39,6 @@ const PageHeaderToolbar = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   gap: theme.spacing(1),
-  // Ensure the toolbar is always on the right side, even after wrapping
   marginLeft: 'auto',
 }));
 
@@ -41,7 +46,7 @@ function PageContainer(props) {
   const { children, breadcrumbs, title, actions = null } = props;
 
   return (
-    <Container sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <FullWidthContainer  maxWidth={false} sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <Stack sx={{ flex: 1, my: 2 }} spacing={2}>
         <Stack>
           <PageHeaderBreadcrumbs
@@ -80,7 +85,7 @@ function PageContainer(props) {
           {children}
         </Box>
       </Stack>
-    </Container>
+    </FullWidthContainer>
   );
 }
 
