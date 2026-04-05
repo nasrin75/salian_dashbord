@@ -274,28 +274,6 @@ function EditForm(props) {
 
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
-              value={formValues.size ?? null}
-              onChange={(e) => onFieldChange("size", e.target.value)}
-              name="size"
-              label="سایز"
-              error={!!formErrors.size}
-              helperText={formErrors.size ?? " "}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.capacity ?? null}
-              onChange={(e) => onFieldChange("capacity", e.target.value)}
-              name="capacity"
-              label="capacity"
-              error={!!formErrors.capacity}
-              helperText={formErrors.capacity ?? " "}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
               value={formValues.invoiceNumber ?? null}
               onChange={(e) => onFieldChange("invoiceNumber", e.target.value)}
               name="invoiceNumber"

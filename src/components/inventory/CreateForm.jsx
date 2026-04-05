@@ -136,6 +136,8 @@ function CreateForm(props) {
               disableClearable
               sx={{ width: 400 }}
               options={equipments}
+              error={!!formErrors.EquipmentId}
+              helperText={formErrors.EquipmentId ?? " "}
               getOptionLabel={(option) => option.name}
               onChange={async (e, value) => {
                 if (!value) return;
@@ -145,6 +147,9 @@ function CreateForm(props) {
               }}
               renderInput={(params) => <TextField {...params} label="قطعه" />}
             />
+            <FormHelperText error={!!formErrors.EquipmentId}>
+                {formErrors.EquipmentId ?? " "}
+              </FormHelperText>
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <Autocomplete
@@ -158,12 +163,17 @@ function CreateForm(props) {
               }
               renderInput={(params) => <TextField {...params} label="مالک" />}
             />
+            <FormHelperText error={!!formErrors.EmployeeId}>
+                {formErrors.EmployeeId ?? " "}
+              </FormHelperText>
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <Autocomplete
               id="location-select-demo"
               sx={{ width: 400 }}
               options={locations}
+              error={!!formErrors.LocationId}
+              helperText={formErrors.LocationId ?? " "}
               autoHighlight
               disableClearable
               onChange={(event, value) =>
@@ -182,6 +192,9 @@ function CreateForm(props) {
                 />
               )}
             />
+            <FormHelperText error={!!formErrors.LocationId}>
+                {formErrors.LocationId ?? " "}
+              </FormHelperText>
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
@@ -250,53 +263,15 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
-          {/* start Size */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.Size ?? null}
-              onChange={(e) => onFieldChange("Size", e.target.value)}
-              name="Size"
-              label="سایز"
-              error={!!formErrors.Size}
-              helperText={formErrors.Size ?? " "}
-              fullWidth
-            />
-          </Grid>
-          {/* end Size */}
+       
 
-          {/* start Capacity */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.Capacity ?? null}
-              onChange={(e) => onFieldChange("Capacity", e.target.value)}
-              name="Capacity"
-              label="Capacity"
-              error={!!formErrors.Capacity}
-              helperText={formErrors.Capacity ?? " "}
-              fullWidth
-            />
-          </Grid>
-          {/* end Capacity */}
-
-          {/* start InvoiceNumber */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.InvoiceNumber ?? null}
-              onChange={(e) => onFieldChange("InvoiceNumber", e.target.value)}
-              name="InvoiceNumber"
-              label="شماره فاکتور"
-              error={!!formErrors.InvoiceNumber}
-              helperText={formErrors.InvoiceNumber ?? " "}
-              fullWidth
-            />
-          </Grid>
           {/* start Description */}
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
               label="توضیحات"
               multiline
               onChange={(e) => onFieldChange("Description", e.target.value)}
-              rows={2}
+              //rows={2}
               maxRows={Infinity}
               fullWidth
             />
@@ -305,6 +280,8 @@ function CreateForm(props) {
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ تحویل"
+              error={!!formErrors.DeliveryDate}
+              helperText={formErrors.DeliveryDate ?? " "}
               value={
                 formValues.DeliveryDate ? dayjs(formValues.DeliveryDate) : null
               }
@@ -323,6 +300,9 @@ function CreateForm(props) {
                 },
               }}
             />
+            <FormHelperText error={!!formErrors.DeliveryDate}>
+                {formErrors.DeliveryDate ?? " "}
+              </FormHelperText>
           </Grid>
 
           {/* start ExpireWarrantyDate */}
@@ -348,6 +328,19 @@ function CreateForm(props) {
                   fullWidth: true,
                 },
               }}
+            />
+          </Grid>
+          
+          {/* start InvoiceNumber */}
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+            <TextField
+              value={formValues.InvoiceNumber ?? null}
+              onChange={(e) => onFieldChange("InvoiceNumber", e.target.value)}
+              name="InvoiceNumber"
+              label="شماره فاکتور"
+              error={!!formErrors.InvoiceNumber}
+              helperText={formErrors.InvoiceNumber ?? " "}
+              fullWidth
             />
           </Grid>
           {/* upload Image */}
