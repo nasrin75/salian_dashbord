@@ -72,7 +72,7 @@ function SettingsForm(props) {
                 کاوه نگار
               </MenuItem>
 
-              <MenuItem key="sabanovin" value="sabanovin" >
+              <MenuItem key="sabanovin" value="sabanovin" disabled>
                 صبانوین
               </MenuItem>
             </Select>
