@@ -71,6 +71,6 @@ body {
 
 @media (min-width: 1200px) {
     .css-1hco7h0-MuiContainer-root {
-        max-width: 90% !important;
+        width: 100% !important;
     }
 }
