@@ -120,7 +120,7 @@ export default function Edit() {
             .then(data => {
                 setEquipment(data.data['result'])
                 setIsLoading(false);
-            })
+            }).catch(err =>{})
 
         setIsLoading(false);
     }, [equipmentID]);

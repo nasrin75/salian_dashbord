@@ -113,10 +113,10 @@ export default function Edit() {
 
         EmployeeDetails(employeeID)
             .then(data => {
-                
+
                 setEmployee(data.data['result'])
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [employeeID]);
@@ -130,10 +130,10 @@ export default function Edit() {
         async (formValues) => {
             updateEmployee(formValues)
                 .then(data => {
-                    
+
                     setEmployee('handlesubmit', data.data['result'])
                     setIsLoading(false);
-                     navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
+                    navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
                 })
         },
         [employeeID],
