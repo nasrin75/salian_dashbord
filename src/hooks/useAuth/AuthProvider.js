@@ -29,12 +29,12 @@ const AuthProvider = ({ children }) => {
                     const token = result.token;
                     setToken(token)
                     StoreTokenInLocalStorage(token)
-                    //localStorage.setItem('user',JSON.stringify(result))
+                    localStorage.setItem('user',JSON.stringify(result))
 
                     //console.log('loginResult',result)
                     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-                    localStorage.setItem("role", result.role)
+                    //localStorage.setItem("role", result.role)
 
                     //getPermission list
                      getPermissions()
@@ -43,7 +43,9 @@ const AuthProvider = ({ children }) => {
                     toast.success("شما با موفقیت وارد شدید")
 
 
-                }).catch(() => toast.error("نام کاربری یا رمزعبور اشتباه است."))
+                }).catch(() => {
+                    //toast.error("نام کاربری یا رمزعبور اشتباه است.")
+                })
 
         },
         [setToken, token],
@@ -51,7 +53,7 @@ const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem("token")
-        localStorage.removeItem("role")
+        localStorage.removeItem("user")
         localStorage.removeItem("permissions")
 
         window.location.href = '/login'
@@ -73,8 +75,12 @@ const AuthProvider = ({ children }) => {
             });
     }
 
-    const hasPermission = (rights) => localStorage.getItem('role')?.toString().toLowerCase() == 'admin' ? true
+    const hasPermission = (rights) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        console.log("hasPermissionRole", user?.role.toLowerCase());
+       return user?.role.toLowerCase() == 'admin' ? true
         : rights.some(right => localStorage.getItem('permissions')?.includes(right));
+    }
 
 
     // Provide the authentication context to the children components

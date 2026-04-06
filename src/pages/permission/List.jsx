@@ -154,8 +154,9 @@ export default function List() {
                         toast.success("دسترسی با موفقیت حذف شد.")
                         setIsLoading(false)
 
-                    }).catch(() =>
-                        toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+                    }).catch(() => {
+                        //toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+                    }
                     )
                 setIsLoading(false);
             }
@@ -173,8 +174,8 @@ export default function List() {
     const columns = useMemo(
         () => [
             { field: 'name', headerName: 'عنوان', width: 440 },
-            { field: 'title', headerName: 'عنوان فارسی', width: 440},
-            { field: 'category', headerName: 'دسته بندی', width: 440},
+            { field: 'title', headerName: 'عنوان فارسی', width: 440 },
+            { field: 'category', headerName: 'دسته بندی', width: 440 },
         ],
         [handlePermissionEditPage, handelDeletePermission],
     );

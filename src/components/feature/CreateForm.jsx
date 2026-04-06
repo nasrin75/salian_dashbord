@@ -35,7 +35,9 @@ function CreateForm(props) {
       .then(data => {
         setEquipments(data.data['result'])
       })
-      .catch(() => toast.error("مشکلی در گرفتن لیست قطعات رخ داده است."))
+      .catch(() => {
+        //toast.error("مشکلی در گرفتن لیست قطعات رخ داده است.")
+      })
   }, [])
 
   const handleSubmit = useCallback(

@@ -128,10 +128,11 @@ export default function List() {
 
                 setIsLoading(false)
 
-            }).catch((err) => {
-                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
-                toast.error(message);
             })
+            // .catch((err) => {
+            //     let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+            //     toast.error(message);
+            // })
 
         setIsLoading(false);
     }, [paginationModel, sortModel, filterModel, searchParams]);
@@ -162,9 +163,9 @@ export default function List() {
                         toast.success("عملیات با موفقیت حذف شد.")
                         setIsLoading(false)
 
-                    }).catch(() =>
-                        toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
-                    )
+                    }).catch(() =>{
+                         //toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+                    })
                 setIsLoading(false);
             }
         },

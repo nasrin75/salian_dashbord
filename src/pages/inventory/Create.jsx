@@ -107,7 +107,9 @@ export default function Create() {
                 toast.success("عملیات با موفقیت انجام شد.")
                 navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
             })
-            .catch(() => toast.error("مشکلی در افزودن به انبار رخ داده است"))
+            .catch(() =>{ 
+                //toast.error("مشکلی در افزودن به انبار رخ داده است")
+            })
 
     }, [navigate, setFormErrors]);
 

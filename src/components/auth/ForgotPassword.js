@@ -41,7 +41,9 @@ function ForgotPassword({ open, handleClose }) {
         toast.success("رمزعبور با موفقیت تغییر کرد")
         handleClose()
       })
-      .catch(() => toast.error("کد یکبار مصرف نامعتبر است."))
+      .catch(() => {
+        // toast.error("کد یکبار مصرف نامعتبر است.")
+      })
   }
 
   const handleFormFieldChange = useCallback((name, value) => {

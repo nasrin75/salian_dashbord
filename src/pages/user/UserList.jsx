@@ -127,7 +127,9 @@ export default function UserList() {
 
         setIsLoading(false)
 
-      }).catch(() => toast.error("عدم دسترسی"))
+      }).catch(() => { 
+        //toast.error("عدم دسترسی") 
+      })
 
     setIsLoading(false);
   }, [paginationModel, sortModel, filterModel, searchParams]);
@@ -202,10 +204,10 @@ export default function UserList() {
 
   const columns = useMemo(
     () => [
-      { field: 'username', headerName: 'نام کاربری', width: 240},
-      { field: 'mobile', headerName: 'موبایل', width: 140},
-      { field: 'email', headerName: 'ایمیل', width: 240},
-      { field: 'role', headerName: 'نقش', width: 140},
+      { field: 'username', headerName: 'نام کاربری', width: 240 },
+      { field: 'mobile', headerName: 'موبایل', width: 140 },
+      { field: 'email', headerName: 'ایمیل', width: 240 },
+      { field: 'role', headerName: 'نقش', width: 140 },
       {
         field: 'status',
         headerName: 'وضعیت',

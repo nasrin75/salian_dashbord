@@ -45,17 +45,23 @@ function DuplicateForm(props) {
     //Equipment List
     getEquipments()
       .then((data) => setEquipments(data.data["result"]))
-      .catch(() => toast("مشکلی در گرفتن لیست قطعات رخ داده است"));
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
+      });
 
     //Location List
     getLocations()
       .then((data) => setLocations(data.data["result"]))
-      .catch(() => toast("مشکلی در گرفتن لیست بخش ها رخ داده است"));
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست بخش ها رخ داده است")
+      });
 
     //Location List
     getEmployees()
       .then((data) => setEmployees(data.data["result"]))
-      .catch(() => toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است"));
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است")
+      });
 
   }, []);
 
@@ -67,7 +73,7 @@ function DuplicateForm(props) {
         setFeatures(list);
       })
       .catch(() => {
-        toast.error("خطا در دریافت ویژگی‌ها");
+        //toast.error("خطا در دریافت ویژگی‌ها");
       });
   };
 
@@ -85,7 +91,7 @@ function DuplicateForm(props) {
       formData.append("file", file);
 
       const token = localStorage.getItem("token");
-      
+
       const res = await fetch(process.env.REACT_APP_API_BASE_URL + "/upload", {
         method: "POST",
         body: formData,

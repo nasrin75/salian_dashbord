@@ -153,9 +153,9 @@ export default function List() {
                         toast.success("عملیات با موفقیت حذف شد.")
                         setIsLoading(false)
 
-                    }).catch(() =>
+                    }).catch(() => {
                         toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
-                    )
+                    })
                 setIsLoading(false);
             }
         },
@@ -182,15 +182,15 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'id', headerName: 'شماره ', width: 240},
-            { field: 'name', headerName: 'نام قطعه', width: 140},
-            { field: 'type', headerName: 'نوع قطعه', width: 140},
-            { field: 'usedCount', headerName: 'تعداداستفاده شده', width: 160},
-            { field: 'unsedCount', headerName: 'تعداداستفاده نشده', width: 160},
-            { field: 'sendToChargeCount', headerName: 'ارسال جهت شارژ', width: 160},
-            { field: 'backFromChargeCount', headerName: 'برگشت از شارژ', width: 160},
-            { field: 'repairCount', headerName: 'تعمیر', width: 100},
-            { field: 'uselessCount', headerName: 'اسقاطی', width: 100},
+            { field: 'id', headerName: 'شماره ', width: 240 },
+            { field: 'name', headerName: 'نام قطعه', width: 140 },
+            { field: 'type', headerName: 'نوع قطعه', width: 140 },
+            { field: 'usedCount', headerName: 'تعداداستفاده شده', width: 160 },
+            { field: 'unsedCount', headerName: 'تعداداستفاده نشده', width: 160 },
+            { field: 'sendToChargeCount', headerName: 'ارسال جهت شارژ', width: 160 },
+            { field: 'backFromChargeCount', headerName: 'برگشت از شارژ', width: 160 },
+            { field: 'repairCount', headerName: 'تعمیر', width: 100 },
+            { field: 'uselessCount', headerName: 'اسقاطی', width: 100 },
             ...(isAlow ? [{
                 field: '',
                 width: 340,

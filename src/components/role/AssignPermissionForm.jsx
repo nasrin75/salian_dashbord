@@ -42,7 +42,9 @@ function AssignPermissionForm(props) {
         const Ids = formValues.map(per => per.id);
         setSelectedPermissions(Ids)
       })
-      .catch(() => toast.error("مشکلی در گرفتن لیست دسترسی ها رخ داده است"))
+      .catch(() => {
+        //toast.error("مشکلی در گرفتن لیست دسترسی ها رخ داده است")
+      })
   }, [])
 
   // 

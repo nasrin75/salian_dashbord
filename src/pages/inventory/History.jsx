@@ -15,7 +15,9 @@ function History() {
                 setData(data.data['result'])
                 console.log(data.data['result'])
             })
-            .catch(() => toast.error('مشکلی در گرفتن تاریخچه رخ داده است.'))
+            .catch(() =>{ 
+                //toast.error('مشکلی در گرفتن تاریخچه رخ داده است.')
+            })
     }, [])
     const closeModal = () => {
         setOpenModal(false)

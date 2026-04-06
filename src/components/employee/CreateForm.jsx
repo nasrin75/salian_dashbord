@@ -36,7 +36,9 @@ function CreateForm(props) {
             .then((data) => {
                 setLocations(data.data['result'])
             })
-            .catch(err => toast.error("مشکلی در گرفتن لیست بخش ها رخ داده است."))
+            .catch(err => {
+                //toast.error("مشکلی در گرفتن لیست بخش ها رخ داده است.")
+            })
 
     }, [])
 

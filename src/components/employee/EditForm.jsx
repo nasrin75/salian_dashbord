@@ -1,4 +1,4 @@
-import { useState,useEffect,useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -30,7 +30,9 @@ function EditForm(props) {
       .then((data) => {
         setLocations(data.data['result'])
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        //console.log(err)
+      })
 
   }, [])
 

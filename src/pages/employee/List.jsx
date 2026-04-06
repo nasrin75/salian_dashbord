@@ -113,8 +113,8 @@ export default function List() {
                 setIsLoading(false)
 
             }).catch((err) => {
-                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
-                toast.error(message);
+                // let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+                // toast.error(message);
             })
 
         setIsLoading(false);
@@ -131,7 +131,7 @@ export default function List() {
 
     const handleEmployeeEditPage = useCallback(
         (employeeID) => () => {
-            
+
             navigate(`/employee/edit/${employeeID}`);
         },
         [navigate],
@@ -159,10 +159,11 @@ export default function List() {
                         toast.success("پرسنل با موفقیت حذف شد.")
                         setIsLoading(false)
 
-                    }).catch(() =>
-                        toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
-                    )
-                setIsLoading(false);
+                    }).catch(() => {
+                        //toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+                        setIsLoading(false);
+                    })
+                
             }
         },
         [dialogs, loadData],
@@ -178,10 +179,10 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'id', headerName: 'کدپرسنلی ', width: 240},
-            { field: 'name', headerName: 'نام', width: 140},
-            { field: 'email', headerName: 'ایمیل', width: 240},
-            { field: 'location', headerName: 'موقعیت', width: 140},
+            { field: 'id', headerName: 'کدپرسنلی ', width: 240 },
+            { field: 'name', headerName: 'نام', width: 140 },
+            { field: 'email', headerName: 'ایمیل', width: 240 },
+            { field: 'location', headerName: 'موقعیت', width: 140 },
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',

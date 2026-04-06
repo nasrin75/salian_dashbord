@@ -28,7 +28,7 @@ const SendResetPasswordEmail = (props) => {
                 
             })
             .catch((err) => {
-                toast.error("کاربری با این ایمیل یافت نشد.")
+                //toast.error("کاربری با این ایمیل یافت نشد.")
                 setIsLoading(false)
             })
     }

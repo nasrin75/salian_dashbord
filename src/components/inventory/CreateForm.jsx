@@ -38,17 +38,23 @@ function CreateForm(props) {
     //Equipment List
     getEquipments()
       .then((data) => setEquipments(data.data["result"]))
-      .catch(() => toast("مشکلی در گرفتن لیست قطعات رخ داده است"));
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
+      });
 
     //Location List
     getLocations()
       .then((data) => setLocations(data.data["result"]))
-      .catch(() => toast("مشکلی در گرفتن لیست بخش ها رخ داده است"));
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست بخش ها رخ داده است")
+      });
 
     //Location List
     getEmployees()
       .then((data) => setEmployees(data.data["result"]))
-      .catch(() => toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است"));
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است")
+      });
   }, []);
 
   //get features by equipment to enter featureValues
@@ -59,7 +65,7 @@ function CreateForm(props) {
         setFeatures(list);
       })
       .catch(() => {
-        toast.error("خطا در دریافت ویژگی‌ها");
+        //toast.error("خطا در دریافت ویژگی‌ها");
       });
   };
 
@@ -148,8 +154,8 @@ function CreateForm(props) {
               renderInput={(params) => <TextField {...params} label="قطعه" />}
             />
             <FormHelperText error={!!formErrors.EquipmentId}>
-                {formErrors.EquipmentId ?? " "}
-              </FormHelperText>
+              {formErrors.EquipmentId ?? " "}
+            </FormHelperText>
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <Autocomplete
@@ -164,8 +170,8 @@ function CreateForm(props) {
               renderInput={(params) => <TextField {...params} label="مالک" />}
             />
             <FormHelperText error={!!formErrors.EmployeeId}>
-                {formErrors.EmployeeId ?? " "}
-              </FormHelperText>
+              {formErrors.EmployeeId ?? " "}
+            </FormHelperText>
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <Autocomplete
@@ -193,8 +199,8 @@ function CreateForm(props) {
               )}
             />
             <FormHelperText error={!!formErrors.LocationId}>
-                {formErrors.LocationId ?? " "}
-              </FormHelperText>
+              {formErrors.LocationId ?? " "}
+            </FormHelperText>
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
@@ -263,7 +269,7 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
-       
+
 
           {/* start Description */}
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
@@ -301,8 +307,8 @@ function CreateForm(props) {
               }}
             />
             <FormHelperText error={!!formErrors.DeliveryDate}>
-                {formErrors.DeliveryDate ?? " "}
-              </FormHelperText>
+              {formErrors.DeliveryDate ?? " "}
+            </FormHelperText>
           </Grid>
 
           {/* start ExpireWarrantyDate */}
@@ -330,7 +336,7 @@ function CreateForm(props) {
               }}
             />
           </Grid>
-          
+
           {/* start InvoiceNumber */}
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
