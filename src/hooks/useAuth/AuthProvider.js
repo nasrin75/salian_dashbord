@@ -5,11 +5,13 @@ import { login } from "../../api/AuthApi";
 import { toast } from "react-toastify";
 import { StoreTokenInLocalStorage } from "../../utlis/constants/common";
 import { getMyPermission } from "../../api/UserApi";
+import { Navigate } from "react-router-dom";
+import { APP_ROUTES } from "../../utlis/constants/routePath";
 
 const AuthProvider = ({ children }) => {
 
     const [token, setToken_] = useState(localStorage.getItem("token"));
-    const [role, setRole] = useState('')
+    const [user, setUser] = useState({})
     const [permissions, setPermissions] = useState([])
 
     // Function to set the authentication token
@@ -27,16 +29,19 @@ const AuthProvider = ({ children }) => {
                     const token = result.token;
                     setToken(token)
                     StoreTokenInLocalStorage(token)
-                    
+                    //localStorage.setItem('user',JSON.stringify(result))
+
+                    //console.log('loginResult',result)
                     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
                     localStorage.setItem("role", result.role)
 
                     //getPermission list
-                    getPermissions()
+                     getPermissions()
+                    
                     //Notify
                     toast.success("شما با موفقیت وارد شدید")
-                    
+
 
                 }).catch(() => toast.error("نام کاربری یا رمزعبور اشتباه است."))
 
@@ -44,6 +49,13 @@ const AuthProvider = ({ children }) => {
         [setToken, token],
     );
 
+    const logout = () => {
+        localStorage.removeItem("token")
+        localStorage.removeItem("role")
+        localStorage.removeItem("permissions")
+
+        window.location.href = '/login'
+    }
 
     const getPermissions = async () => {
         await getMyPermission()
@@ -53,15 +65,21 @@ const AuthProvider = ({ children }) => {
                 setPermissions(permissionNames)
 
                 localStorage.setItem("permissions", permissionNames)
+            }).catch(err => {
+                console.log("getMyPermissionErr", err.response?.data)
+                if (err.response?.data == 'IP_ADDRESS_IS_NOT_PERMITTED') {
+                    window.location.href = APP_ROUTES.UNAUTHORIZED_PATH
+                }
             });
     }
 
-    const hasPermission = (rights) => localStorage.getItem('role')?.toString().toLowerCase() == 'admin' ? true 
-    : rights.some(right => localStorage.getItem('permissions')?.includes(right));
+    const hasPermission = (rights) => localStorage.getItem('role')?.toString().toLowerCase() == 'admin' ? true
+        : rights.some(right => localStorage.getItem('permissions')?.includes(right));
+
 
     // Provide the authentication context to the children components
     return (
-        <AuthContext.Provider value={{ token, setToken, loginAction, permissions, hasPermission }}>
+        <AuthContext.Provider value={{ token, setToken, loginAction, permissions, hasPermission, logout }}>
             {children}
         </AuthContext.Provider>
     );
