@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
@@ -17,6 +16,10 @@ import RadioGroup from '@mui/material/RadioGroup';
 import { getRoles } from '../../api/RoleApi';
 import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
+import { Fragment } from 'react';
+
+const ipArrayToString = (arr) => arr.join('.');
+const ipStringToArray = (str) => str.split('.').map(num => num === '' ? '' : parseInt(num, 10));
 
 function UserForm(props) {
   const {
@@ -36,47 +39,114 @@ function UserForm(props) {
   ///
   const [isCheckIpBtn, setIsCheckIpBtn] = useState(false);
   const [scope, setScope] = useState("0");
-  const [isRangeScope, setIsRangeScope] = useState(false);
+  const [singleIp, setSingleIp] = useState(Array(4).fill(''));
+  const [rangeIpFrom, setRangeIpFrom] = useState(Array(4).fill(''));
+  const [rangeIpTo, setRangeIpTo] = useState(Array(4).fill(''));
 
-  const handleIpInputs = (scope) => {
-    console.log('handleIpInputs', scope)
-    setScope(scope)
-    onFieldChange("Scope", scope, "radio")
-  }
-  
-  const renderIpInputs = (prefix) => (
-    <Grid container spacing={1} alignItems="center">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <>
-          <Grid item xs={3} key={`${prefix}-ip-${i}`}>
-            <TextField
-              fullWidth
-              size="small"
-            //placeholder="0-255"
-            />
-          </Grid>
-          {/* Add a dot after every segment except the last one */}
-          {i < 3 && (
-            <Grid item xs={0.5}>
-              <Typography variant="body1" textAlign="center">.</Typography>
+  const handleIpChange = (type, index, value) => {
+    const validValue = value.replace(/[^0-9]/g, '').slice(0, 3); // can enter just 3 number
+
+    console.log('handleIpChange', type, index, value)
+
+    if (type === 'single') {
+      const newIp = [...singleIp];
+      newIp[index] = validValue;
+      setSingleIp(newIp);
+    } else if (type === 'from') {
+      const newIp = [...rangeIpFrom];
+      newIp[index] = validValue;
+      setRangeIpFrom(newIp);
+      //console.log('handleIpChange_from Updated rangeIpFrom:', newIp);
+
+    } else if (type === 'to') {
+      const newIpTo = [...rangeIpTo]; // Create a new array for to
+      newIpTo[index] = validValue;
+      setRangeIpTo(newIpTo);
+      //console.log('handleIpChange_to Updated rangeIpTo:', newIpTo);
+
+      // ---- Add this part to link 'from' with 'to' ----
+      const newIpFrom = [...rangeIpFrom]; // Create a new array for from
+      if (index === 3) newIpFrom[3] = newIpTo[3];
+      if (index === 1) newIpFrom[1] = newIpTo[1];
+      if (index === 2) newIpFrom[2] = newIpTo[2];
+
+      setRangeIpFrom(newIpFrom);
+      //console.log('handleIpChange_to Updated rangeIpFrom (linked to to):', newIpFrom);
+    }
+  };
+
+  useEffect(() => {
+    if (scope === '1') {
+      setRangeIpTo(prevIpTo => {
+        const newIpTo = [...prevIpTo];
+
+        newIpTo[3] = rangeIpFrom[3];
+        newIpTo[2] = rangeIpFrom[2];
+        newIpTo[1] = rangeIpFrom[1];
+
+        return newIpTo;
+      });
+      //console.log('useEffect: RTL - Copied and reversed first three parts from rangeIpFrom to rangeIpTo');
+    } else {
+      setRangeIpTo(Array(4).fill(''));
+      //console.log('useEffect: Scope changed to single IP or reset, cleared rangeIpTo');
+    }
+  }, [rangeIpFrom, scope]);
+
+  const renderIpInputs = (type, ipState, setIpState) => {
+    const ipArray = type === 'single' ? singleIp : rangeIpFrom;
+    const setState = type === 'single' ? setSingleIp : (type === 'from' ? setRangeIpFrom : setRangeIpTo);
+    console.log('renderIpInputs called with type:', type, 'and current ipState:', ipState);
+
+    return (
+      <Grid container spacing={1} alignItems="center" sx={{ mb: type === 'single' ? 2 : 0 }}>
+        {[0, 1, 2, 3].map((index) => (
+          <Fragment key={index}>
+            <Grid item xs={3}>
+              <TextField
+                variant="outlined"
+                placeholder="0-255"
+                value={ipState[index]}
+                onChange={(e) => handleIpChange(type, index, e.target.value)}
+                inputProps={{ maxLength: 3, sx: { textAlign: 'center' } }}
+                fullWidth
+                error={!!formErrors[`${type}-${index}`]}
+                helperText={formErrors[`${type}-${index}`] ?? ' '}
+              />
             </Grid>
-          )}
-        </>
-      ))}
-    </Grid>
-  );
-  ///
-  const [data, setData] = useState({
-    Username: '',
-    Password: '',
-    Email: '',
-    Mobile: '',
-    LoginTypes: [],
-    IsCheckIp: '',
-    status: '',
-    IpWhiteLists: ''
-  });
+            {index < 3 && (
+              <Grid item xs={1} sx={{ textAlign: 'center' }}>
+                <Typography variant="body1">.</Typography>
+              </Grid>
+            )}
+          </Fragment>
+        ))}
+      </Grid>
+    );
+  };
 
+  const handleScopeChange = (event) => {
+    const newScope = event.target.value;
+
+    setScope(newScope);
+    setSingleIp(Array(3).fill(''));
+    setRangeIpFrom(Array(3).fill(''));
+    setRangeIpTo(Array(3).fill(''));
+
+  };
+
+  // create ip as string to send backend
+  const constructFinalIpString = () => {
+    if (scope === '0') {
+      const ipStr = ipArrayToString(singleIp);
+      console.log("aaaaaaaaaaaa", ipStr)
+      return { startIp: ipStr, endIp: ipStr };
+    } else {
+      const startIpStr = ipArrayToString(rangeIpFrom);
+      const endIpStr = ipArrayToString(rangeIpTo);
+      return { startIp: startIpStr, endIp: endIpStr };
+    }
+  };
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
@@ -90,10 +160,14 @@ function UserForm(props) {
       })
   }, [])
 
+  console.log("Ip result:", constructFinalIpString());
 
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
+
+      const ipData = constructFinalIpString();
+      console.log("Sending to backend:", ipData);
 
       setIsSubmitting(true);
       try {
@@ -197,7 +271,59 @@ function UserForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
-          {
+          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+            <FormControl>
+
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="Scope"
+                value={scope}
+                onChange={handleScopeChange}
+              >
+                <FormControlLabel
+                  value="0"
+                  control={<Radio />}
+                  label="IP تکی:"
+                />
+
+                <FormControlLabel
+                  value="1"
+                  control={<Radio />}
+                  label="محدوده IP:"
+                />
+              </RadioGroup>
+
+              <FormHelperText error={!!formErrors.Scope}>
+                {formErrors.Scope ?? ' '}
+              </FormHelperText>
+
+              {scope === '0' ? (
+                <Grid item xs={12}>
+                  {renderIpInputs("single", singleIp, setSingleIp)}
+                </Grid>
+              ) : (
+                <>
+                  <Grid item xs={12}>
+                    <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
+                      از:
+                    </Typography>
+                    {renderIpInputs("from", rangeIpFrom, setRangeIpFrom)}
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
+                      تا:
+                    </Typography>
+                    {renderIpInputs("to", rangeIpTo, setRangeIpTo)}
+                  </Grid>
+                </>
+              )}
+
+            </FormControl>
+          </Grid>
+
+
+          {/* {
             isCheckIpBtn && (
               <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
                 <FormControl>
@@ -206,7 +332,8 @@ function UserForm(props) {
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="Scope"
-                    onChange={(e) => handleIpInputs(e.target.value)}
+                    value={scope}
+                    onChange={handleScopeChange}
                   >
                     <FormControlLabel
                       value="0"
@@ -226,35 +353,30 @@ function UserForm(props) {
                   </FormHelperText>
 
                   {scope === '0' ? (
-                    <>
-                      {renderIpInputs("single")}
-                    </>
+                    <Grid item xs={12}>
+                      {renderIpInputs("single", singleIp, setSingleIp)}
+                    </Grid>
                   ) : (
                     <>
-                      <Typography
-                        variant="body2"
-                        component="label"
-                        sx={{ mt: 2, mb: 1, display: "block" }}
-                      >
-                        از:
-                      </Typography>
-                      {renderIpInputs("from")}
-
-                      <Typography
-                        variant="body2"
-                        component="label"
-                        sx={{ mt: 2, mb: 1, display: "block" }}
-                      >
-                        تا:
-                      </Typography>
-                      {renderIpInputs("to")}
+                      <Grid item xs={12}>
+                        <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
+                          از:
+                        </Typography>
+                        {renderIpInputs("from", rangeIpFrom, setRangeIpFrom)}
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
+                          تا:
+                        </Typography>
+                        {renderIpInputs("to", rangeIpTo, setRangeIpTo)}
+                      </Grid>
                     </>
                   )}
 
                 </FormControl>
               </Grid>
             )
-          }
+          } */}
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}></Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <FormControl>
