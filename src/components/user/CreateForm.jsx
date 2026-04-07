@@ -15,6 +15,8 @@ import Radio from '@mui/material/Radio';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import { getRoles } from '../../api/RoleApi';
+import Typography from '@mui/material/Typography';
+import { useEffect } from 'react';
 
 function UserForm(props) {
   const {
@@ -31,6 +33,39 @@ function UserForm(props) {
   const isOtpFieldRelevant = !isMobileFieldEmpty;
   const isIpCheckActive = formValues.IsCheckIp === true;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  ///
+  const [isCheckIpBtn, setIsCheckIpBtn] = useState(false);
+  const [scope, setScope] = useState("0");
+  const [isRangeScope, setIsRangeScope] = useState(false);
+
+  const handleIpInputs = (scope) => {
+    console.log('handleIpInputs', scope)
+    setScope(scope)
+    onFieldChange("Scope", scope, "radio")
+  }
+  
+  const renderIpInputs = (prefix) => (
+    <Grid container spacing={1} alignItems="center">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <>
+          <Grid item xs={3} key={`${prefix}-ip-${i}`}>
+            <TextField
+              fullWidth
+              size="small"
+            //placeholder="0-255"
+            />
+          </Grid>
+          {/* Add a dot after every segment except the last one */}
+          {i < 3 && (
+            <Grid item xs={0.5}>
+              <Typography variant="body1" textAlign="center">.</Typography>
+            </Grid>
+          )}
+        </>
+      ))}
+    </Grid>
+  );
+  ///
   const [data, setData] = useState({
     Username: '',
     Password: '',
@@ -44,7 +79,7 @@ function UserForm(props) {
 
   const [roles, setRoles] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
 
     getRoles()
       .then((data) => {
@@ -135,27 +170,23 @@ function UserForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
-            <TextField
-              value={formValues.IpWhiteLists ?? ''}
-              onChange={(e) => onFieldChange("IpWhiteLists", e.target.value)}
-              name="IpWhiteLists"
-              label="IP WhiteList"
-              error={!!formErrors.IpWhiteLists}
-              helperText={formErrors.IpWhiteLists ?? ' '}
-              disabled={!isIpCheckActive}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+
+
+          <Grid size={{ xs: 12, sm: 1 }} sx={{ display: 'flex' }}>
             <FormControl>
               <FormControlLabel
                 name="IsCheckIp"
                 control={
                   <Checkbox
+                    sx={{
+                      display: "inline"
+                    }}
                     size="large"
                     checked={!!formValues.IsCheckIp}
-                    onChange={(e) => onFieldChange("IsCheckIp", e.target.checked, "checkbox")}
+                    onChange={(e) => {
+                      onFieldChange("IsCheckIp", e.target.checked, "checkbox")
+                      setIsCheckIpBtn(!isCheckIpBtn)
+                    }}
                     name="IsCheckIp"
                   />
                 }
@@ -166,6 +197,65 @@ function UserForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
+          {
+            isCheckIpBtn && (
+              <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+                <FormControl>
+
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="Scope"
+                    onChange={(e) => handleIpInputs(e.target.value)}
+                  >
+                    <FormControlLabel
+                      value="0"
+                      control={<Radio />}
+                      label="IP تکی:"
+                    />
+
+                    <FormControlLabel
+                      value="1"
+                      control={<Radio />}
+                      label="محدوده IP:"
+                    />
+                  </RadioGroup>
+
+                  <FormHelperText error={!!formErrors.Scope}>
+                    {formErrors.Scope ?? ' '}
+                  </FormHelperText>
+
+                  {scope === '0' ? (
+                    <>
+                      {renderIpInputs("single")}
+                    </>
+                  ) : (
+                    <>
+                      <Typography
+                        variant="body2"
+                        component="label"
+                        sx={{ mt: 2, mb: 1, display: "block" }}
+                      >
+                        از:
+                      </Typography>
+                      {renderIpInputs("from")}
+
+                      <Typography
+                        variant="body2"
+                        component="label"
+                        sx={{ mt: 2, mb: 1, display: "block" }}
+                      >
+                        تا:
+                      </Typography>
+                      {renderIpInputs("to")}
+                    </>
+                  )}
+
+                </FormControl>
+              </Grid>
+            )
+          }
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}></Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">وضعیت</FormLabel>
@@ -183,6 +273,7 @@ function UserForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
+
 
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <FormControl>
