@@ -6,7 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import EditForm from '../../components/employee/EditForm';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
-import { updateEmployee, employeeDetails, EmployeeDetails } from '../../api/EmployeeApi';
+import { updateEmployee, EmployeeDetails } from '../../api/EmployeeApi';
 import { EditValidation } from '../../validation/EmployeeValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -136,7 +136,7 @@ export default function Edit() {
                     navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
                 })
         },
-        [employeeID],
+        [employeeID, navigate],
     );
 
     const renderEdit = useMemo(() => {
