@@ -63,9 +63,9 @@ const UserCreate = () => {
         finalValue = Boolean(value);
       }
 
-      if (name === "Status" && value == '-1') {
-        finalValue = 0;
-      }
+      // if (name === "Status" && value == '-1') {
+      //   finalValue = 0;
+      // }
 
       if (type === "radio") {
        

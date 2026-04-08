@@ -19,6 +19,7 @@ import { useEffect } from 'react';
 import { Fragment } from 'react';
 
 const ipArrayToString = (arr) => arr.join('.');
+const ipStringToArray = (str) => str.split('.').map(num => num === '' ? '' : parseInt(num, 10));
 
 function UserForm(props) {
   const {
@@ -69,7 +70,7 @@ function UserForm(props) {
       newIpTo[index] = validValue;
       setRangeIpTo(newIpTo);
 
-      // ---- Add this part to link 'from' with 'to' ----
+      //  link 'from' with 'to' 
       const newIpFrom = [...rangeIpFrom];
       if (index === 0) newIpFrom[0] = newIpTo[0];
       if (index === 1) newIpFrom[1] = newIpTo[1];
@@ -131,9 +132,7 @@ function UserForm(props) {
     );
   };
 
-  // --------------------------
   // Reset IPs when scope changes
-  // --------------------------
   const handleScopeChange = (event) => {
     const newScope = event.target.value;
     setScope(newScope);
