@@ -36,22 +36,20 @@ function EditForm(props) {
       .then(data => {
         setEquipments(data.data['result'])
       })
-      .catch(() => toast.error("مشکلی در گرفتن لیست قطعات رخ داده است."))
+      .catch(() => {
+        //toast.error("مشکلی در گرفتن لیست قطعات رخ داده است.")
+      })
 
-      if(formValues?.equipments){
-        setEquipmentIds(formValues.equipments.map(x=>x.id))
-      }
-  }, [])
+    if (formValues?.equipments) {
+      setEquipmentIds(formValues.equipments.map(x => x.id));
+    }
+  }, [formValues.equipments]);
 
-    useEffect(() => {
-
-      if(formValues?.equipments){
-        setEquipmentIds(formValues.equipments.map(x=>x.id))
-      }
-      
-  }, [formValues])
-
-
+  useEffect(() => {
+    if (formValues?.equipments) {
+      setEquipmentIds(formValues.equipments.map(x => x.id))
+    }
+  }, [formValues.equipments])
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -79,12 +77,13 @@ function EditForm(props) {
       target: { value },
     } = event;
 
-    setEquipmentIds(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-    onFieldChange("equipmentIds", value)
+    const selectedIds = typeof value === 'string' ? value.split(',') : value;
+
+    setEquipmentIds(selectedIds);
+
+    onFieldChange("equipmentIds", selectedIds);
   };
+
   return (
     <Box
       component="form"
