@@ -9,6 +9,7 @@ import { EditValidation } from '../../validation/ProfileValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getDetails, updateProfile } from '../../api/ProfileApi';
+import useAuth from '../../hooks/useAuth/useAuth';
 
 function SettingEditForm({ initialValues, onSubmit }) {
     const navigate = useNavigate();
@@ -73,9 +74,9 @@ function SettingEditForm({ initialValues, onSubmit }) {
     }, [initialValues, setFormValues]);
 
     const handleFormSubmit = useCallback(async () => {
-        
+
         const { issues } = EditValidation(formValues);
-        
+
         if (issues && issues.length > 0) {
             setFormErrors(
                 Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
@@ -83,7 +84,7 @@ function SettingEditForm({ initialValues, onSubmit }) {
             return;
         }
         setFormErrors({});
-        
+
         try {
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
@@ -105,7 +106,7 @@ function SettingEditForm({ initialValues, onSubmit }) {
 }
 
 export default function Profile() {
-    const { userID } = 1;//TODO:after create auth edit it
+    const { getUserID } = useAuth();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -114,15 +115,15 @@ export default function Profile() {
     const loadData = useCallback(async () => {
         setError(null);
         setIsLoading(true);
-
-        getDetails(1)//TODO:after create auth edit it
+        
+        getDetails(getUserID())
             .then(data => {
                 setUser(data.data['result'])
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
-    }, [userID]);
+    }, [getUserID]);
 
     useEffect(() => {
         loadData();
@@ -136,10 +137,10 @@ export default function Profile() {
                 .then(data => {
                     setUser(data.data['result'])
                     setIsLoading(false);
-                    
+
                 })
         },
-        [userID],
+        [getUserID],
     );
 
     const renderEdit = useMemo(() => {
@@ -176,7 +177,7 @@ export default function Profile() {
 
     return (
         <PageContainer
-            title={"تنظیمات"}
+            title={"پروفایل"}
         >
             <Divider sx={{ marginBottom: "4%" }} />
             <Box sx={{ display: 'flex', flex: 1 }}>{renderEdit}</Box>

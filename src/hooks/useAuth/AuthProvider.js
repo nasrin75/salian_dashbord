@@ -5,13 +5,11 @@ import { login } from "../../api/AuthApi";
 import { toast } from "react-toastify";
 import { StoreTokenInLocalStorage } from "../../utlis/constants/common";
 import { getMyPermission } from "../../api/UserApi";
-import { Navigate } from "react-router-dom";
 import { APP_ROUTES } from "../../utlis/constants/routePath";
 
 const AuthProvider = ({ children }) => {
 
     const [token, setToken_] = useState(localStorage.getItem("token"));
-    const [user, setUser] = useState({})
     const [permissions, setPermissions] = useState([])
 
     // Function to set the authentication token
@@ -29,16 +27,13 @@ const AuthProvider = ({ children }) => {
                     const token = result.token;
                     setToken(token)
                     StoreTokenInLocalStorage(token)
-                    localStorage.setItem('user',JSON.stringify(result))
+                    localStorage.setItem('user', JSON.stringify(result))
 
-                    //console.log('loginResult',result)
                     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-                    //localStorage.setItem("role", result.role)
-
                     //getPermission list
-                     getPermissions()
-                    
+                    getPermissions()
+
                     //Notify
                     toast.success("شما با موفقیت وارد شدید")
 
@@ -56,7 +51,7 @@ const AuthProvider = ({ children }) => {
         localStorage.removeItem("user")
         localStorage.removeItem("permissions")
 
-        window.location.href = '/login'
+        window.location.href = APP_ROUTES.LOGIN_PATH
     }
 
     const getPermissions = async () => {
@@ -68,24 +63,29 @@ const AuthProvider = ({ children }) => {
 
                 localStorage.setItem("permissions", permissionNames)
             }).catch(err => {
-                console.log("getMyPermissionErr", err.response?.data)
+
                 if (err.response?.data == 'IP_ADDRESS_IS_NOT_PERMITTED') {
                     window.location.href = APP_ROUTES.UNAUTHORIZED_PATH
                 }
             });
     }
 
+    const getUserID = () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        return user.userId;
+    }
+
     const hasPermission = (rights) => {
         const user = JSON.parse(localStorage.getItem('user'));
-        console.log("hasPermissionRole", user?.role.toLowerCase());
-       return user?.role.toLowerCase() == 'admin' ? true
-        : rights.some(right => localStorage.getItem('permissions')?.includes(right));
+
+        return user?.role.toLowerCase() == 'admin' ? true
+            : rights.some(right => localStorage.getItem('permissions')?.includes(right));
     }
 
 
     // Provide the authentication context to the children components
     return (
-        <AuthContext.Provider value={{ token, setToken, loginAction, permissions, hasPermission, logout }}>
+        <AuthContext.Provider value={{ token, setToken, loginAction, permissions, hasPermission, logout, getUserID }}>
             {children}
         </AuthContext.Provider>
     );
