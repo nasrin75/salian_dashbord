@@ -6,7 +6,7 @@
 export const ResponseMessage = [
     {
         'key': 'USER_NOT_FOUND',
-        'mgs': "کاربر یافت نشد",
+        'mgs': "کاربر موردنظر یافت نشد",
     },
     {
         'key': 'TOKEN_TIME_REMAINED',
@@ -214,25 +214,48 @@ export const ResponseMessage = [
         'mgs': 'نوع',
     },
     {
-        'key':'IsShowInMenu',
-        'mgs':'نمایش در منو',
+        'key': 'IsShowInMenu',
+        'mgs': 'نمایش در منو',
     },
     {
-        'key':'ٔName',
-        'mgs':'نام',
+        'key': 'ٔName',
+        'mgs': 'نام',
     },
     {
-        'key':'Title',
-        'mgs':'عنوان',
+        'key': 'Title',
+        'mgs': 'عنوان',
     },
     {
-        'key':'Abbreviation',
-        'mgs':'مخفف',
+        'key': 'Abbreviation',
+        'mgs': 'مخفف',
     },
     {
-        'key':'IsShow',
-        'mgs':'نمایش دادن',
-}
-
+        'key': 'IsShow',
+        'mgs': 'نمایش دادن',
+    },
+    {
+        'key': 'INVENTORY_NOT_EXIST',
+        'mgs': 'انبار یافت نشد',
+    },
+    {
+        'key': 'PASSWORD_IS_WRONG',
+        'mgs': 'رمزعبور صحیح نیست.',
+    },
+    {
+        'key': 'EMAIL_NOT_EXIST',
+        'mgs': 'ایمیل یافت نشد',
+    },
+    {
+        'key': 'TOKEN_IS_INVALID',
+        'mgs': 'کد نامعتبر است.',
+    },
+    {
+        'key': 'EQUIPMENT_NOT_FOUND',
+        'mgs': 'قطعه موردنظر یافت نشد.',
+    },
+    {
+        'key': 'EMPLOYEE_NOT_FOUND',
+        'mgs': 'پرسنل موردنظر یافت نشد.',
+    },
 
 ]
