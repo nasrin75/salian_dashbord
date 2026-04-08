@@ -84,7 +84,7 @@ const Routes = () => {
 
 
             //Profile
-            { path: APP_ROUTES.PROFILE_SETTING_PATH, element: <Profile /> },
+            { path: APP_ROUTES.PROFILE_PATH, element: <Profile /> },
             //Inventory
             { path: APP_ROUTES.INVENTORY_LIST_PATH, element: <Inventory /> },
             { path: APP_ROUTES.INVENTORY_CREATE_PATH, element: <InventoryCreate /> },

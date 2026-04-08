@@ -29,7 +29,7 @@ export const APP_ROUTES = {
     INVENTORY_CREATE_DUPLICATE_PATH: '/inventory/:inventoryID/duplicate',
 
     //Profile
-    PROFILE_SETTING_PATH: '/profile',
+    PROFILE_PATH: '/profile',
 
     //Locations
     LOCATION_LIST_PATH: '/setting/locations',
