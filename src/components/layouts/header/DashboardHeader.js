@@ -1,4 +1,3 @@
-import * as React from 'react';
 import PropTypes from 'prop-types';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -10,8 +9,13 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import Stack from '@mui/material/Stack';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import ThemeSwitcher from '../../theme/ThemeSwitcher';
+import LogoutIcon from "@mui/icons-material/Logout";
+import PersonIcon from '@mui/icons-material/Person';
+import useAuth from '../../../hooks/useAuth/useAuth';
+import { useCallback } from 'react';
+import { APP_ROUTES } from '../../../utlis/constants/routePath';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   borderWidth: 0,
@@ -32,14 +36,21 @@ const LogoContainer = styled('div')({
   },
 });
 
-function DashboardHeader({ logo, title, menuOpen, onToggleMenu,isLogin = false }) {
+function DashboardHeader({ logo, title, menuOpen, onToggleMenu, isLogin = false }) {
   const theme = useTheme();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-  const handleMenuOpen = React.useCallback(() => {
+  const redirectProfilePage = useCallback(() => {
+    console.log('redirectProfilePage',APP_ROUTES.PROFILE_PATH)
+    navigate(APP_ROUTES.PROFILE_PATH)
+  }, [navigate])
+
+  const handleMenuOpen = useCallback(() => {
     onToggleMenu(!menuOpen);
   }, [menuOpen, onToggleMenu]);
 
-  const getMenuIcon = React.useCallback(
+  const getMenuIcon = useCallback(
     (isExpanded) => {
       const expandMenuActionText = 'Expand';
       const collapseMenuActionText = 'Collapse';
@@ -78,9 +89,9 @@ function DashboardHeader({ logo, title, menuOpen, onToggleMenu,isLogin = false }
         >
           <Stack direction="row" alignItems="center">
             {!isLogin && (
-              <Box sx={{ mr: 1 }}>{getMenuIcon(menuOpen)}</Box> 
+              <Box sx={{ mr: 1 }}>{getMenuIcon(menuOpen)}</Box>
             )}
-            
+
             <Link to="/" style={{ textDecoration: 'none' }}>
               <Stack direction="row" alignItems="center">
                 {logo ? <LogoContainer>{logo}</LogoContainer> : null}
@@ -104,11 +115,25 @@ function DashboardHeader({ logo, title, menuOpen, onToggleMenu,isLogin = false }
           <Stack
             direction="row"
             alignItems="center"
-            spacing={1}
-            sx={{ marginLeft: 'auto' }}
+            spacing={1.5}
+            sx={{ marginLeft: '5px' }}
           >
             <Stack direction="row" alignItems="center">
+              <IconButton
+                size="small"
+                onClick={redirectProfilePage}
+              >
+                <PersonIcon />
+              </IconButton>
               <ThemeSwitcher />
+              <IconButton
+                size="small"
+                onClick={logout}
+              >
+                <LogoutIcon />
+              </IconButton>
+
+
             </Stack>
           </Stack>
         </Stack>
