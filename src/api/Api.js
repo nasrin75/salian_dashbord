@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { APP_ROUTES } from "../utlis/constants/routePath";
 import { ResponseMessage } from "../Response/ResponseMessage";
@@ -19,7 +18,11 @@ Api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  config.timeout = 10000; // 10s timeout
   return config;
+}, (error) => {
+  console.error('Error in request interceptor:', error);
+  return Promise.reject(error);
 });
 
 
@@ -34,37 +37,48 @@ Api.interceptors.response.use(
 
   },
   (error) => {
-    // This function runs for ALL error responses (non-2xx status codes) or network errors.
-    if (error.response) {
+    if (!error.response) {
+      console.error('Network Error or Request Setup Error:', error.message || error);
+      window.location.href = APP_ROUTES.NOT_FOUND_PATH
+      toast.error('مشکل در اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی کنید.');
+
+    } else {
+      let result = "مشکلی رخ داده است";
+      if (error.response?.data?.message) {
+        const message = error.response?.data?.message;
+        const resp = ResponseMessage.find((item) => item?.key && item?.key.toUpperCase() === message.toUpperCase());
+        result = resp?.mgs || message;
+      }
+
       switch (error.response.status) {
         case 400:
-          //console.log("Apiiiii",Translation(error.response.data.message))
-
+          toast.error(result || 'خطای ورودی');
           break;
         case 401:
-          toast.error("لطفا دوباره وارد شوید")
-          localStorage.clear('token')
-          this.router.navigate([APP_ROUTES.LOGIN_PATH])
-          break;
-        case 404:
-          toast.error("موردی یافت نشد.")
+          // Unauthenticated
+          toast.error("لطفاً دوباره وارد شوید.");
+          localStorage.removeItem("token");
+          //window.location.href = APP_ROUTES.UNAUTHORIZED_PATH
+          if (typeof this !== 'undefined' && this.router) {
+            window.location.href = APP_ROUTES.UNAUTHORIZED_PATH
+          }
           break;
         case 403:
-          toast.error("عدم دسترسی")
+          toast.error("عدم دسترسی کافی.");
+          break;
+        case 404:
+          console.log(error.response)
+          //window.location.href = APP_ROUTES.NOT_FOUND_PATH
           break;
         case 500:
-          toast.error("مشکلی رخ داده است.")
+          // Internal Server Error
+          toast.error("خطای داخلی سرور. لطفاً بعداً دوباره تلاش کنید.");
           break;
         default:
-          console.log(`Unhandled HTTP Error: Status ${error.response.status}`);
+          console.warn(`Unhandled HTTP Error: Status ${error.response.status}`);
+          toast.error(`خطایی رخ داد (${error.response.status}).`);
           break;
       }
-    } else if (error.request) {
-      // The request was made but no response was received (e.g., network down).
-      console.log('No response received from the server. Please check your network connection.');
-    } else {
-      // Something happened in setting up the request that triggered an error.
-      console.log('Error setting up the request:', error.message);
     }
 
     return Promise.reject(error);
