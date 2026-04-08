@@ -25,6 +25,7 @@ import { getInventorySubMenu } from '../../../api/EquipmentApi';
 import useAuth from '../../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../../utlis/constants/Permissions';
 import { APP_ROUTES } from '../../../utlis/constants/routePath';
+import logo from '../../../Assets/images/logo.png';
 
 function DashboardSidebar({
   expanded = true,
@@ -140,7 +141,7 @@ function DashboardSidebar({
               }}
             >
               <img
-                src="./Assets/images/logo.png"
+                src={logo}
                 alt="Dashboard Logo"
                 style={{
                   height: '48px',
