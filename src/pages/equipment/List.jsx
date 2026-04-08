@@ -109,7 +109,7 @@ export default function List() {
 
                 setIsLoading(false)
 
-            })
+            }).catch(err => {})
 
         setIsLoading(false);
     }, [paginationModel, sortModel, filterModel, searchParams]);

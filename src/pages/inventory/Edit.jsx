@@ -125,6 +125,8 @@ export default function Edit() {
                 
                 setInventory(data.data['result'])
                 setIsLoading(false);
+            }).catch(err =>{
+                //console.log(err)
             })
 
         setIsLoading(false);
