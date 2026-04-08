@@ -38,7 +38,7 @@ function UserForm(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   ///
   const [isCheckIpBtn, setIsCheckIpBtn] = useState(false);
-  const [scope, setScope] = useState("0");
+  const [scope, setScope] = useState(0);
   const [singleIp, setSingleIp] = useState(Array(4).fill(''));
   const [rangeIpFrom, setRangeIpFrom] = useState(Array(4).fill(''));
   const [rangeIpTo, setRangeIpTo] = useState(Array(4).fill(''));
@@ -48,73 +48,91 @@ function UserForm(props) {
 
     console.log('handleIpChange', type, index, value)
 
+    onFieldChange('Scope', scope, 'number')
+
     if (type === 'single') {
       const newIp = [...singleIp];
       newIp[index] = validValue;
       setSingleIp(newIp);
-    } else if (type === 'from') {
+  
+    }
+    if (type === 'from') {
       const newIp = [...rangeIpFrom];
       newIp[index] = validValue;
       setRangeIpFrom(newIp);
-      //console.log('handleIpChange_from Updated rangeIpFrom:', newIp);
+     
+    }
 
-    } else if (type === 'to') {
-      const newIpTo = [...rangeIpTo]; // Create a new array for to
+    if (type === 'to') {
+
+      const newTo = [...rangeIpTo];
+      newTo[index] = validValue;
+      setRangeIpTo(ipArrayToString(newTo));
+      
+      // if (index <= 2) {
+      //   const newFrom = [...rangeIpFrom];
+      //   newFrom[index] = newTo[index];
+      //   setRangeIpFrom(ipArrayToString(newFrom));
+    
+      // }
+      //return;
+      //
+      const newIpTo = [...rangeIpTo];
       newIpTo[index] = validValue;
       setRangeIpTo(newIpTo);
-      //console.log('handleIpChange_to Updated rangeIpTo:', newIpTo);
 
       // ---- Add this part to link 'from' with 'to' ----
-      const newIpFrom = [...rangeIpFrom]; // Create a new array for from
-      if (index === 3) newIpFrom[3] = newIpTo[3];
+      const newIpFrom = [...rangeIpFrom];
+      if (index === 0) newIpFrom[0] = newIpTo[0];
       if (index === 1) newIpFrom[1] = newIpTo[1];
       if (index === 2) newIpFrom[2] = newIpTo[2];
 
-      setRangeIpFrom(newIpFrom);
-      //console.log('handleIpChange_to Updated rangeIpFrom (linked to to):', newIpFrom);
+      // setRangeIpFrom(newIpFrom);
     }
+
   };
 
   useEffect(() => {
-    if (scope === '1') {
-      setRangeIpTo(prevIpTo => {
-        const newIpTo = [...prevIpTo];
+    // if (scope !== '1') {
+    //   setRangeIpTo(Array(4).fill(''));
+    //   return;
+    // }
 
-        newIpTo[3] = rangeIpFrom[3];
-        newIpTo[2] = rangeIpFrom[2];
-        newIpTo[1] = rangeIpFrom[1];
+    // sync first 3 blocks from → to
+    setRangeIpTo(prev => {
+      const newTo = [...prev];
+      newTo[0] = rangeIpFrom[0];
+      newTo[1] = rangeIpFrom[1];
+      newTo[2] = rangeIpFrom[2];
+      return newTo;
+    });
 
-        return newIpTo;
-      });
-      //console.log('useEffect: RTL - Copied and reversed first three parts from rangeIpFrom to rangeIpTo');
-    } else {
-      setRangeIpTo(Array(4).fill(''));
-      //console.log('useEffect: Scope changed to single IP or reset, cleared rangeIpTo');
-    }
   }, [rangeIpFrom, scope]);
 
   const renderIpInputs = (type, ipState, setIpState) => {
     const ipArray = type === 'single' ? singleIp : rangeIpFrom;
     const setState = type === 'single' ? setSingleIp : (type === 'from' ? setRangeIpFrom : setRangeIpTo);
-    console.log('renderIpInputs called with type:', type, 'and current ipState:', ipState);
 
     return (
       <Grid container spacing={1} alignItems="center" sx={{ mb: type === 'single' ? 2 : 0 }}>
-        {[0, 1, 2, 3].map((index) => (
+        {[3, 2, 1, 0].map((index) => (
           <Fragment key={index}>
             <Grid item xs={3}>
               <TextField
                 variant="outlined"
                 placeholder="0-255"
                 value={ipState[index]}
-                onChange={(e) => handleIpChange(type, index, e.target.value)}
+                onChange={(e) => {
+                  handleIpChange(type, index, e.target.value)
+                  //constructFinalIpString()
+                }}
                 inputProps={{ maxLength: 3, sx: { textAlign: 'center' } }}
                 fullWidth
                 error={!!formErrors[`${type}-${index}`]}
                 helperText={formErrors[`${type}-${index}`] ?? ' '}
               />
             </Grid>
-            {index < 3 && (
+            {index > 0 && (
               <Grid item xs={1} sx={{ textAlign: 'center' }}>
                 <Typography variant="body1">.</Typography>
               </Grid>
@@ -125,28 +143,31 @@ function UserForm(props) {
     );
   };
 
+  // --------------------------
+  // Reset IPs when scope changes
+  // --------------------------
   const handleScopeChange = (event) => {
     const newScope = event.target.value;
-
     setScope(newScope);
-    setSingleIp(Array(3).fill(''));
-    setRangeIpFrom(Array(3).fill(''));
-    setRangeIpTo(Array(3).fill(''));
 
+    // always 4 parts!
+    setSingleIp(Array(4).fill(''));
+    setRangeIpFrom(Array(4).fill(''));
+    setRangeIpTo(Array(4).fill(''));
   };
 
   // create ip as string to send backend
   const constructFinalIpString = () => {
-    if (scope === '0') {
-      const ipStr = ipArrayToString(singleIp);
-      console.log("aaaaaaaaaaaa", ipStr)
-      return { startIp: ipStr, endIp: ipStr };
+    if (scope === 0) {
+      console.log('into constructFinalIpString')
+      onFieldChange('StartIp', ipArrayToString(singleIp));
     } else {
-      const startIpStr = ipArrayToString(rangeIpFrom);
-      const endIpStr = ipArrayToString(rangeIpTo);
-      return { startIp: startIpStr, endIp: endIpStr };
+      onFieldChange("Ip",ipArrayToString(rangeIpFrom) +',' +ipArrayToString(rangeIpTo),'doubleString')
+      // onFieldChange('StartIp', ipArrayToString(rangeIpFrom));
+      // onFieldChange('EndIp', ipArrayToString(rangeIpTo));
     }
   };
+
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
@@ -160,20 +181,20 @@ function UserForm(props) {
       })
   }, [])
 
-  console.log("Ip result:", constructFinalIpString());
 
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
-
-      const ipData = constructFinalIpString();
-      console.log("Sending to backend:", ipData);
+      // console.log('handleSubmit')
+      constructFinalIpString();
 
       setIsSubmitting(true);
       try {
         await onSubmit(formValues);
+        console.log('handleSubmit onsub')
       } finally {
         setIsSubmitting(false);
+        console.log('handleSubmit finally', formValues)
       }
     },
     [formValues, onSubmit],
@@ -271,59 +292,8 @@ function UserForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
-            <FormControl>
 
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="Scope"
-                value={scope}
-                onChange={handleScopeChange}
-              >
-                <FormControlLabel
-                  value="0"
-                  control={<Radio />}
-                  label="IP تکی:"
-                />
-
-                <FormControlLabel
-                  value="1"
-                  control={<Radio />}
-                  label="محدوده IP:"
-                />
-              </RadioGroup>
-
-              <FormHelperText error={!!formErrors.Scope}>
-                {formErrors.Scope ?? ' '}
-              </FormHelperText>
-
-              {scope === '0' ? (
-                <Grid item xs={12}>
-                  {renderIpInputs("single", singleIp, setSingleIp)}
-                </Grid>
-              ) : (
-                <>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
-                      از:
-                    </Typography>
-                    {renderIpInputs("from", rangeIpFrom, setRangeIpFrom)}
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
-                      تا:
-                    </Typography>
-                    {renderIpInputs("to", rangeIpTo, setRangeIpTo)}
-                  </Grid>
-                </>
-              )}
-
-            </FormControl>
-          </Grid>
-
-
-          {/* {
+          {
             isCheckIpBtn && (
               <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
                 <FormControl>
@@ -352,11 +322,7 @@ function UserForm(props) {
                     {formErrors.Scope ?? ' '}
                   </FormHelperText>
 
-                  {scope === '0' ? (
-                    <Grid item xs={12}>
-                      {renderIpInputs("single", singleIp, setSingleIp)}
-                    </Grid>
-                  ) : (
+                  {scope === '1' ? (
                     <>
                       <Grid item xs={12}>
                         <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
@@ -371,12 +337,16 @@ function UserForm(props) {
                         {renderIpInputs("to", rangeIpTo, setRangeIpTo)}
                       </Grid>
                     </>
+                  ) : (
+                    <Grid item xs={12}>
+                      {renderIpInputs("single", singleIp, setSingleIp)}
+                    </Grid>
                   )}
 
                 </FormControl>
               </Grid>
             )
-          } */}
+          }
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}></Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <FormControl>
@@ -386,6 +356,8 @@ function UserForm(props) {
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="Status"
                 onChange={(e) => onFieldChange("Status", e.target.value, "radio")}
+                error={!!formErrors.Status}
+                helperText={formErrors.Status ?? " "}
               >
                 <FormControlLabel value="1" control={<Radio />} label="فعال" />
                 <FormControlLabel value="0" control={<Radio />} label="غیرفعال" />
@@ -404,6 +376,8 @@ function UserForm(props) {
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="RoleId"
+                error={!!formErrors.RoleId}
+                helperText={formErrors.RoleId ?? " "}
                 onChange={(e) => onFieldChange("RoleId", e.target.value, "radio")}
               >
                 {
@@ -413,8 +387,8 @@ function UserForm(props) {
                 }
 
               </RadioGroup>
-              <FormHelperText error={!!formErrors.role}>
-                {formErrors.role ?? ' '}
+              <FormHelperText error={!!formErrors.RoleId}>
+                {formErrors.RoleId ?? ' '}
               </FormHelperText>
             </FormControl>
           </Grid>
@@ -426,7 +400,8 @@ function UserForm(props) {
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="LoginTypes"
-
+                error={!!formErrors.LoginTypes}
+                helperText={formErrors.LoginTypes}
               >
                 <FormControlLabel value="otp" control={<Checkbox
                   checked={formValues.LoginTypes?.includes("otp") ?? false}
@@ -448,8 +423,8 @@ function UserForm(props) {
                   onChange={(e) => handleLoginTypeChange("push", e.target.checked)
                   } />} label="Push" />
               </FormGroup>
-              <FormHelperText error={!!formErrors.loginType}>
-                {formErrors.loginType ?? ' '}
+              <FormHelperText error={!!formErrors.LoginTypes}>
+                {formErrors.LoginTypes ?? ' '}
               </FormHelperText>
             </FormControl>
           </Grid>
@@ -473,24 +448,26 @@ function UserForm(props) {
 UserForm.propTypes = {
   formState: PropTypes.shape({
     errors: PropTypes.shape({
-      username: PropTypes.string,
+      Username: PropTypes.string,
       IsCheckIp: PropTypes.string,
-      role: PropTypes.string,
-      status: PropTypes.string,
-      email: PropTypes.string,
-      mobile: PropTypes.string,
-      password: PropTypes.string,
-      LoginTypes: PropTypes.string
+      RoleId: PropTypes.string,
+      Status: PropTypes.string,
+      Email: PropTypes.string,
+      Mobile: PropTypes.string,
+      Password: PropTypes.string,
+      LoginTypes: PropTypes.array,
+      StartIp: PropTypes.string,
     }).isRequired,
     values: PropTypes.shape({
-      username: PropTypes.string,
-      email: PropTypes.string,
-      mobile: PropTypes.string,
-      password: PropTypes.string,
-      role: PropTypes.number,
-      status: PropTypes.number,
+      Username: PropTypes.string,
+      Email: PropTypes.string,
+      Mobile: PropTypes.string,
+      Password: PropTypes.string,
+      RoleId: PropTypes.number,
+      Status: PropTypes.number,
       IsCheckIp: PropTypes.bool,
-      LoginTypes: PropTypes.string
+      LoginTypes: PropTypes.array,
+      StartIp: PropTypes.string,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,
