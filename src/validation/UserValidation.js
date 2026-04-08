@@ -8,10 +8,13 @@ export function userValidate(user) {
   if (!user.Password) {
     issues = [...issues, { message: 'رمزعبور الزامی است.', path: ['Password'] }];
   }
+   if (!user.Status) {
+    issues = [...issues, { message: 'انتخاب وضعیت الزامی است', path: ['Status'] }];
+  }
   if (!user.RoleId) {
     issues = [...issues, { message: 'انتخاب الزامی است.', path: ['RoleId'] }];
   }
-  if (!user.LoginTypes) {
+  if (!user.LoginTypes || user.LoginTypes.length === 0) {
     issues = [...issues, { message: 'انتخاب نحوه ورود الزامی است.', path: ['LoginTypes'] }];
   }
 
@@ -30,7 +33,7 @@ export function userEditFormValidate(user) {
   if (!user.roleId) {
     issues = [...issues, { message: 'انتخاب الزامی است.', path: ['roleId'] }];
   }
-  if (!user.loginTypes) {
+  if (!user.loginTypes || user.loginTypes.length === 0) {
     issues = [...issues, { message: 'انتخاب نحوه ورود الزامی است.', path: ['loginTypes'] }];
   }
 
