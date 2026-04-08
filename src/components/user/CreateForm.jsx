@@ -19,7 +19,6 @@ import { useEffect } from 'react';
 import { Fragment } from 'react';
 
 const ipArrayToString = (arr) => arr.join('.');
-const ipStringToArray = (str) => str.split('.').map(num => num === '' ? '' : parseInt(num, 10));
 
 function UserForm(props) {
   const {
@@ -34,9 +33,8 @@ function UserForm(props) {
   const isEmailFieldEmpty = !formValues.Email;
   const isMobileFieldEmpty = !formValues.Mobile;
   const isOtpFieldRelevant = !isMobileFieldEmpty;
-  const isIpCheckActive = formValues.IsCheckIp === true;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  ///
+  
   const [isCheckIpBtn, setIsCheckIpBtn] = useState(false);
   const [scope, setScope] = useState(0);
   const [singleIp, setSingleIp] = useState(Array(4).fill(''));
@@ -46,21 +44,19 @@ function UserForm(props) {
   const handleIpChange = (type, index, value) => {
     const validValue = value.replace(/[^0-9]/g, '').slice(0, 3); // can enter just 3 number
 
-    console.log('handleIpChange', type, index, value)
 
     onFieldChange('Scope', scope, 'number')
-
     if (type === 'single') {
       const newIp = [...singleIp];
       newIp[index] = validValue;
       setSingleIp(newIp);
-  
+
     }
     if (type === 'from') {
       const newIp = [...rangeIpFrom];
       newIp[index] = validValue;
       setRangeIpFrom(newIp);
-     
+
     }
 
     if (type === 'to') {
@@ -68,15 +64,7 @@ function UserForm(props) {
       const newTo = [...rangeIpTo];
       newTo[index] = validValue;
       setRangeIpTo(ipArrayToString(newTo));
-      
-      // if (index <= 2) {
-      //   const newFrom = [...rangeIpFrom];
-      //   newFrom[index] = newTo[index];
-      //   setRangeIpFrom(ipArrayToString(newFrom));
-    
-      // }
-      //return;
-      //
+
       const newIpTo = [...rangeIpTo];
       newIpTo[index] = validValue;
       setRangeIpTo(newIpTo);
@@ -158,13 +146,11 @@ function UserForm(props) {
 
   // create ip as string to send backend
   const constructFinalIpString = () => {
+
     if (scope === 0) {
-      console.log('into constructFinalIpString')
-      onFieldChange('StartIp', ipArrayToString(singleIp));
+      onFieldChange('SingleIp', ipArrayToString(singleIp));
     } else {
-      onFieldChange("Ip",ipArrayToString(rangeIpFrom) +',' +ipArrayToString(rangeIpTo),'doubleString')
-      // onFieldChange('StartIp', ipArrayToString(rangeIpFrom));
-      // onFieldChange('EndIp', ipArrayToString(rangeIpTo));
+      onFieldChange("RangeIp", ipArrayToString(rangeIpFrom) + ',' + ipArrayToString(rangeIpTo), 'doubleString')
     }
   };
 
@@ -185,16 +171,14 @@ function UserForm(props) {
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
-      // console.log('handleSubmit')
+      
       constructFinalIpString();
 
       setIsSubmitting(true);
       try {
         await onSubmit(formValues);
-        console.log('handleSubmit onsub')
       } finally {
         setIsSubmitting(false);
-        console.log('handleSubmit finally', formValues)
       }
     },
     [formValues, onSubmit],
@@ -360,7 +344,7 @@ function UserForm(props) {
                 helperText={formErrors.Status ?? " "}
               >
                 <FormControlLabel value="1" control={<Radio />} label="فعال" />
-                <FormControlLabel value="0" control={<Radio />} label="غیرفعال" />
+                <FormControlLabel value="-1" control={<Radio />} label="غیرفعال" />
               </RadioGroup>
               <FormHelperText error={!!formErrors.Status}>
                 {formErrors.Status ?? ' '}
@@ -451,12 +435,12 @@ UserForm.propTypes = {
       Username: PropTypes.string,
       IsCheckIp: PropTypes.string,
       RoleId: PropTypes.string,
-      Status: PropTypes.string,
+      Status: PropTypes.number,
       Email: PropTypes.string,
       Mobile: PropTypes.string,
       Password: PropTypes.string,
       LoginTypes: PropTypes.array,
-      StartIp: PropTypes.string,
+      //SingleIp: PropTypes.string,
     }).isRequired,
     values: PropTypes.shape({
       Username: PropTypes.string,
@@ -467,7 +451,7 @@ UserForm.propTypes = {
       Status: PropTypes.number,
       IsCheckIp: PropTypes.bool,
       LoginTypes: PropTypes.array,
-      StartIp: PropTypes.string,
+      //SingleIp: PropTypes.string,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,

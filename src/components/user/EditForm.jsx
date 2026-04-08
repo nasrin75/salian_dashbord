@@ -36,7 +36,9 @@ function EditForm(props) {
       .then((data) => {
         setRoles(data.data['result'])
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        //console.log(err)
+      })
 
   }, [])
   const handleSubmit = useCallback(
@@ -115,7 +117,7 @@ function EditForm(props) {
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
-              value={formValues.password ?? ''}
+              value={formValues.password ? '****' : ''}
               onChange={(e) => onFieldChange("password", e.target.value)}
               name="password"
               label="رمزعبور"
@@ -185,7 +187,7 @@ function EditForm(props) {
                 onChange={(e) => onFieldChange("status", e.target.value, "radio")}
               >
                 <FormControlLabel value="1" control={<Radio checked={formValues.status == '1' ?? false} />} label="فعال" />
-                <FormControlLabel value="0" control={<Radio checked={formValues.status == '0' ?? false} />} label="غیرفعال" />
+                <FormControlLabel value="-1" control={<Radio checked={formValues.status == '-1' ?? false} />} label="غیرفعال" />
               </RadioGroup>
               <FormHelperText error={!!formErrors.status}>
                 {formErrors.status ?? ' '}
@@ -209,8 +211,8 @@ function EditForm(props) {
                 }
 
               </RadioGroup>
-              <FormHelperText error={!!formErrors.role}>
-                {formErrors.role ?? ' '}
+              <FormHelperText error={!!formErrors.roleId}>
+                {formErrors.roleId ?? ' '}
               </FormHelperText>
             </FormControl>
           </Grid>
@@ -267,7 +269,7 @@ EditForm.propTypes = {
     errors: PropTypes.shape({
       username: PropTypes.string,
       IsCheckIp: PropTypes.string,
-      role: PropTypes.string,
+      roleId: PropTypes.number,
       status: PropTypes.string,
       email: PropTypes.string,
       mobile: PropTypes.string,
@@ -279,7 +281,7 @@ EditForm.propTypes = {
       email: PropTypes.string,
       mobile: PropTypes.string,
       password: PropTypes.string,
-      role: PropTypes.number,
+      roleId: PropTypes.number,
       status: PropTypes.number,
       IsCheckIp: PropTypes.bool,
       LoginTypes: PropTypes.arrayOf(PropTypes.string)
