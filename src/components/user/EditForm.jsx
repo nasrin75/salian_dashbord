@@ -20,7 +20,7 @@ const ipArrayToString = (arr) => {
   // console.log('arr',arr)
   if (!arr) return '';
   // if (arr != null) {
-    return arr.join('.')
+  return arr.join('.')
   // }
 };
 
@@ -46,9 +46,10 @@ function EditForm(props) {
   const [roles, setRoles] = useState([]);
   const [isCheckIpBtn, setIsCheckIpBtn] = useState(formValues.isCheckIp);
   const [scope, setScope] = useState(formValues?.scope || 0);
+  // const [scope, setScope] = useState(formValues?.scope || 0);
   const [singleIp, setSingleIp] = useState(() => ipStringToArray(formValues?.startIp));
   const [rangeIpFrom, setRangeIpFrom] = useState(ipStringToArray(formValues?.startIp));
-  const [rangeIpTo, setRangeIpTo] = useState(formValues?.endIp);
+  const [rangeIpTo, setRangeIpTo] = useState(ipStringToArray(formValues?.endIp));
   // const [rangeIpTo, setRangeIpTo] = useState(formValues?.scope == '1' ? ipStringToArray(formValues?.endIp) : ['', '', '', '']);
 
   useEffect(() => {
@@ -101,7 +102,7 @@ function EditForm(props) {
     const newScope = event.target.value;
     await setScope(newScope);
 
-     //onFieldChange('scope', newScope);
+    //onFieldChange('scope', newScope);
 
     let currentStartIp = ipArrayToString(singleIp);
     let currentEndIp = ipArrayToString(rangeIpTo);
@@ -113,7 +114,7 @@ function EditForm(props) {
 
     } else {
 
-        if (scope === 0) {
+      if (scope === 0) {
         currentStartIp = ipArrayToString(singleIp);
       }
 
@@ -194,9 +195,10 @@ function EditForm(props) {
     onFieldChange("LoginTypes", updated)
   }
 
-  console.log('rangeIpFrom', rangeIpFrom);
-  console.log('rangeIpTo', rangeIpTo);
-  console.log('singleIp', singleIp);
+  // console.log('rangeIpFrom', rangeIpFrom);
+  // console.log('rangeIpTo', rangeIpTo);
+  //console.log('singleIp', singleIp);
+  console.log(scope);
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -220,7 +222,7 @@ function EditForm(props) {
           console.log('ran   onsubmit', formValues)
         }
 
-formValues.scope = scope;
+        formValues.scope = scope;
         await onSubmit(formValues);
         console.log('onsubmit', formValues)
       } finally {
