@@ -121,23 +121,6 @@ function EditForm(props) {
       await setRangeIpFrom(ipStringToArray(currentStartIp));
       await setRangeIpTo(ipStringToArray(currentEndIp));
     }
-    // if (newScope === 0) {
-
-    //   if (scope === 1) {
-    //     currentStartIp = ipArrayToString(rangeIpFrom);
-    //   }
-
-    //   await setSingleIp(ipStringToArray(currentStartIp));
-
-    // } else {
-
-    //   if (scope === 0) {
-    //     currentStartIp = ipArrayToString(singleIp);
-    //   }
-
-    //   await setRangeIpFrom(ipStringToArray(currentStartIp));
-    //   await setRangeIpTo(ipStringToArray(currentEndIp));
-    // }
 
   };
 
@@ -342,7 +325,7 @@ function EditForm(props) {
                     {formErrors.scope ?? ' '}
                   </FormHelperText>
 
-                  {(formValues.scope == '1' || scope == 1) ? (
+                  {(scope == 1) ? (
                     <>
                       <Grid item xs={12}>
                         <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
