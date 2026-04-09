@@ -17,11 +17,8 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 
 const ipArrayToString = (arr) => {
-  // console.log('arr',arr)
   if (!arr) return '';
-  // if (arr != null) {
   return arr.join('.')
-  // }
 };
 
 const ipStringToArray = (ipString) => {
@@ -41,16 +38,14 @@ function EditForm(props) {
 
   const formValues = formState.values;
   const formErrors = formState.errors;
-  console.log('formValues', formValues)
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [roles, setRoles] = useState([]);
   const [isCheckIpBtn, setIsCheckIpBtn] = useState(formValues.isCheckIp);
   const [scope, setScope] = useState(formValues?.scope || 0);
-  // const [scope, setScope] = useState(formValues?.scope || 0);
-  const [singleIp, setSingleIp] = useState(() => ipStringToArray(formValues?.startIp));
+  const [singleIp, setSingleIp] = useState(ipStringToArray(formValues?.startIp));
   const [rangeIpFrom, setRangeIpFrom] = useState(ipStringToArray(formValues?.startIp));
   const [rangeIpTo, setRangeIpTo] = useState(ipStringToArray(formValues?.endIp));
-  // const [rangeIpTo, setRangeIpTo] = useState(formValues?.scope == '1' ? ipStringToArray(formValues?.endIp) : ['', '', '', '']);
 
   useEffect(() => {
 
@@ -97,77 +92,55 @@ function EditForm(props) {
     );
   };
 
-  // Reset IPs when scope changes
-  const handleScopeChange = async (event) => {
-    const newScope = event.target.value;
-    await setScope(newScope);
-
-    //onFieldChange('scope', newScope);
-
-    let currentStartIp = ipArrayToString(singleIp);
-    let currentEndIp = ipArrayToString(rangeIpTo);
+  const handleScopeChange = (event) => {
+    const newScope = Number(event.target.value);
+    setScope(newScope);
 
     if (newScope === 0) {
-
-
-      await setSingleIp(ipStringToArray(rangeIpFrom));
-
+      setSingleIp([...rangeIpFrom]);
     } else {
-
-      if (scope === 0) {
-        currentStartIp = ipArrayToString(singleIp);
-      }
-
-      await setRangeIpFrom(ipStringToArray(currentStartIp));
-      await setRangeIpTo(ipStringToArray(currentEndIp));
+      setRangeIpFrom([...singleIp]);
+      setRangeIpTo([...singleIp]);
     }
-
   };
 
-  const handleIpChange = async (type, index, value) => {
-    const validValue = value.replace(/[^0-9]/g, '').slice(0, 3);
-    // onFieldChange('scope', scope);
+  const handleIpChange = (type, index, value) => {
+    const v = value.replace(/[^0-9]/g, '').slice(0, 3);
 
-    let updatedIpArray;
-
-    if (type === 'single') {
-      updatedIpArray = [...singleIp];
-      updatedIpArray[index] = validValue;
-      await setSingleIp(updatedIpArray);
+    if (type === "single") {
+      const newIp = [...singleIp];
+      newIp[index] = v;
+      setSingleIp(newIp);
       return;
     }
 
-    if (type === 'from') {
-      updatedIpArray = [...rangeIpFrom];
-      updatedIpArray[index] = validValue;
-      await setRangeIpFrom(updatedIpArray);
-      await setRangeIpTo(updatedIpArray);
-      console.log('from', updatedIpArray, validValue);
-
-      //  link 'from' with 'to' 
+    if (type === "from") {
+      const newFrom = [...rangeIpFrom];
+      newFrom[index] = v;
+      setRangeIpFrom(newFrom);
+      setRangeIpTo([...newFrom]);
       const newIpTo = [...rangeIpTo];
-      if (index === 0) newIpTo[0] = updatedIpArray[0];
-      if (index === 1) newIpTo[1] = updatedIpArray[1];
-      if (index === 2) newIpTo[2] = updatedIpArray[2];
+      if (index === 0) newIpTo[0] = newFrom[0];
+      if (index === 1) newIpTo[1] = newFrom[1];
+      if (index === 2) newIpTo[2] = newFrom[2];
 
-      await setRangeIpTo(newIpTo);
+      setRangeIpTo(newIpTo);
       return;
     }
 
-    if (type === 'to') {
-      updatedIpArray = [...rangeIpTo];
-      updatedIpArray[index] = validValue;
-      await setRangeIpTo(updatedIpArray);
-      await setRangeIpFrom(updatedIpArray);
-      console.log('to', updatedIpArray, validValue);
-
+    if (type === "to") {
+      const newTo = [...rangeIpTo];
+      newTo[index] = v;
+      setRangeIpTo(newTo);
+      setRangeIpFrom([...newTo]);
       const newIpFrom = [...rangeIpFrom];
-      if (index === 0) newIpFrom[0] = updatedIpArray[0];
-      if (index === 1) newIpFrom[1] = updatedIpArray[1];
-      if (index === 2) newIpFrom[2] = updatedIpArray[2];
-      await setRangeIpFrom(newIpFrom);
+      if (index === 0) newIpFrom[0] = newTo[0];
+      if (index === 1) newIpFrom[1] = newTo[1];
+      if (index === 2) newIpFrom[2] = newTo[2];
+      setRangeIpFrom(newIpFrom);
       return;
     }
+
   };
 
 
@@ -178,10 +151,6 @@ function EditForm(props) {
     onFieldChange("LoginTypes", updated)
   }
 
-  // console.log('rangeIpFrom', rangeIpFrom);
-  // console.log('rangeIpTo', rangeIpTo);
-  //console.log('singleIp', singleIp);
-  console.log(scope);
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -191,26 +160,21 @@ function EditForm(props) {
       try {
         onFieldChange('scope', scope);
         if (scope === 0) {
-          //formValues.startIp = ipArrayToString(singleIp);
           onFieldChange('endIp', '');
           onFieldChange('startIp', ipArrayToString(singleIp));
           formValues.startIp = ipArrayToString(singleIp);
-          formValues.endIp = ipArrayToString('');
-          console.log('sin   onsubmit', formValues)
+          formValues.endIp = '';
         } else {
           onFieldChange('endIp', ipArrayToString(rangeIpTo));
           onFieldChange('startIp', ipArrayToString(rangeIpFrom));
           formValues.startIp = ipArrayToString(rangeIpFrom);
           formValues.endIp = ipArrayToString(rangeIpTo);
-          console.log('ran   onsubmit', formValues)
         }
 
         formValues.scope = scope;
         await onSubmit(formValues);
-        console.log('onsubmit', formValues)
       } finally {
         setIsSubmitting(false);
-        console.log('finally', formValues)
       }
     },
     [formValues, onSubmit, rangeIpTo, rangeIpFrom, singleIp],
