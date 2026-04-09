@@ -18,9 +18,10 @@ import Typography from '@mui/material/Typography';
 
 const ipArrayToString = (arr) => {
   // console.log('arr',arr)
-  if (arr != null) {
+  if (!arr) return '';
+  // if (arr != null) {
     return arr.join('.')
-  }
+  // }
 };
 
 const ipStringToArray = (ipString) => {
@@ -47,7 +48,8 @@ function EditForm(props) {
   const [scope, setScope] = useState(formValues?.scope || 0);
   const [singleIp, setSingleIp] = useState(() => ipStringToArray(formValues?.startIp));
   const [rangeIpFrom, setRangeIpFrom] = useState(ipStringToArray(formValues?.startIp));
-  const [rangeIpTo, setRangeIpTo] = useState(formValues?.scope == '1' ? ipStringToArray(formValues?.endIp) : ['', '', '', '']);
+  const [rangeIpTo, setRangeIpTo] = useState(formValues?.endIp);
+  // const [rangeIpTo, setRangeIpTo] = useState(formValues?.scope == '1' ? ipStringToArray(formValues?.endIp) : ['', '', '', '']);
 
   useEffect(() => {
 
@@ -97,31 +99,45 @@ function EditForm(props) {
   // Reset IPs when scope changes
   const handleScopeChange = async (event) => {
     const newScope = event.target.value;
-    
-    onFieldChange('scope', newScope);
+    await setScope(newScope);
+
+     //onFieldChange('scope', newScope);
 
     let currentStartIp = ipArrayToString(singleIp);
     let currentEndIp = ipArrayToString(rangeIpTo);
 
     if (newScope === 0) {
 
-      if (scope === 1) {
-        currentStartIp = ipArrayToString(rangeIpFrom);
-      }
 
-      setSingleIp(ipStringToArray(currentStartIp));
+      await setSingleIp(ipStringToArray(rangeIpFrom));
 
     } else {
 
-      if (scope === 0) {
+        if (scope === 0) {
         currentStartIp = ipArrayToString(singleIp);
       }
 
       await setRangeIpFrom(ipStringToArray(currentStartIp));
       await setRangeIpTo(ipStringToArray(currentEndIp));
     }
+    // if (newScope === 0) {
 
-    setScope(newScope);
+    //   if (scope === 1) {
+    //     currentStartIp = ipArrayToString(rangeIpFrom);
+    //   }
+
+    //   await setSingleIp(ipStringToArray(currentStartIp));
+
+    // } else {
+
+    //   if (scope === 0) {
+    //     currentStartIp = ipArrayToString(singleIp);
+    //   }
+
+    //   await setRangeIpFrom(ipStringToArray(currentStartIp));
+    //   await setRangeIpTo(ipStringToArray(currentEndIp));
+    // }
+
   };
 
   const handleIpChange = async (type, index, value) => {
@@ -133,9 +149,7 @@ function EditForm(props) {
     if (type === 'single') {
       updatedIpArray = [...singleIp];
       updatedIpArray[index] = validValue;
-      setSingleIp(updatedIpArray);
-
-      onFieldChange('startIp', ipArrayToString(updatedIpArray));
+      await setSingleIp(updatedIpArray);
       return;
     }
 
@@ -182,6 +196,7 @@ function EditForm(props) {
 
   console.log('rangeIpFrom', rangeIpFrom);
   console.log('rangeIpTo', rangeIpTo);
+  console.log('singleIp', singleIp);
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -189,20 +204,23 @@ function EditForm(props) {
 
       setIsSubmitting(true);
       try {
+        onFieldChange('scope', scope);
         if (scope === 0) {
-          formValues.startIp = ipArrayToString(singleIp);
+          //formValues.startIp = ipArrayToString(singleIp);
+          onFieldChange('endIp', '');
           onFieldChange('startIp', ipArrayToString(singleIp));
-          // onFieldChange('endIp', null);
+          formValues.startIp = ipArrayToString(singleIp);
+          formValues.endIp = ipArrayToString('');
           console.log('sin   onsubmit', formValues)
         } else {
           onFieldChange('endIp', ipArrayToString(rangeIpTo));
           onFieldChange('startIp', ipArrayToString(rangeIpFrom));
-          // formValues.startIp = ipArrayToString(rangeIpFrom);
-          // formValues.endIp = ipArrayToString(rangeIpTo);
+          formValues.startIp = ipArrayToString(rangeIpFrom);
+          formValues.endIp = ipArrayToString(rangeIpTo);
           console.log('ran   onsubmit', formValues)
         }
 
-
+formValues.scope = scope;
         await onSubmit(formValues);
         console.log('onsubmit', formValues)
       } finally {
@@ -210,7 +228,7 @@ function EditForm(props) {
         console.log('finally', formValues)
       }
     },
-    [formValues, onSubmit],
+    [formValues, onSubmit, rangeIpTo, rangeIpFrom, singleIp],
   );
 
   const handleReset = useCallback(() => {
