@@ -17,15 +17,16 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 
 const ipArrayToString = (arr) => {
+  // console.log('arr',arr)
   if (arr != null) {
     return arr.join('.')
   }
 };
 
 const ipStringToArray = (ipString) => {
-  if (!ipString) return ['', '', '', '']; // اگر رشته خالی یا undefined بود، آرایه خالی برگردان
+  if (!ipString) return ['', '', '', ''];
   const parts = ipString.split('.');
-  if (parts.length !== 4) return ['', '', '', '']; // اگر فرمت IP درست نبود
+  if (parts.length !== 4) return ['', '', '', ''];
   return parts.map(part => part.replace(/[^0-9]/g, '').slice(0, 3));
 };
 function EditForm(props) {
@@ -39,17 +40,17 @@ function EditForm(props) {
 
   const formValues = formState.values;
   const formErrors = formState.errors;
-
+  console.log('formValues', formValues)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [roles, setRoles] = useState([]);
   const [isCheckIpBtn, setIsCheckIpBtn] = useState(formValues.isCheckIp);
-  const [scope, setScope] = useState(formValues?.ips?.scope || 0);
-  const [singleIp, setSingleIp] = useState(() => ipStringToArray(formValues?.ips?.start));
-  const [rangeIpFrom, setRangeIpFrom] = useState(ipStringToArray(formValues?.ips?.start));
-  const [rangeIpTo, setRangeIpTo] = useState(ipStringToArray(formValues?.ips?.end));
+  const [scope, setScope] = useState(formValues?.scope || 0);
+  const [singleIp, setSingleIp] = useState(() => ipStringToArray(formValues?.startIp));
+  const [rangeIpFrom, setRangeIpFrom] = useState(ipStringToArray(formValues?.startIp));
+  const [rangeIpTo, setRangeIpTo] = useState(formValues?.scope == '1' ? ipStringToArray(formValues?.endIp) : ['', '', '', '']);
 
   useEffect(() => {
-    
+
     getRoles()
       .then((data) => {
         setRoles(data.data['result'])
@@ -60,8 +61,9 @@ function EditForm(props) {
 
   }, [])
 
+
   const renderIpInputs = (type, ipState) => {
-   
+    const filed = type == 'to' ? 'endIp' : 'startIp';
     return (
       <Grid container spacing={1} alignItems="center" sx={{ mb: type === 'single' ? 2 : 0 }}>
         {[3, 2, 1, 0].map((index) => (
@@ -93,8 +95,10 @@ function EditForm(props) {
   };
 
   // Reset IPs when scope changes
-  const handleScopeChange = (event) => {
+  const handleScopeChange = async (event) => {
     const newScope = event.target.value;
+    
+    onFieldChange('scope', newScope);
 
     let currentStartIp = ipArrayToString(singleIp);
     let currentEndIp = ipArrayToString(rangeIpTo);
@@ -113,74 +117,58 @@ function EditForm(props) {
         currentStartIp = ipArrayToString(singleIp);
       }
 
-      setRangeIpFrom(ipStringToArray(currentStartIp));
-      setRangeIpTo(ipStringToArray(currentEndIp));
+      await setRangeIpFrom(ipStringToArray(currentStartIp));
+      await setRangeIpTo(ipStringToArray(currentEndIp));
     }
 
     setScope(newScope);
   };
 
-  const handleIpChange = (type, index, value) => {
-    const validValue = value.replace(/[^0-9]/g, '').slice(0, 3); // can enter just 3 number
-    onFieldChange('scope', scope, 'number')
+  const handleIpChange = async (type, index, value) => {
+    const validValue = value.replace(/[^0-9]/g, '').slice(0, 3);
+    // onFieldChange('scope', scope);
 
     let updatedIpArray;
-    let stateSetter;
-    let formValueKey;
 
     if (type === 'single') {
       updatedIpArray = [...singleIp];
       updatedIpArray[index] = validValue;
-      stateSetter = setSingleIp;
-      formValueKey = 'SingleIp';
-    } else if (type === 'from') {
-      updatedIpArray = [...rangeIpFrom];
-      updatedIpArray[index] = validValue;
-      stateSetter = setRangeIpFrom;
-      formValueKey = 'ips.start';
-    } else if (type === 'to') {
-      updatedIpArray = [...rangeIpTo];
-      updatedIpArray[index] = validValue;
-      stateSetter = setRangeIpTo;
-      formValueKey = 'ips.end';
-    }
+      setSingleIp(updatedIpArray);
 
-    if (stateSetter) {
-      stateSetter(updatedIpArray);
-
-      const ipString = ipArrayToString(updatedIpArray);
-      //onFieldChange(formValueKey, ipString, 'string');
-    }
-
-    // link to with from (when change to change from and vs)
-    if (type === 'to') {
-      const newIpFrom = [...rangeIpFrom];
-      if (index === 0) newIpFrom[0] = updatedIpArray[0];
-      if (index === 1) newIpFrom[1] = updatedIpArray[1];
-      if (index === 2) newIpFrom[2] = updatedIpArray[2];
-
-      setRangeIpFrom(newIpFrom);
+      onFieldChange('startIp', ipArrayToString(updatedIpArray));
+      return;
     }
 
     if (type === 'from') {
+      updatedIpArray = [...rangeIpFrom];
+      updatedIpArray[index] = validValue;
+      await setRangeIpFrom(updatedIpArray);
+      await setRangeIpTo(updatedIpArray);
+      console.log('from', updatedIpArray, validValue);
+
+      //  link 'from' with 'to' 
       const newIpTo = [...rangeIpTo];
       if (index === 0) newIpTo[0] = updatedIpArray[0];
       if (index === 1) newIpTo[1] = updatedIpArray[1];
       if (index === 2) newIpTo[2] = updatedIpArray[2];
 
-      setRangeIpTo(newIpTo);
+      await setRangeIpTo(newIpTo);
+      return;
     }
-  };
 
-  const constructFinalIpString = () => {
+    if (type === 'to') {
+      updatedIpArray = [...rangeIpTo];
+      updatedIpArray[index] = validValue;
+      await setRangeIpTo(updatedIpArray);
+      await setRangeIpFrom(updatedIpArray);
+      console.log('to', updatedIpArray, validValue);
 
-    if (scope == 0) {
-      onFieldChange('ips.start', ipArrayToString(singleIp));
-    } else {
-      onFieldChange('singleIp', ipArrayToString(rangeIpFrom));
-      // onFieldChange('ips.end', ipArrayToString(rangeIpTo));
-      //onFieldChange("ips.end", ipArrayToString(rangeIpFrom) + ',' + ipArrayToString(rangeIpTo), 'doubleString')
-      onFieldChange("rangeIp", ipArrayToString(rangeIpFrom) + ',' + ipArrayToString(rangeIpTo), 'doubleString')
+      const newIpFrom = [...rangeIpFrom];
+      if (index === 0) newIpFrom[0] = updatedIpArray[0];
+      if (index === 1) newIpFrom[1] = updatedIpArray[1];
+      if (index === 2) newIpFrom[2] = updatedIpArray[2];
+      await setRangeIpFrom(newIpFrom);
+      return;
     }
   };
 
@@ -191,20 +179,38 @@ function EditForm(props) {
 
     onFieldChange("LoginTypes", updated)
   }
+
+  console.log('rangeIpFrom', rangeIpFrom);
+  console.log('rangeIpTo', rangeIpTo);
+
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
 
       setIsSubmitting(true);
-
       try {
-        await constructFinalIpString();
+        if (scope === 0) {
+          formValues.startIp = ipArrayToString(singleIp);
+          onFieldChange('startIp', ipArrayToString(singleIp));
+          // onFieldChange('endIp', null);
+          console.log('sin   onsubmit', formValues)
+        } else {
+          onFieldChange('endIp', ipArrayToString(rangeIpTo));
+          onFieldChange('startIp', ipArrayToString(rangeIpFrom));
+          // formValues.startIp = ipArrayToString(rangeIpFrom);
+          // formValues.endIp = ipArrayToString(rangeIpTo);
+          console.log('ran   onsubmit', formValues)
+        }
+
+
         await onSubmit(formValues);
+        console.log('onsubmit', formValues)
       } finally {
         setIsSubmitting(false);
+        console.log('finally', formValues)
       }
     },
-    [formValues, onSubmit, constructFinalIpString],
+    [formValues, onSubmit],
   );
 
   const handleReset = useCallback(() => {
@@ -316,7 +322,7 @@ function EditForm(props) {
                     {formErrors.scope ?? ' '}
                   </FormHelperText>
 
-                  {scope == 1 ? (
+                  {(formValues.scope == '1' || scope == 1) ? (
                     <>
                       <Grid item xs={12}>
                         <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
@@ -350,8 +356,8 @@ function EditForm(props) {
                 name="status"
                 onChange={(e) => onFieldChange("status", e.target.value, "radio")}
               >
-                <FormControlLabel value="1" control={<Radio checked={formValues.status == '1' ?? false} />} label="فعال" />
-                <FormControlLabel value="-1" control={<Radio checked={formValues.status == '-1' ?? false} />} label="غیرفعال" />
+                <FormControlLabel value="1" control={<Radio checked={(formValues.status == 'active' || formValues.status == '1') ?? false} />} label="فعال" />
+                <FormControlLabel value="-1" control={<Radio checked={(formValues.status == 'deactive' || formValues.status == '-1') ?? false} />} label="غیرفعال" />
               </RadioGroup>
               <FormHelperText error={!!formErrors.status}>
                 {formErrors.status ?? ' '}
