@@ -118,7 +118,7 @@ export default function Profile() {
         
         getDetails(getUserID())
             .then(data => {
-                setUser(data.data['result'])
+                setUser(data.data.data)
                 setIsLoading(false);
             }).catch(err => { })
 
@@ -135,7 +135,7 @@ export default function Profile() {
         async (formValues) => {
             updateProfile(formValues)
                 .then(data => {
-                    setUser(data.data['result'])
+                    setUser(data.data.data)
                     setIsLoading(false);
 
                 })

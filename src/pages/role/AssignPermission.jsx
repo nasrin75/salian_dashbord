@@ -94,7 +94,7 @@ export default function AssignPermission() {
 
         getRolePermissions(roleID)
             .then(data => {
-                setRolePermissions(data.data['result'])
+                setRolePermissions(data.data.data)
                 setIsLoading(false);
             })
 
@@ -115,7 +115,7 @@ export default function AssignPermission() {
             }
             assignRolePermission(request)
                 .then(data => {
-                    setRolePermissions('handlesubmit', data.data['result'])
+                    setRolePermissions('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.ROLE_LIST_PATH);
                 })

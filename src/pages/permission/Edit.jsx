@@ -117,7 +117,7 @@ export default function PermissionEdit() {
 
         PermissionDetails(permissionID)
             .then(data => {
-                setPermission(data.data['result'])
+                setPermission(data.data.data)
                 setIsLoading(false);
             })
 
@@ -133,7 +133,7 @@ export default function PermissionEdit() {
         async (formValues) => {
             updatePermission(formValues)
                 .then(data => {
-                    setPermission('handlesubmit', data.data['result'])
+                    setPermission('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.PERMISSION_LIST_PATH);
                 })

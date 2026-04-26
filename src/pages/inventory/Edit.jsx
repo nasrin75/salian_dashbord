@@ -123,7 +123,7 @@ export default function Edit() {
         InventoryDetails(inventoryID)
             .then(data => {
                 
-                setInventory(data.data['result'])
+                setInventory(data.data.data)
                 setIsLoading(false);
             }).catch(err =>{
                 //console.log(err)
@@ -141,7 +141,7 @@ export default function Edit() {
         async (formValues) => {
             updateInventory(formValues)
                 .then(data => { 
-                    setInventory(data.data['result'])
+                    setInventory(data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
                 })

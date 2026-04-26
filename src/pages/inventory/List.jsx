@@ -207,7 +207,7 @@ export default function List() {
     useEffect(() => {
         getFeaturesName()
             .then(data => {
-                setAllFeatureNames(data.data['result'])
+                setAllFeatureNames(data.data.data)
             })
             .catch(err => { })
     }, []);
@@ -232,7 +232,7 @@ export default function List() {
 
         getInventories(searchParams.get("equipment"))
             .then(data => {
-                setInventories(data.data['result'])
+                setInventories(data.data.data)
 
                 setIsLoading(false)
 

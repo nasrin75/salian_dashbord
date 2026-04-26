@@ -22,8 +22,8 @@ const AuthProvider = ({ children }) => {
         async (data) => {
             await login(data)
                 .then(data => {
-                    const result = data.data['result'];
-
+                    const result = data.data.data;
+                    console.log(data.data.data)
                     const token = result.token;
                     setToken(token)
                     StoreTokenInLocalStorage(token)
@@ -57,7 +57,7 @@ const AuthProvider = ({ children }) => {
     const getPermissions = async () => {
         await getMyPermission()
             .then(data => {
-                const result = data.data['result'];
+                const result = data.data.data;
                 const permissionNames = result.map(permission => permission.name).join(",")
                 setPermissions(permissionNames)
 

@@ -117,7 +117,7 @@ export default function FeatureEdit() {
 
         FeatureDetails(featureID)
             .then(data => {
-                setFeature(data.data['result'])
+                setFeature(data.data.data)
                 setIsLoading(false);
             })
 
@@ -133,7 +133,7 @@ export default function FeatureEdit() {
         async (formValues) => {
             updateFeature(formValues)
                 .then(data => {
-                    setFeature('handlesubmit', data.data['result'])
+                    setFeature('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.FEATURE_LIST_PATH);
                 })

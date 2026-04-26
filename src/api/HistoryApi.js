@@ -1,7 +1,7 @@
 import Api from "./Api";
 
 export const getHistories = (request) => {
-    return Api.post('/history', request)
+    return Api.get('/history', request)
 }
 export const deleteHistory = (historyID) => {
     return Api.delete(`/history/delete?id=${historyID}`)

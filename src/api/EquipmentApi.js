@@ -20,7 +20,7 @@ export const updateEquipment = (data) => {
 }
 
 export const getInventorySubMenu = () => {
-    return Api.get('/equipment/inventory/subMenu')
+    return Api.get('/inventory/subMenu')
 }
 
 export const getEquipmentFeatures = (equipmentID) => {

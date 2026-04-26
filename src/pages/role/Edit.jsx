@@ -118,7 +118,7 @@ export default function RoleEdit() {
 
         RoleDetails(roleID)
             .then(data => {
-                setRole(data.data['result'])
+                setRole(data.data.data)
                 setIsLoading(false);
             })
 
@@ -134,7 +134,7 @@ export default function RoleEdit() {
         async (formValues) => {
             updateRole(formValues)
                 .then(data => {
-                    setRole('handlesubmit', data.data['result'])
+                    setRole('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.ROLE_LIST_PATH);
                 })

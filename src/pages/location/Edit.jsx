@@ -118,7 +118,7 @@ export default function Edit() {
 
         LocationDetails(locationID)
             .then(data => {
-                setLocation(data.data['result'])
+                setLocation(data.data.data)
                 setIsLoading(false);
             })
 
@@ -134,7 +134,7 @@ export default function Edit() {
         async (formValues) => {
             updateLocation(formValues)
                 .then(data => {
-                    setLocation('handlesubmit', data.data['result'])
+                    setLocation('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.LOCATION_LIST_PATH);
                 })

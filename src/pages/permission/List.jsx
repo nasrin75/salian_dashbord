@@ -108,7 +108,7 @@ export default function List() {
         getPermissions()
             .then(data => {
 
-                setPermissions(data.data['result'])
+                setPermissions(data.data.data)
 
                 setIsLoading(false)
 

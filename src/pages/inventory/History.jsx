@@ -12,8 +12,8 @@ function History() {
     useEffect(() => {
         getHistoryBy("Inventories", inventoryID)
             .then(data => {
-                setData(data.data['result'])
-                console.log(data.data['result'])
+                setData(data.data.data)
+                console.log(data.data.data)
             })
             .catch(() =>{ 
                 //toast.error('مشکلی در گرفتن تاریخچه رخ داده است.')

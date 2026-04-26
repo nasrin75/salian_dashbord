@@ -121,7 +121,7 @@ export default function DuplicateInventory() {
         InventoryDetails(inventoryID)
             .then(data => {
 
-                setInventory(data.data['result'])
+                setInventory(data.data.data)
                 setIsLoading(false);
             }).catch(err =>{
                 //console.log(err)
@@ -139,7 +139,7 @@ export default function DuplicateInventory() {
         async (formValues) => {
             addDuplicateInventory(formValues)
                 .then(data => {
-                    setInventory(data.data['result'])
+                    setInventory(data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
                 })

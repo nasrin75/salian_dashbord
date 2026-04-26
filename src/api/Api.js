@@ -39,7 +39,7 @@ Api.interceptors.response.use(
   (error) => {
     if (!error.response) {
       console.error('Network Error or Request Setup Error:', error.message || error);
-      window.location.href = APP_ROUTES.NOT_FOUND_PATH
+      //window.location.href = APP_ROUTES.NOT_FOUND_PATH
       toast.error('مشکل در اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی کنید.');
 
     } else {

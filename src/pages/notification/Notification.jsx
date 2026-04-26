@@ -6,7 +6,6 @@ import PageContainer from "../../components/PageContainer";
 import { PERMISSION } from "../../utlis/constants/Permissions";
 import useAuth from "../../hooks/useAuth/useAuth";
 import EmailForm from "../../components/notifications/email/EmailForm";
-import SmsForm from "../../components/notifications/sms/SmsForm";
 
 const Notification = () => {
     const { hasPermission } = useAuth();
@@ -27,7 +26,7 @@ const Notification = () => {
                     {hasPermission([PERMISSION.SEND_PUSH_NOTIFICATION]) && (<Tab label="پوش" />)}
                 </Tabs>
 
-                {value === 0 && <Box sx={{ p: 3 }}><SmsForm /></Box>}
+                {value === 0 && <Box sx={{ p: 3 }}>Content for Tab 1</Box>}
                 {value === 1 && <Box sx={{ p: 3 }}>
                     <EmailForm />
                 </Box>}

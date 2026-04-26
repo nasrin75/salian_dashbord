@@ -34,7 +34,7 @@ function EditForm(props) {
   useEffect(() => {
     getEquipments()
       .then(data => {
-        setEquipments(data.data['result'])
+        setEquipments(data.data.data)
       })
       .catch(() => {
         //toast.error("مشکلی در گرفتن لیست قطعات رخ داده است.")

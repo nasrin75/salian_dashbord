@@ -107,7 +107,7 @@ export default function List() {
 
         getRoles()
             .then(data => {
-                setRoles(data.data['result'])
+                setRoles(data.data.data)
 
                 setIsLoading(false)
 

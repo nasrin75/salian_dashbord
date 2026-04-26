@@ -29,7 +29,7 @@ function AssignPermissionForm(props) {
   useEffect(() => {
     getPermissions()
       .then(data => {
-        let result = data.data['result'];
+        let result = data.data.data;
         //grouping permissions by category
         const categories = result.reduce((cats, { id, category, title }) => {
           if (!cats[category]) cats[category] = [];

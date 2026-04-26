@@ -156,7 +156,7 @@ export default function UserEdit() {
 
     userDetails(userId)
       .then(data => {
-        setUser(data.data['result'])
+        setUser(data.data.data)
         setIsLoading(false);
       }).catch(err => { })
 
@@ -174,7 +174,7 @@ export default function UserEdit() {
       
       updateUser(JSON.stringify(formValues))
         .then(data => {
-          setUser('handlesubmit', data.data['result'])
+          setUser('handlesubmit', data.data.data)
           setIsLoading(false);
         })
 

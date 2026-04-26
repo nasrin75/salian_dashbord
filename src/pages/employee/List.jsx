@@ -108,7 +108,7 @@ export default function List() {
 
         getEmployees()
             .then(data => {
-                setEmployees(data.data['result'])
+                setEmployees(data.data.data)
 
                 setIsLoading(false)
 

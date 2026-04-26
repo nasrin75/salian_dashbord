@@ -106,7 +106,7 @@ export default function List() {
 
         getLocations()
             .then(data => {
-                setLocations(data.data['result'])
+                setLocations(data.data.data)
 
                 setIsLoading(false)
 

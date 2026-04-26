@@ -106,7 +106,7 @@ export default function List() {
 
         getFeatures()
             .then(data => {
-                setFeatures(data.data['result'])
+                setFeatures(data.data.data)
 
                 setIsLoading(false)
 

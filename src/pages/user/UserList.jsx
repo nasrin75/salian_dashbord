@@ -123,7 +123,7 @@ export default function UserList() {
     }
     getUsers(request)
       .then(data => {
-        setUsers(data.data['result'])
+        setUsers(data.data.data)
 
         setIsLoading(false)
 

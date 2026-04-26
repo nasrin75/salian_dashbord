@@ -45,21 +45,21 @@ function EditForm(props) {
   useEffect(() => {
     //Equipment List
     getEquipments()
-      .then((data) => setEquipments(data.data["result"]))
+      .then((data) => setEquipments(data.data.data))
       .catch(() => {
         //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
       });
 
     //Location List
     getLocations()
-      .then((data) => setLocations(data.data["result"]))
+      .then((data) => setLocations(data.data.data))
       .catch(() => {
         //toast("مشکلی در گرفتن لیست بخش ها رخ داده است")
       });
 
     //Location List
     getEmployees()
-      .then((data) => setEmployees(data.data["result"]))
+      .then((data) => setEmployees(data.data.data))
       .catch(() => {
         //toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است")
       });
@@ -70,7 +70,7 @@ function EditForm(props) {
   const getFeaturesData = async (equipmentID) => {
     await getEquipmentFeatures(equipmentID)
       .then((data) => {
-        const list = data.data["result"];
+        const list = data.data.data;
         setFeatures(list);
       })
       .catch(() => {

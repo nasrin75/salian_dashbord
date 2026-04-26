@@ -28,7 +28,7 @@ function EditForm(props) {
 
     getLocations()
       .then((data) => {
-        setLocations(data.data['result'])
+        setLocations(data.data.data)
       })
       .catch(err => {
         //console.log(err)

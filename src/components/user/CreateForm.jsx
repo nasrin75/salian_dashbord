@@ -159,7 +159,7 @@ function UserForm(props) {
 
     getRoles()
       .then((data) => {
-        setRoles(data.data['result'])
+        setRoles(data.data.data)
       })
       .catch(err => {
         //console.log(err)

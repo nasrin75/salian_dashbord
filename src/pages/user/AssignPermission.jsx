@@ -118,7 +118,7 @@ export default function AssignPermission() {
 
         getUserPermissions(userID)
             .then(data => {
-                setUserPermissions(data.data['result'])
+                setUserPermissions(data.data.data)
                 setIsLoading(false);
             })
 
@@ -139,7 +139,7 @@ export default function AssignPermission() {
             }
             assignUserPermission(request)
                 .then(data => {
-                    setUserPermissions('handlesubmit', data.data['result'])
+                    setUserPermissions('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.USER_LIST_PATH);
                 })

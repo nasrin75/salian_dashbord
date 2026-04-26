@@ -49,7 +49,7 @@ function DashboardSidebar({
 
   useEffect(() => {
     getInventorySubMenu()
-      .then(data => setInventorySubMenu(data.data['result']))
+      .then(data => setInventorySubMenu(data.data.data))
       .catch(err => {
         //console.log(err)
       })

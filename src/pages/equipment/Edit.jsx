@@ -118,7 +118,7 @@ export default function Edit() {
 
         EquipmentDetails(equipmentID)
             .then(data => {
-                setEquipment(data.data['result'])
+                setEquipment(data.data.data)
                 setIsLoading(false);
             }).catch(err =>{})
 
@@ -134,7 +134,7 @@ export default function Edit() {
         async (formValues) => {
             updateEquipment(formValues)
                 .then(data => {
-                    setEquipment('handlesubmit', data.data['result'])
+                    setEquipment('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.EQUIPMENT_LIST_PATH);
                 })

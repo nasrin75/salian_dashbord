@@ -119,7 +119,7 @@ export default function Setting() {
 
         getSettings()
             .then(data => {
-                setSettings(data.data['result'])
+                setSettings(data.data.data)
 
                 setIsLoading(false);
             })
@@ -136,7 +136,7 @@ export default function Setting() {
         async (formValues) => {
             updateSetting(formValues)
                 .then(data => {
-                    setSettings(data.data['result'])
+                    setSettings(data.data.data)
                     setIsLoading(false);
                 })
         },

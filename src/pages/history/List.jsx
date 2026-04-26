@@ -124,7 +124,7 @@ export default function List() {
 
         getHistories(request)
             .then(data => {
-                setHistories(data.data['result'])
+                setHistories(data.data.data)
 
                 setIsLoading(false)
 

@@ -114,7 +114,7 @@ export default function Edit() {
         EmployeeDetails(employeeID)
             .then(data => {
 
-                setEmployee(data.data['result'])
+                setEmployee(data.data.data)
                 setIsLoading(false);
             }).catch(err => { })
 
@@ -131,7 +131,7 @@ export default function Edit() {
             updateEmployee(formValues)
                 .then(data => {
 
-                    setEmployee('handlesubmit', data.data['result'])
+                    setEmployee('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
                 })

@@ -105,7 +105,7 @@ export default function List() {
 
         getEquipments()
             .then(data => {
-                setEquipments(data.data['result'])
+                setEquipments(data.data.data)
 
                 setIsLoading(false)
 
