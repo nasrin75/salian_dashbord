@@ -226,6 +226,7 @@ function UserForm(props) {
               helperText={formErrors.Password ?? ' '}
               fullWidth
             />
+        
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <TextField
@@ -451,7 +452,7 @@ UserForm.propTypes = {
       Status: PropTypes.number,
       IsCheckIp: PropTypes.bool,
       LoginTypes: PropTypes.array,
-      //SingleIp: PropTypes.string,
+      SingleIp: PropTypes.string,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,

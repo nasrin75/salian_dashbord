@@ -364,19 +364,19 @@ function EditForm(props) {
               >
                 <FormControlLabel value="otp" control={<Checkbox
                   checked={formValues.loginTypes?.includes("otp") || false}
-                  onChange={(e) => handleLoginTypeChange("otp", e.target.checked)
+                  onChange={(e) => handleLoginTypeChange("otp", e.target.value)
                   } />} label="OTP" />
                 <FormControlLabel value="password" control={<Checkbox
                   checked={formValues.loginTypes?.includes("password") || false}
-                  onChange={(e) => handleLoginTypeChange("password", e.target.checked)
+                  onChange={(e) => handleLoginTypeChange("password", e.target.value)
                   } />} label="Password" />
                 <FormControlLabel value="email" control={<Checkbox
                   checked={formValues.loginTypes?.includes("email") || false}
-                  onChange={(e) => handleLoginTypeChange("email", e.target.checked)
+                  onChange={(e) => handleLoginTypeChange("email", e.target.value)
                   } />} label="Email" />
                 <FormControlLabel value="push" control={<Checkbox
                   checked={formValues.loginTypes?.includes("push") || false}
-                  onChange={(e) => handleLoginTypeChange("push", e.target.checked)
+                  onChange={(e) => handleLoginTypeChange("push", e.target.value)
                   } />} label="Push" />
               </FormGroup>
               <FormHelperText error={!!formErrors.loginType}>

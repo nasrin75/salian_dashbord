@@ -17,14 +17,13 @@ const INITIAL_FORM_VALUES = {
   Status: '',
   IsCheckIp: false,
   LoginTypes: [],
-   Scope: '',
+  Scope: '',
   SingleIp: '',
   RangeIp: '',
 };
 
 const UserCreate = () => {
   const navigate = useNavigate();
-
 
   const [formState, setFormState] = useState(() => ({
     values: INITIAL_FORM_VALUES,
@@ -54,12 +53,14 @@ const UserCreate = () => {
     (name, value, type = "text") => {
 
       let finalValue = value;
-      //console.log("handleFormFieldChange:", name, value, type)
 
       if (type === "checkbox") {
         finalValue = Boolean(value);
       }
+      if (type === "radio") {
 
+        finalValue = Number(value);
+      }
       const newFormValues = {
         ...formValues,
         [name]: finalValue,
@@ -81,7 +82,7 @@ const UserCreate = () => {
   const handleFormSubmit = useCallback(async () => {
 
     const { issues } = userValidate(formValues);
-
+ console.log('issues', issues)
     if (issues && issues.length > 0) {
       setFormErrors(
         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
@@ -90,13 +91,15 @@ const UserCreate = () => {
     }
     setFormErrors({});
 
-    //console.log('handleFormSubmit', formValues)
+    console.log('handleFormSubmit', formValues)
 
     createUser(JSON.stringify(formValues))
       .then(() => {
         toast.success("کاربر با موفقیت ایجاد شد.")
 
         navigate(APP_ROUTES.USER_LIST_PATH);
+      }).catch(err =>{
+        
       })
 
   }, [formValues, navigate, setFormErrors]);
