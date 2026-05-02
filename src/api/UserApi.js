@@ -5,7 +5,7 @@ export const getUsers = (request) => {
 }
 
 export const createUser = (data) => {
-    return Api.post('/user/create', data)
+    return Api.post('/user', data)
 }
 export function deleteUser(userID) {
     return Api.delete(`/user/delete?id=${userID}`)

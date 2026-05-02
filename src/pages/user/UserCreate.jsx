@@ -17,7 +17,7 @@ const INITIAL_FORM_VALUES = {
   Status: '',
   IsCheckIp: false,
   LoginTypes: [],
-  Scope: '',
+   Scope: '',
   SingleIp: '',
   RangeIp: '',
 };
@@ -54,22 +54,10 @@ const UserCreate = () => {
     (name, value, type = "text") => {
 
       let finalValue = value;
-
-      if (type === "number") {
-        finalValue = value === "" ? null : Number(value);
-      }
+      //console.log("handleFormFieldChange:", name, value, type)
 
       if (type === "checkbox") {
         finalValue = Boolean(value);
-      }
-
-      // if (name === "Status" && value == '-1') {
-      //   finalValue = 0;
-      // }
-
-      if (type === "radio") {
-       
-        finalValue = Number(value);
       }
 
       const newFormValues = {
@@ -78,7 +66,7 @@ const UserCreate = () => {
       };
 
       setFormValues(newFormValues);
-      console.log('setFormValues', newFormValues)
+      //console.log('setFormValues', newFormValues)
 
       const { issues } = userValidate(newFormValues);
 
@@ -102,7 +90,7 @@ const UserCreate = () => {
     }
     setFormErrors({});
 
-    console.log('handleFormSubmit', formValues)
+    //console.log('handleFormSubmit', formValues)
 
     createUser(JSON.stringify(formValues))
       .then(() => {
