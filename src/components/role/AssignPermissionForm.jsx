@@ -1,158 +1,135 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import FormGroup from '@mui/material/FormGroup';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import RadioGroup from '@mui/material/RadioGroup';
+import React, { useEffect, useState } from 'react';
+import { Checkbox, FormControlLabel, Typography, Box, Divider, Grid } from '@mui/material';
 import { getPermissions } from '../../api/PermissionApi';
-import { toast } from 'react-toastify';
-import Checkbox from '@mui/material/Checkbox';
-import Typography from '@mui/material/Typography';
 
-function AssignPermissionForm(props) {
-  const {
-    formState,
-    onFieldChange,
-    onSubmit,
-  } = props;
+// Helper function to flatten the permission tree (if needed for simpler column distribution)
+const flattenPermissions = (permissions, parentId = null) => {
+  let flatList = [];
+  for (const perm of permissions) {
+    flatList.push({ ...perm, parentId: parentId }); // Ensure parentId is correctly set for children
+    if (perm.children && perm.children.length > 0) {
+      flatList = flatList.concat(flattenPermissions(perm.children, perm.id));
+    }
+  }
+  return flatList;
+};
+const PermissionNode = ({ permission, selectedPermissions, handlePermissionSelection }) => {
+  return (
+    <Box key={permission.id} sx={{ paddingLeft: '30px', mb: 1 }}> 
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={selectedPermissions.includes(permission.id)}
+            onChange={(e) => handlePermissionSelection(permission.id, e.target.checked)}
+          />
+        }
+        label={
+          <Typography
+            sx={{
+              fontWeight: permission.parentId == null ? 'bold' : '',
+            }}
+          >
+            {permission.title}
+          </Typography>
+        }
+      />
 
-  const formValues = formState.values;
-  const formErrors = formState.errors;
+      {permission.children && permission.children.length > 0 && (
+         <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}>
+          {permission.children.map((child) => (
+            <PermissionNode
+              key={child.id}
+              permission={child}
+              selectedPermissions={selectedPermissions}
+              handlePermissionSelection={handlePermissionSelection}
+            />
+          ))}
+        </Grid>
+      )}
+    </Box>
+  );
+};
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [permissions, setPermissions] = useState([]);
+const processApiData = (apiData) => {
+  const groupedByCategory = {};
+
+  apiData.forEach(permission => {
+    const category = permission.category || "بدون دسته بندی"; 
+    if (!groupedByCategory[category]) {
+      groupedByCategory[category] = [];
+    }
+
+    groupedByCategory[category].push({
+      ...permission,
+      id: permission.id, 
+      children: [], 
+      parentId: null
+    });
+  });
+  return groupedByCategory;
+};
+const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
+  // Initialize with an empty object because the data is now grouped by category
+  const [permissionsByCategory, setPermissionsByCategory] = useState({});
   const [selectedPermissions, setSelectedPermissions] = useState([]);
 
   useEffect(() => {
     getPermissions()
-      .then(data => {
-        let result = data.data.data;
-        //grouping permissions by category
-        const categories = result.reduce((cats, { id, category, title }) => {
-          if (!cats[category]) cats[category] = [];
-          cats[category].push({ id, title });
-          return cats;
-        }, {});
-
-        setPermissions(categories)
-        //get just permission ids
-        const Ids = formValues.map(per => per.id);
-        setSelectedPermissions(Ids)
+      .then(response => {
+        setPermissionsByCategory(response.data.data);
       })
-      .catch(() => {
-        //toast.error("مشکلی در گرفتن لیست دسترسی ها رخ داده است")
-      })
-  }, [])
+      .catch((error) => {
+        console.error("Error fetching permissions:", error);
+      });
+      console.log('formState',formState.values)
+      setSelectedPermissions(formState.values)
+  }, []);
 
-  // 
   const handlePermissionSelection = (id, checked) => {
-
-    setSelectedPermissions(prev => {
-      //because don't update selectedPermissions use this way
-      const newPermissions = checked ? [...prev, Number(id)] : prev.filter(x => x !== id)
-      onFieldChange("permissionIds", newPermissions)
-
-      return newPermissions;
-    })
-  }
-
-  const handleSubmit = useCallback(
-    async (event) => {
-      event.preventDefault();
-
-      setIsSubmitting(true);
-      try {
-        await onSubmit(formValues);
-      } finally {
-        setIsSubmitting(false);
+    console.log('handlePermissionSelection',id, checked)
+    setSelectedPermissions((prevSelected) => {
+      let newPermissions;
+      if (checked) {
+        // Add permission ID if not already present
+        newPermissions = [...prevSelected, id];
+      } else {
+        // Remove permission ID
+        newPermissions = prevSelected.filter(x => x !== id);
       }
-    },
-    [formValues, onSubmit],
-  );
+      // Update the form state
+      onFieldChange("permissionIds", newPermissions);
+      return newPermissions;
+    });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // The selectedPermissions state already holds the flat list of IDs.
+    onSubmit({ permissionIds: selectedPermissions });
+  };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      noValidate
-      autoComplete="off"
-      sx={{ width: '100%' }}
-    >
-      <FormGroup>
-        <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
+      {Object.keys(permissionsByCategory).map((categoryName) => (
+        <Box key={categoryName} sx={{ mb: 3 }}> 
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>{categoryName}</Typography>
+          {/* Render the root permissions for this category */}
+          {permissionsByCategory[categoryName].map((permission) => (
+            <PermissionNode
+              key={permission.id}
+              permission={permission}
+              selectedPermissions={selectedPermissions}
+              handlePermissionSelection={handlePermissionSelection}
+            />
+          ))}
+          <Divider sx={{ mt: 2 }} /> 
+        </Box>
+      ))}
 
-          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}>
-            <FormControl>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="permissionIds"
-              >
-
-                {
-
-                  Object.entries(permissions).map(([category, items]) => (
-                    <div key={category} className="category-section" style={{ paddingBottom: '1%' }}>
-                      <Typography variant='h5' align='center'>{category}</Typography>
-                      <ul>
-                        {items.map(permission => (
-                          <li style={{ listStyleType: "none" }}>
-                            <FormControlLabel
-                              key={permission.id}
-                              value={permission.id}
-                              control={<Checkbox
-                                checked={selectedPermissions.includes(permission.id)}
-                                onChange={(e) => handlePermissionSelection(permission.id, e.target.checked)} />} label={permission.title} />
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))
-                }
-
-              </RadioGroup>
-              {/* <FormHelperText error={!!formErrors.role}>
-                                    {formErrors.role ?? ' '}
-                                </FormHelperText> */}
-            </FormControl>
-          </Grid>
-        </Grid>
-      </FormGroup>
-      <Stack direction="row" spacing={2} justifyContent="space-between">
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          loading={isSubmitting}
-        >
-          ذخیره
-        </Button>
-      </Stack>
+      <Box sx={{ mt: 3, textAlign: 'right' }}> 
+        <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>ذخیره</button>
+      </Box>
     </Box>
   );
-}
-
-// AssignPermissionForm.propTypes = {
-//   formState: PropTypes.shape({
-//     errors: PropTypes.shape({
-//       name: PropTypes.string,
-//       type: PropTypes.string,
-//       isShowInMenu:PropTypes.bool,
-//     }).isRequired,
-//     values: PropTypes.shape({
-//       name: PropTypes.string,
-//       type: PropTypes.string,
-//       isShowInMenu:PropTypes.bool,
-//     }).isRequired,
-//   }).isRequired,
-//   onFieldChange: PropTypes.func.isRequired,
-//   onSubmit: PropTypes.func.isRequired,
-//   submitButtonLabel: PropTypes.string.isRequired,
-// };
-
-
+};
 export default AssignPermissionForm;
-

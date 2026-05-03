@@ -50,7 +50,7 @@ function PermissionEditForm({ initialValues, onSubmit }) {
     const handleFormFieldChange = useCallback(
         (name, value) => {
 
-            console.log("roleAAA",name, value)
+            
             const newFormValues = {
                 ...formValues,
                 [name]: value,
