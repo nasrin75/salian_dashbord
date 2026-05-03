@@ -81,9 +81,12 @@ const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
       .catch((error) => {
         console.error("Error fetching permissions:", error);
       });
+      console.log('formState',formState.values)
+      setSelectedPermissions(formState.values)
   }, []);
 
   const handlePermissionSelection = (id, checked) => {
+    console.log('handlePermissionSelection',id, checked)
     setSelectedPermissions((prevSelected) => {
       let newPermissions;
       if (checked) {
