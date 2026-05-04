@@ -54,7 +54,7 @@ function EditForm(props) {
   console.log('startIp',formValues?.startIp)
   console.log('endIp',formValues?.endIp)
   console.log('rangeIpFrom',rangeIpFrom)
-  console.log('rangeIpTo',rangeIpTo)
+  console.log('rangeIpTo',rangeIpTo,ipStringToArray(formValues?.endIp),formValues?.endIp)
 
   useEffect(() => {
 
@@ -69,7 +69,7 @@ function EditForm(props) {
   }, [])
 
   useEffect(() => {
-    if (scope !== 1) {
+    if (scope !== '1') {
       setRangeIpTo(Array(4).fill(''));
       // setSingleIp(Array(4).fill('')); 
       return;
@@ -87,7 +87,6 @@ function EditForm(props) {
   }, [rangeIpFrom, scope]);
 
   const renderIpInputs = (type, ipState) => {
-    const filed = type == 'to' ? 'endIp' : 'startIp';
     return (
       <Grid container spacing={1} alignItems="center" sx={{ mb: type === 'single' ? 2 : 0 }}>
         {[3, 2, 1, 0].map((index) => (
@@ -124,16 +123,16 @@ function EditForm(props) {
   setScope(newScope);
   onFieldChange('scope', newScope);
 
-  if (newScope === '0') {
-    setSingleIp(['', '', '', '']);
-    setRangeIpFrom(['', '', '', '']);
-    setRangeIpTo(['', '', '', '']);
-    onFieldChange('endIp', '');
-  } else if (newScope === '1') {
-    setRangeIpFrom(['', '', '', '']);
-    setSingleIp(['', '', '', '']);
-    onFieldChange('startIp', '');
-  }
+  // if (newScope === '0') {
+  //   setSingleIp(['', '', '', '']);
+  //   setRangeIpFrom(['', '', '', '']);
+  //   setRangeIpTo(['', '', '', '']);
+  //   onFieldChange('endIp', '');
+  // } else if (newScope === '1') {
+  //   setRangeIpFrom(['', '', '', '']);
+  //   setSingleIp(['', '', '', '']);
+  //   onFieldChange('startIp', '');
+  // }
 };
 
   // create ip as string to send backend
@@ -192,22 +191,23 @@ function EditForm(props) {
 
   const handleCheckIp = (e) => {
     const isChecked = e.target.checked;
+    console.log('handleCheckIp',isChecked)
     onFieldChange("isCheckIp", isChecked);
     setIsCheckIpBtn(isChecked);
     if (!isChecked) {
-      onFieldChange("scope", '0');
-      setScope('0');
-      onFieldChange("rangeIpFrom", '');
-      setRangeIpFrom('');
-      onFieldChange("rangeIpTo", '');
-      setRangeIpTo('');
-      onFieldChange("startIp", '');
-      setSingleIp('');
+      // onFieldChange("scope", '0');
+      // setScope('0');
+      // onFieldChange("rangeIpFrom", '');
+      // setRangeIpFrom('');
+      // onFieldChange("rangeIpTo", '');
+      // setRangeIpTo('');
+      // onFieldChange("startIp", '');
+      // setSingleIp('');
 
     } else {
       if (scope === undefined || scope === null) {
-        onFieldChange("scope", 0);
-        setScope(0);
+        onFieldChange("scope", '0');
+        setScope('0');
       }
     }
   }
