@@ -13,6 +13,8 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import Switch from '@mui/material/Switch';
+import Autocomplete from '@mui/material/Autocomplete';
+import { getEquipments } from '../../api/EquipmentApi';
 
 function EditForm(props) {
   const {
@@ -27,6 +29,7 @@ function EditForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [parentEquipments, setParentEquipments] = useState();
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -48,6 +51,15 @@ function EditForm(props) {
     }
   }, [formValues, onReset]);
 
+  useEffect(() => {
+    getEquipments()
+      .then(data => {
+        setParentEquipments(data.data.data)
+      })
+      .catch(() => {
+        //toast.error("مشکلی در گرفتن لیست قطعات رخ داده است.")
+      })
+  }, [])
   return (
     <Box
       component="form"
@@ -59,6 +71,27 @@ function EditForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+            <Autocomplete
+              id="equipment-select-demo"
+              autoHighlight
+              disableClearable
+              sx={{ width: 400 }}
+              options={parentEquipments}
+              error={!!formErrors.ParentId}
+              helperText={formErrors.ParentId ?? " "}
+              getOptionLabel={(option) => option.name}
+              onChange={async (e, value) => {
+                if (!value) return;
+
+                onFieldChange("ParentId", value.id);
+              }}
+              renderInput={(params) => <TextField {...params} label=" Parentقطعه " />}
+            />
+            <FormHelperText error={!!formErrors.ParentId}>
+              {formErrors.ParentId ?? " "}
+            </FormHelperText>
+          </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.name ?? ''}
@@ -80,8 +113,8 @@ function EditForm(props) {
                   formValues.type === 'internal'
                     ? '1'
                     : formValues.type === 'external'
-                    ? '2'
-                    : formValues.type 
+                      ? '2'
+                      : formValues.type
                 }
                 onChange={(e) => onFieldChange("type", e.target.value, "radio")}
               >
@@ -124,12 +157,12 @@ EditForm.propTypes = {
     errors: PropTypes.shape({
       name: PropTypes.string,
       type: PropTypes.string,
-      isShowInMenu:PropTypes.bool,
+      isShowInMenu: PropTypes.bool,
     }).isRequired,
     values: PropTypes.shape({
       name: PropTypes.string,
       type: PropTypes.string,
-      isShowInMenu:PropTypes.bool,
+      isShowInMenu: PropTypes.bool,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,

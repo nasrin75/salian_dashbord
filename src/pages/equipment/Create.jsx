@@ -12,6 +12,7 @@ const INITIAL_FORM_VALUES = {
     Name: '',
     Type: '',
     IsShowInMenu: false,
+    ParentId: null,
 };
 
 export default function Create() {
@@ -46,6 +47,10 @@ export default function Create() {
 
             if (type == 'switch') {
                 finalValue = value == 'on' ? true : false;
+            }
+            if (type === "radio") {
+
+                finalValue = Number(value);
             }
             const newFormValues = {
                 ...formValues,
