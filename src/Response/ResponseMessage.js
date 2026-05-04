@@ -6,256 +6,260 @@
 export const ResponseMessage = [
     {
         'key': 'USER_NOT_FOUND',
-        'mgs': "کاربر موردنظر یافت نشد",
+        'msg': "کاربر موردنظر یافت نشد",
     },
     {
         'key': 'TOKEN_TIME_REMAINED',
-        'mgs': "محدودیت زمانی در ارسال کد یکبار مصرف",
+        'msg': "محدودیت زمانی در ارسال کد یکبار مصرف",
     },
     {
         'key': 'BrandName',
-        'mgs': "نام برند",
+        'msg': "نام برند",
     },
     {
         'key': 'status',
-        'mgs': "وضعیت",
+        'msg': "وضعیت",
     },
     {
         'key': 'UpdatedAt',
-        'mgs': 'تاریخ بروزرسانی',
+        'msg': 'تاریخ بروزرسانی',
     },
     {
         'key': 'ItParentNumber',
-        'mgs': 'شماره IT Parent',
+        'msg': 'شماره IT Parent',
     },
     {
         'key': 'EmployeeId',
-        'mgs': 'پرسنل',
+        'msg': 'پرسنل',
     },
     {
 
         'key': 'backFromCharge',
-        'mgs': "برگشت از شارژ"
+        'msg': "برگشت از شارژ"
     },
     {
         'key': 'useless',
-        'mgs': "اسقاطی"
+        'msg': "اسقاطی"
     },
     {
         'key': 'unuse',
-        'mgs': "استفاده نشده"
+        'msg': "استفاده نشده"
     },
     {
         'key': 'inuse',
-        'mgs': "استفاده شده"
+        'msg': "استفاده شده"
     },
     {
         'key': 'sendToCharge',
-        'mgs': "ارسال جهت شارژ"
+        'msg': "ارسال جهت شارژ"
     },
     {
         'key': 'repair',
-        'mgs': "تعمیر"
+        'msg': "تعمیر"
     },
     {
         'key': 'login',
-        'mgs': "ورود به پنل"
+        'msg': "ورود به پنل"
     },
     {
         'key': 'update',
-        'mgs': "ویرایش"
+        'msg': "ویرایش"
     },
     {
         'key': 'delete',
-        'mgs': "حذف"
+        'msg': "حذف"
     },
     {
         'key': 'create',
-        'mgs': "افزودن"
+        'msg': "افزودن"
     },
     {
         'key': 'ExpireWarrantyDate',
-        'mgs': "تاریخ اتمام گارانتی"
+        'msg': "تاریخ اتمام گارانتی"
     },
     {
         'key': 'locationId',
-        'mgs': "ایدی بخش"
+        'msg': "ایدی بخش"
     },
     {
         'key': 'inventories',
-        'mgs': "انبار"
+        'msg': "انبار"
     },
     {
         'key': 'users',
-        'mgs': "کاربران"
+        'msg': "کاربران"
     },
     {
         'key': 'employees',
-        'mgs': "پرسنل"
+        'msg': "پرسنل"
     },
     {
         'key': 'equipments',
-        'mgs': "قطعات"
+        'msg': "قطعات"
     },
     {
         'key': 'roles',
-        'mgs': "نقش ها"
+        'msg': "نقش ها"
     },
     {
         'key': 'permissions',
-        'mgs': "دسترسی ها"
+        'msg': "دسترسی ها"
     },
     {
         'key': 'inventoryfeatures',
-        'mgs': "ویژگی قطعات انبار"
+        'msg': "ویژگی قطعات انبار"
     },
     {
         'key': 'PermissionEntityUserEntity',
-        'mgs': 'دسترسی به کاربر',
+        'msg': 'دسترسی به کاربر',
     },
     {
         'key': 'PermissionEntityRoleEntity',
-        'mgs': 'دسترسی به نقش',
+        'msg': 'دسترسی به نقش',
     },
     {
         'key': 'PropertyNumber',
-        'mgs': 'شماره اموال'
+        'msg': 'شماره اموال'
     },
     {
         'key': 'SerialNumber',
-        'mgs': 'شماره سریال'
+        'msg': 'شماره سریال'
     },
     {
         'key': 'InvoiceNumber',
-        'mgs': 'شماره فاکتور'
+        'msg': 'شماره فاکتور'
     },
     {
         'key': 'InvoiceImage',
-        'mgs': 'تصویر فاکتور'
+        'msg': 'تصویر فاکتور'
     },
     {
         'key': 'Description',
-        'mgs': 'توضیحات'
+        'msg': 'توضیحات'
     },
     {
         'key': 'ModelName',
-        'mgs': 'مدل'
+        'msg': 'مدل'
     },
     {
         'key': 'Capacity',
-        'mgs': 'Capacity'
+        'msg': 'Capacity'
     },
     {
         'key': 'Size',
-        'mgs': 'سایز'
+        'msg': 'سایز'
     },
     {
         'key': 'DeletedAt',
-        'mgs': 'تاریخ حذف'
+        'msg': 'تاریخ حذف'
     },
     {
         'key': 'Email',
-        'mgs': 'ایمیل'
+        'msg': 'ایمیل'
     },
     {
         'key': 'Username',
-        'mgs': 'نام کاربری'
+        'msg': 'نام کاربری'
     },
     {
         'key': 'Password',
-        'mgs': 'رمزعبور'
+        'msg': 'رمزعبور'
     },
     {
         'key': 'RoleFaName',
-        'mgs': 'نام نقش'
+        'msg': 'نام نقش'
     },
     {
         'key': 'RoleId',
-        'mgs': 'آیدی نقش'
+        'msg': 'آیدی نقش'
     },
     {
         'key': 'Mobile',
-        'mgs': 'موبایل'
+        'msg': 'موبایل'
     },
     {
         'key': 'EmployeeName',
-        'mgs': 'پرسنل'
+        'msg': 'پرسنل'
     },
     {
         'key': 'EquipmentId',
-        'mgs': 'آیدی قطعه'
+        'msg': 'آیدی قطعه'
     },
     {
         'key': 'EquipmentName',
-        'mgs': 'نام قطعه'
+        'msg': 'نام قطعه'
     },
     {
         'key': 'ItNumber',
-        'mgs': 'شماره IT'
+        'msg': 'شماره IT'
     },
     {
         'key': 'LocationTitle',
-        'mgs': 'بخش'
+        'msg': 'بخش'
     },
     {
         'key': "UserUsername",
-        'mgs': "کاربر"
+        'msg': "کاربر"
     },
     {
         'key': "CreatedAt",
-        'mgs': "تاریخ ایجاد"
+        'msg': "تاریخ ایجاد"
     },
     {
         'key': 'IsCheckIp',
-        'mgs': 'چک IP',
+        'msg': 'چک IP',
     },
     {
         'key': 'Type',
-        'mgs': 'نوع',
+        'msg': 'نوع',
     },
     {
         'key': 'IsShowInMenu',
-        'mgs': 'نمایش در منو',
+        'msg': 'نمایش در منو',
     },
     {
         'key': 'ٔName',
-        'mgs': 'نام',
+        'msg': 'نام',
     },
     {
         'key': 'Title',
-        'mgs': 'عنوان',
+        'msg': 'عنوان',
     },
     {
         'key': 'Abbreviation',
-        'mgs': 'مخفف',
+        'msg': 'مخفف',
     },
     {
         'key': 'IsShow',
-        'mgs': 'نمایش دادن',
+        'msg': 'نمایش دادن',
     },
     {
         'key': 'INVENTORY_NOT_EXIST',
-        'mgs': 'انبار یافت نشد',
+        'msg': 'انبار یافت نشد',
     },
     {
         'key': 'PASSWORD_IS_WRONG',
-        'mgs': 'رمزعبور صحیح نیست.',
+        'msg': 'رمزعبور صحیح نیست.',
     },
     {
         'key': 'EMAIL_NOT_EXIST',
-        'mgs': 'ایمیل یافت نشد',
+        'msg': 'ایمیل یافت نشد',
     },
     {
         'key': 'TOKEN_IS_INVALID',
-        'mgs': 'کد نامعتبر است.',
+        'msg': 'کد نامعتبر است.',
     },
     {
         'key': 'EQUIPMENT_NOT_FOUND',
-        'mgs': 'قطعه موردنظر یافت نشد.',
+        'msg': 'قطعه موردنظر یافت نشد.',
     },
     {
         'key': 'EMPLOYEE_NOT_FOUND',
-        'mgs': 'پرسنل موردنظر یافت نشد.',
+        'msg': 'پرسنل موردنظر یافت نشد.',
+    },
+    {
+        'key':'LOCATION_NOT_FOUND',
+        'msg': 'بخش موردنظر یافت نشد.',
     },
 
 ]

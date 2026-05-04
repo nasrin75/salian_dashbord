@@ -119,7 +119,7 @@ export default function FeatureEdit() {
             .then(data => {
                 setFeature(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [featureID]);
@@ -136,7 +136,7 @@ export default function FeatureEdit() {
                     setFeature('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.FEATURE_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [featureID],
     );

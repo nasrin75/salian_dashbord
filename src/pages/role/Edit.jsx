@@ -120,7 +120,7 @@ export default function RoleEdit() {
             .then(data => {
                 setRole(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [roleID]);
@@ -137,7 +137,7 @@ export default function RoleEdit() {
                     setRole('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.ROLE_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [roleID],
     );

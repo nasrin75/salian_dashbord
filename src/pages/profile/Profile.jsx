@@ -138,7 +138,7 @@ export default function Profile() {
                     setUser(data.data.data)
                     setIsLoading(false);
 
-                })
+                }).catch(err => { })
         },
         [getUserID],
     );

@@ -12,7 +12,7 @@ export const RoleDetails = (roleID) => {
     return Api.get(`/role/${roleID}`)
 }
 export const createRole = (data) => {
-    return Api.post('/role/create', data)
+    return Api.post('/role', data)
 }
 
 export const updateRole = (data) => {

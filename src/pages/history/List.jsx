@@ -128,7 +128,7 @@ export default function List() {
 
                 setIsLoading(false)
 
-            })
+            }).catch(err => { })
             // .catch((err) => {
             //     let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
             //     toast.error(message);

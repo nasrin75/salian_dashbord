@@ -72,7 +72,7 @@ export default function Create() {
             .then(() => {
                 toast.success("نقش با موفقیت ایجاد شد.")
                 navigate(APP_ROUTES.ROLE_LIST_PATH);
-            })
+            }).catch(err => { })
 
     }, [formValues, navigate, setFormErrors]);
 

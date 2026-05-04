@@ -99,7 +99,7 @@ export default function AssignPermission() {
             .then(data => {
                 setUserPermissions(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [userID]);
@@ -121,7 +121,7 @@ export default function AssignPermission() {
                     setUserPermissions('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.USER_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [userID],
     );

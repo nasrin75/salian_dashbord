@@ -137,7 +137,7 @@ export default function Edit() {
                     setEquipment('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.EQUIPMENT_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [equipmentID],
     );

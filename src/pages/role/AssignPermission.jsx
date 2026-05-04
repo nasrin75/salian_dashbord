@@ -97,7 +97,7 @@ export default function AssignPermission() {
             .then(data => {
                 setRolePermissions(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [roleID]);
@@ -119,7 +119,7 @@ export default function AssignPermission() {
                     setRolePermissions('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.ROLE_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [roleID],
     );

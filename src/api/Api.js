@@ -25,63 +25,117 @@ Api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
-
 Api.interceptors.response.use(
   (response) => {
-    // This function runs for successful responses (HTTP status codes 2xx).
     const token = localStorage.getItem("token");
     if (token) {
       response.headers.Authorization = `Bearer ${token}`;
     }
     return response;
-
   },
+
   (error) => {
     if (!error.response) {
-      console.error('Network Error or Request Setup Error:', error.message || error);
-      //window.location.href = APP_ROUTES.NOT_FOUND_PATH
-      toast.error('مشکل در اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی کنید.');
+      toast.error('مشکل در اتصال به سرور.');
+      return Promise.reject({ handled: true });
+    }
+console.log(error.response.data.message)
+    const message = error.response.data?.message;
 
-    } else {
-      let result = "مشکلی رخ داده است";
-      if (error.response?.data?.message) {
-        const message = error.response?.data?.message;
-        const resp = ResponseMessage.find((item) => item?.key && item?.key.toUpperCase() === message.toUpperCase());
-        result = resp?.mgs || message;
+    switch (error.response.status) {
+      case 400: {
+        let result = "مشکلی رخ داده است";
+
+        const resp = ResponseMessage.find(
+          (item) => item.key.toUpperCase() === message?.toUpperCase()
+        );
+
+        result = resp?.msg || message || result;
+        toast.error(result);
+        break;
       }
 
-      switch (error.response.status) {
-        case 400:
-          toast.error(result || 'خطای ورودی');
-          break;
-        case 401:
-          // Unauthenticated
-          toast.error("لطفاً دوباره وارد شوید.");
-          localStorage.removeItem("token");
-          //window.location.href = APP_ROUTES.UNAUTHORIZED_PATH
-          if (typeof this !== 'undefined' && this.router) {
-            window.location.href = APP_ROUTES.UNAUTHORIZED_PATH
-          }
-          break;
-        case 403:
-          toast.error("عدم دسترسی کافی.");
-          break;
-        case 404:
-          console.log(error.response)
-          //window.location.href = APP_ROUTES.NOT_FOUND_PATH
-          break;
-        case 500:
-          // Internal Server Error
-          toast.error("خطای داخلی سرور. لطفاً بعداً دوباره تلاش کنید.");
-          break;
-        default:
-          console.warn(`Unhandled HTTP Error: Status ${error.response.status}`);
-          toast.error(`خطایی رخ داد (${error.response.status}).`);
-          break;
-      }
+      case 401:
+        toast.error("لطفاً دوباره وارد شوید.");
+        localStorage.removeItem("token");
+        window.location.href = APP_ROUTES.UNAUTHORIZED_PATH;
+        break;
+
+      case 403:
+        toast.error("عدم دسترسی کافی.");
+        break;
+
+      case 500:
+        toast.error("خطای داخلی سرور");
+        break;
+
+      default:
+        toast.error(`خطا: ${error.response.status}`);
     }
 
-    return Promise.reject(error);
+    return Promise.resolve();
   }
 );
+
+// Api.interceptors.response.use(
+//   (response) => {
+//     // This function runs for successful responses (HTTP status codes 2xx).
+//     const token = localStorage.getItem("token");
+//     if (token) {
+//       response.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return response;
+
+//   },
+//   (error) => {
+//     if (!error.response) {
+//       console.error('Network Error or Request Setup Error:', error.message || error);
+//       //window.location.href = APP_ROUTES.NOT_FOUND_PATH
+//       toast.error('مشکل در اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی کنید.');
+
+//     } else {
+
+//       console.log('err', error.response?.data?.message);
+//       switch (error.response.status) {
+//         case 400:
+//           let result = "مشکلی رخ داده است";
+//           if (error.response?.data?.message) {
+//             const message = error.response?.data?.message;
+//             const resp = ResponseMessage.find((item) => item?.key && item?.key.toUpperCase() === message.toUpperCase());
+//             result = resp?.msg || message;
+//           }
+//            console.log('err', error.response?.data?.message,result);
+//           toast.error(result || 'خطای ورودی');
+//           break;
+//         case 401:
+//           // Unauthenticated
+//           toast.error("لطفاً دوباره وارد شوید.");
+//           localStorage.removeItem("token");
+//           //window.location.href = APP_ROUTES.UNAUTHORIZED_PATH
+//           if (typeof this !== 'undefined' && this.router) {
+//             window.location.href = APP_ROUTES.UNAUTHORIZED_PATH
+//           }
+//           break;
+//         case 403:
+//           toast.error("عدم دسترسی کافی.");
+//           break;
+//         case 404:
+//           console.log(error.response)
+//           //window.location.href = APP_ROUTES.NOT_FOUND_PATH
+//           break;
+//         case 500:
+//           // Internal Server Error
+//           toast.error("خطای داخلی سرور. لطفاً بعداً دوباره تلاش کنید.");
+//           break;
+//         default:
+//           console.warn(`Unhandled HTTP Error: Status ${error.response.status}`);
+//           toast.error(`خطایی رخ داد (${error.response.status}).`);
+//           break;
+//       }
+//     }
+
+//     return Promise.reject(error);
+//     //return Promise.reject({ handled: true });
+//   }
+// );
 export default Api;

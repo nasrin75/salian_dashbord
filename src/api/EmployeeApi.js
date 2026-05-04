@@ -12,9 +12,9 @@ export function EmployeeDetails(employeeID) {
     return Api.get(`/employee/${employeeID}`)
 }
 export const createEmployee = (data) =>{
-    return Api.post('/employee/create',data)
+    return Api.post('/employee',data)
 }
 
 export const updateEmployee = (data) =>{
-    return Api.put('/employee/edit',data)
+    return Api.put('/employee',data)
 }

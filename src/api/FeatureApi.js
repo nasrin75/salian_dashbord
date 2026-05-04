@@ -11,11 +11,11 @@ export const FeatureDetails = (featureID) => {
     return Api.get(`/feature/${featureID}`)
 }
 export const createFeature = (data) => {
-    return Api.post('/feature/create', data)
+    return Api.post('/feature', data)
 }
 
 export const updateFeature = (data) => {
-    return Api.put('/feature/edit', data)
+    return Api.put('/feature', data)
 }
 
 export const getFeaturesName = () => {

@@ -12,11 +12,11 @@ export function EquipmentDetails(equipmentID) {
     return Api.get(`/equipment/${equipmentID}`)
 }
 export const createEquipment = (data) => {
-    return Api.post('/equipment/create', data)
+    return Api.post('/equipment', data)
 }
 
 export const updateEquipment = (data) => {
-    return Api.put('/equipment/edit', data)
+    return Api.put('/equipment', data)
 }
 
 export const getInventorySubMenu = () => {

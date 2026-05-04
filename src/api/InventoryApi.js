@@ -11,11 +11,11 @@ export const InventoryDetails = (inventoryID) => {
     return Api.get(`/inventory/${inventoryID}`)
 }
 export const createInventory = (data) => {
-    return Api.post('/inventory/create', data)
+    return Api.post('/inventory', data)
 }
 
 export const updateInventory = (data) => {
-    return Api.put('/inventory/edit', data)
+    return Api.put('/inventory', data)
 }
 
 export const addDuplicateInventory = (data) => {

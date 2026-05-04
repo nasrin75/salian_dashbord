@@ -122,7 +122,7 @@ export default function Setting() {
                 setSettings(data.data.data)
 
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [setSettings]);
@@ -138,7 +138,7 @@ export default function Setting() {
                 .then(data => {
                     setSettings(data.data.data)
                     setIsLoading(false);
-                })
+                }).catch(err => { })
         },
         [settings],
     );

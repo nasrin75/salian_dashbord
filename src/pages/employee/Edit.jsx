@@ -134,7 +134,7 @@ export default function Edit() {
                     setEmployee('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [employeeID, navigate],
     );

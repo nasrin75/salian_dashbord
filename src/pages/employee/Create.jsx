@@ -75,7 +75,7 @@ export default function Create() {
             .then(() => {
                 toast.success("پرسنل جدید با موفقیت ایجاد شد.")
                 navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
-            })
+            }).catch(err => { })
 
     }, [formValues, navigate, setFormErrors]);
 

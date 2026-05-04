@@ -120,7 +120,7 @@ export default function Edit() {
             .then(data => {
                 setLocation(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err=>{})
 
         setIsLoading(false);
     }, [locationID]);
@@ -137,7 +137,7 @@ export default function Edit() {
                     setLocation('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.LOCATION_LIST_PATH);
-                })
+                }).catch(err => {})
         },
         [locationID],
     );

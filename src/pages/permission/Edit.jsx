@@ -119,7 +119,7 @@ export default function PermissionEdit() {
             .then(data => {
                 setPermission(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [permissionID]);
@@ -136,7 +136,7 @@ export default function PermissionEdit() {
                     setPermission('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.PERMISSION_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [permissionID],
     );

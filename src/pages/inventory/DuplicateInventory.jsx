@@ -142,7 +142,7 @@ export default function DuplicateInventory() {
                     setInventory(data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
-                })
+                }).catch(err => { })
         },
         [inventoryID],
     );

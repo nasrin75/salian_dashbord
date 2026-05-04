@@ -11,9 +11,9 @@ export const LocationDetails=(locationID) => {
     return Api.get(`/location/${locationID}`)
 }
 export const createLocation = (data) =>{
-    return Api.post('/location/create',data)
+    return Api.post('/location',data)
 }
 
 export const updateLocation = (data) =>{
-    return Api.put('/location/edit',data)
+    return Api.put('/location',data)
 }
