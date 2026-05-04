@@ -4,7 +4,7 @@ export const getHistories = (request) => {
     return Api.get('/history', request)
 }
 export const deleteHistory = (historyID) => {
-    return Api.delete(`/history/delete?id=${historyID}`)
+    return Api.delete(`/history/${historyID}`)
 }
 
 export const getHistoryBy = (entityName, entityID) => {

@@ -59,7 +59,10 @@ const AuthProvider = ({ children }) => {
             .then(data => {
                 const result = data.data.data;
                 const permissionNames = result.map(permission => permission.name).join(",")
-                setPermissions(permissionNames)
+                //if(result?.role.toLowerCase() != 'admin'){
+                    setPermissions(permissionNames)
+                //}
+                
 
                 localStorage.setItem("permissions", permissionNames)
             }).catch(err => {
@@ -76,6 +79,7 @@ const AuthProvider = ({ children }) => {
     }
 
     const hasPermission = (rights) => {
+        //return false;
         const user = JSON.parse(localStorage.getItem('user'));
 
         return user?.role.toLowerCase() == 'admin' ? true

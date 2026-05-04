@@ -15,6 +15,7 @@ import FormLabel from '@mui/material/FormLabel';
 import { getRoles } from '../../api/RoleApi';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
+import { PERMISSION } from '../../utlis/constants/Permissions';
 
 const ipArrayToString = (arr) => {
   if (!arr) return '';
@@ -34,7 +35,9 @@ function EditForm(props) {
     onSubmit,
     onReset,
     submitButtonLabel,
+    hasPermission
   } = props;
+
 
   const formValues = formState.values;
   const formErrors = formState.errors;
@@ -144,14 +147,40 @@ function EditForm(props) {
   };
 
 
-  const handleLoginTypeChange = (value, checked) => {
+  const handleLoginTypeChange = (value, isChecked) => {
     const current = formValues.loginTypes || [];
-    const updated = checked ? [...current, value] : current.filter(x => x !== value);
+    let updated;
 
-    onFieldChange("LoginTypes", updated)
+    if (isChecked) {
+      updated = [...current, value];
+    } else {
+      updated = current.filter(x => x !== value);
+    }
+
+    onFieldChange("loginTypes", updated);
   }
 
-
+  const handleCheckIp = (e) => {
+    const isChecked = e.target.checked;
+    onFieldChange("isCheckIp", isChecked);
+    setIsCheckIpBtn(isChecked);
+  if (!isChecked) {
+    onFieldChange("scope", '0'); 
+    setScope('0');
+    onFieldChange("rangeIpFrom", '');
+    setRangeIpFrom('');
+    onFieldChange("rangeIpTo", '');
+    setRangeIpTo('');
+    onFieldChange("singleIp", '');
+    setSingleIp('');
+    
+  } else {
+     if (scope === undefined || scope === null) {
+        onFieldChange("scope", '0');
+        setScope('0');
+     }
+  }
+  }
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
@@ -185,7 +214,7 @@ function EditForm(props) {
       onReset(formValues);
     }
   }, [formValues, onReset]);
-
+  
   return (
     <Box
       component="form"
@@ -206,6 +235,7 @@ function EditForm(props) {
               error={!!formErrors.username}
               helperText={formErrors.username ?? ' '}
               fullWidth
+              disabled={!hasPermission([PERMISSION.USER_VIEW_USERNAME])}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
@@ -217,6 +247,7 @@ function EditForm(props) {
               error={!!formErrors.password}
               helperText={formErrors.password ?? ' '}
               fullWidth
+              disabled={!hasPermission([PERMISSION.USER_VIEW_PASSWORD])}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
@@ -239,6 +270,7 @@ function EditForm(props) {
               error={!!formErrors.mobile}
               helperText={formErrors.mobile ?? ' '}
               fullWidth
+              disabled={!hasPermission([PERMISSION.USER_VIEW_Mobile])}
             />
           </Grid>
 
@@ -250,7 +282,7 @@ function EditForm(props) {
                   <Checkbox
                     size="large"
                     checked={formValues.isCheckIp ?? false}
-                    onChange={(e) => onFieldChange("isCheckIp", e.target.checked)}
+                    onChange={handleCheckIp}
                   />
                 }
                 label="IP چک شود ؟"
@@ -274,13 +306,13 @@ function EditForm(props) {
                   >
                     <FormControlLabel
                       value="0"
-                      control={<Radio checked={scope == 0 ?? false} />}
+                      control={<Radio />}
                       label="IP تکی:"
                     />
 
                     <FormControlLabel
                       value="1"
-                      control={<Radio checked={scope == 1 ?? false} />}
+                      control={<Radio />}
                       label="محدوده IP:"
                     />
                   </RadioGroup>
@@ -289,7 +321,7 @@ function EditForm(props) {
                     {formErrors.scope ?? ' '}
                   </FormHelperText>
 
-                  {(scope == 1) ? (
+                  {(scope === '1') ? (
                     <>
                       <Grid item xs={12}>
                         <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
@@ -340,10 +372,11 @@ function EditForm(props) {
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="roleId"
                 onChange={(e) => onFieldChange("roleId", e.target.value, "radio")}
+
               >
                 {
                   roles.map(role => {
-                    return <FormControlLabel value={role.id} control={<Radio checked={formValues.roleId == role.id ?? false} />} label={role.faName} />
+                    return <FormControlLabel disabled={!hasPermission([PERMISSION.USER_View_ROLE])} value={role.id} control={<Radio checked={formValues.roleId == role.id ?? false} />} label={role.faName} />
                   })
                 }
 
@@ -364,19 +397,19 @@ function EditForm(props) {
               >
                 <FormControlLabel value="otp" control={<Checkbox
                   checked={formValues.loginTypes?.includes("otp") || false}
-                  onChange={(e) => handleLoginTypeChange("otp", e.target.value)
+                  onChange={(e) => handleLoginTypeChange("otp", e.target.checked)
                   } />} label="OTP" />
                 <FormControlLabel value="password" control={<Checkbox
                   checked={formValues.loginTypes?.includes("password") || false}
-                  onChange={(e) => handleLoginTypeChange("password", e.target.value)
+                  onChange={(e) => handleLoginTypeChange("password", e.target.checked)
                   } />} label="Password" />
                 <FormControlLabel value="email" control={<Checkbox
                   checked={formValues.loginTypes?.includes("email") || false}
-                  onChange={(e) => handleLoginTypeChange("email", e.target.value)
+                  onChange={(e) => handleLoginTypeChange("email", e.target.checked)
                   } />} label="Email" />
                 <FormControlLabel value="push" control={<Checkbox
                   checked={formValues.loginTypes?.includes("push") || false}
-                  onChange={(e) => handleLoginTypeChange("push", e.target.value)
+                  onChange={(e) => handleLoginTypeChange("push", e.target.checked)
                   } />} label="Push" />
               </FormGroup>
               <FormHelperText error={!!formErrors.loginType}>

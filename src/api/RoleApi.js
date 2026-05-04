@@ -5,7 +5,7 @@ export const getRoles = () => {
 }
 
 export const deleteRole = (roleID) => {
-    return Api.delete(`/role/delete?id=${roleID}`)
+    return Api.delete(`/role/${roleID}`)
 }
 
 export const RoleDetails = (roleID) => {

@@ -5,7 +5,7 @@ export const getEmployees = () => {
 }
 
 export function deleteEmployee(employeeID) {
-    return Api.delete(`/employee/delete?id=${employeeID}`)
+    return Api.delete(`/employee/${employeeID}`)
 }
 
 export function EmployeeDetails(employeeID) {

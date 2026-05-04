@@ -179,7 +179,7 @@ export default function List() {
         [],
     );
 
-    const isAlow = hasPermission([PERMISSION.HISTORY_DELETE, PERMISSION.HISTORY_DETAILS]);
+    const isAlow = hasPermission([PERMISSION.HISTORY_DELETE, PERMISSION.HISTORY_VIEW]);
     const columns = useMemo(
         () => [
             { field: 'id', headerName: 'شناسه', width: 140 },
@@ -235,7 +235,7 @@ export default function List() {
                         />)
                     }
 
-                    if (hasPermission([PERMISSION.HISTORY_DETAILS])) {
+                    if (hasPermission([PERMISSION.HISTORY_VIEW])) {
 
                         actions.push(<GridActionsCellItem
                             key="details-item"

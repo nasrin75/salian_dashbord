@@ -4,7 +4,7 @@ export const getInventories = (equipment = "ALL") => {
     return Api.get(`/inventory?equipment=${equipment}`);
 }
 export const deleteInventory = (inventoryID) => {
-    return Api.delete(`/inventory/delete?id=${inventoryID}`)
+    return Api.delete(`/inventory/${inventoryID}`)
 }
 
 export const InventoryDetails = (inventoryID) => {

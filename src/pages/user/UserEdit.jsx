@@ -6,13 +6,15 @@ import EditForm from '../../components/user/EditForm';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { updateUser, userDetails } from '../../api/UserApi';
-import { userEditFormValidate } from '../../validation/UserValidation';
+import { userEditValidator } from '../../validation/UserValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import useAuth from '../../hooks/useAuth/useAuth';
 
 function UserEditForm({ initialValues, onSubmit }) {
+   const { hasPermission } = useAuth();
   const { userId } = useParams();
   const navigate = useNavigate();
 
@@ -95,8 +97,8 @@ function UserEditForm({ initialValues, onSubmit }) {
       }
       setFormValues(newFormValues);
 
-      const { issues } = userEditFormValidate(newFormValues);
-
+      const { issues } = userEditValidator(newFormValues);
+console.log('issue',issues)
       setFormErrors({
         ...formErrors,
         [name]: issues?.find(i => i.path?.[0] === name)?.message,
@@ -111,7 +113,7 @@ function UserEditForm({ initialValues, onSubmit }) {
   }, [initialValues, setFormValues]);
 
   const handleFormSubmit = useCallback(async () => {
-    const { issues } = userEditFormValidate(formValues);
+    const { issues } = userEditValidator(formValues);
 
     if (issues && issues.length > 0) {
       setFormErrors(
@@ -138,6 +140,7 @@ function UserEditForm({ initialValues, onSubmit }) {
       onSubmit={handleFormSubmit}
       onReset={handleFormReset}
       onIpChange={handleIpUpdate}
+      hasPermission ={hasPermission}
       submitButtonLabel="ذخیره"
     />
   );
@@ -176,7 +179,7 @@ export default function UserEdit() {
         .then(data => {
           setUser('handlesubmit', data.data.data)
           setIsLoading(false);
-        })
+        }).catch(err =>{})
 
       
     },

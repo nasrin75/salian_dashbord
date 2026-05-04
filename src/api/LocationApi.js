@@ -4,7 +4,7 @@ export const getLocations = () =>{
     return Api.get('/location');
 }
 export const deleteLocation = (locationID) =>{
-    return Api.delete(`/location/delete?id=${locationID}`)
+    return Api.delete(`/location/${locationID}`)
 }
 
 export const LocationDetails=(locationID) => {

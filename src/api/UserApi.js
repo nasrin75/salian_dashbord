@@ -8,7 +8,7 @@ export const createUser = (data) => {
     return Api.post('/user', data)
 }
 export function deleteUser(userID) {
-    return Api.delete(`/user/delete?id=${userID}`)
+    return Api.delete(`/user/${userID}`)
 }
 export const userDetails = (userID) => {
     return Api.get(`/user/${userID}`)

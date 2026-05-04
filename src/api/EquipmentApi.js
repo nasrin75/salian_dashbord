@@ -5,7 +5,7 @@ export const getEquipments = () => {
 }
 
 export function deleteEquipment(equipmentID) {
-    return Api.delete(`/equipment/delete?id=${equipmentID}`)
+    return Api.delete(`/equipment/${equipmentID}`)
 }
 
 export function EquipmentDetails(equipmentID) {

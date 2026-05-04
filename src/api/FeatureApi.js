@@ -4,7 +4,7 @@ export const getFeatures = () => {
     return Api.get('/feature');
 }
 export const deleteFeature = (featureID) => {
-    return Api.delete(`/feature/delete?id=${featureID}`)
+    return Api.delete(`/feature/${featureID}`)
 }
 
 export const FeatureDetails = (featureID) => {
