@@ -88,7 +88,7 @@ function UserForm(props) {
   }, [rangeIpFrom, scope]);
 
   const renderIpInputs = (type, ipState, setIpState) => {
-
+console.log('aa',type, ipState);
     return (
       <Grid container spacing={1} alignItems="center" sx={{ mb: type === 'single' ? 2 : 0 }}>
         {[3, 2, 1, 0].map((index) => (
@@ -205,7 +205,7 @@ function UserForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.Username ?? ''}
               onChange={(e) => onFieldChange("Username", e.target.value)}
@@ -216,7 +216,7 @@ function UserForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.Password ?? ''}
               onChange={(e) => onFieldChange("Password", e.target.value)}
@@ -226,9 +226,9 @@ function UserForm(props) {
               helperText={formErrors.Password ?? ' '}
               fullWidth
             />
-        
+
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.Email ?? ''}
               onChange={(e) => onFieldChange("Email", e.target.value)}
@@ -239,7 +239,7 @@ function UserForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.Mobile ?? ''}
               onChange={(e) => onFieldChange("Mobile", e.target.value)}
@@ -251,89 +251,8 @@ function UserForm(props) {
             />
           </Grid>
 
-
-          <Grid size={{ xs: 12, sm: 1 }} sx={{ display: 'flex' }}>
-            <FormControl>
-              <FormControlLabel
-                name="IsCheckIp"
-                control={
-                  <Checkbox
-                    sx={{
-                      display: "inline"
-                    }}
-                    size="large"
-                    checked={!!formValues.IsCheckIp}
-                    onChange={(e) => {
-                      onFieldChange("IsCheckIp", e.target.checked, "checkbox")
-                      setIsCheckIpBtn(!isCheckIpBtn)
-                    }}
-                    name="IsCheckIp"
-                  />
-                }
-                label="IP چک شود ؟"
-              />
-              <FormHelperText error={!!formErrors.IsCheckIp}>
-                {formErrors.IsCheckIp ?? ' '}
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-
-          {
-            isCheckIpBtn && (
-              <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
-                <FormControl>
-
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-row-radio-buttons-group-label"
-                    name="Scope"
-                    value={scope}
-                    onChange={(event, newValue) => handleScopeChange(newValue)}
-                  >
-                    <FormControlLabel
-                      value="0"
-                      control={<Radio />}
-                      label="IP تکی:"
-                    />
-
-                    <FormControlLabel
-                      value="1"
-                      control={<Radio />}
-                      label="محدوده IP:"
-                    />
-                  </RadioGroup>
-
-                  <FormHelperText error={!!formErrors.Scope}>
-                    {formErrors.Scope ?? ' '}
-                  </FormHelperText>
-
-                  {scope === '1' ? (
-                    <>
-                      <Grid item xs={12}>
-                        <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
-                          از:
-                        </Typography>
-                        {renderIpInputs("from", rangeIpFrom, setRangeIpFrom)}
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
-                          تا:
-                        </Typography>
-                        {renderIpInputs("to", rangeIpTo, setRangeIpTo)}
-                      </Grid>
-                    </>
-                  ) : (
-                    <Grid item xs={12}>
-                      {renderIpInputs("single", singleIp, setSingleIp)}
-                    </Grid>
-                  )}
-
-                </FormControl>
-              </Grid>
-            )
-          }
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}></Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">وضعیت</FormLabel>
               <RadioGroup
@@ -377,8 +296,7 @@ function UserForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
-
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">ورود با :</FormLabel>
               <FormGroup
@@ -392,7 +310,7 @@ function UserForm(props) {
                   checked={formValues.LoginTypes?.includes("otp") ?? false}
                   onChange={(e) => handleLoginTypeChange("otp", e.target.checked)}
                   disabled={isMobileFieldEmpty} // OTP disabled if Mobile is empty
-                />} label="OTP" />
+                />} label="Sms OTP" />
                 <FormControlLabel value="password" control={<Checkbox
                   checked={formValues.LoginTypes?.includes("password")}
                   onChange={(e) => handleLoginTypeChange("password", e.target.checked)
@@ -402,7 +320,7 @@ function UserForm(props) {
                   checked={formValues.LoginTypes?.includes("email")}
                   onChange={(e) => handleLoginTypeChange("email", e.target.checked)}
                   disabled={isEmailFieldEmpty}
-                />} label="Email" />
+                />} label="Email OTP" />
                 <FormControlLabel value="push" control={<Checkbox
                   checked={formValues.LoginTypes?.includes("push")}
                   onChange={(e) => handleLoginTypeChange("push", e.target.checked)
@@ -413,6 +331,89 @@ function UserForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
+
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
+            <FormControl>
+              <FormControlLabel
+                name="IsCheckIp"
+                control={
+                  <Checkbox
+                    sx={{
+                      display: "inline"
+                    }}
+                    size="large"
+                    checked={!!formValues.IsCheckIp}
+                    onChange={(e) => {
+                      onFieldChange("IsCheckIp", e.target.checked, "checkbox")
+                      setIsCheckIpBtn(!isCheckIpBtn)
+                    }}
+                    name="IsCheckIp"
+                  />
+                }
+                label="IP چک شود ؟"
+              />
+              <FormHelperText error={!!formErrors.IsCheckIp}>
+                {formErrors.IsCheckIp ?? ' '}
+              </FormHelperText>
+            </FormControl>
+          </Grid>
+          {
+            isCheckIpBtn && (
+              <Grid size={{ xs: 12, sm: 10 }} sx={{ display: 'flex' }}>
+                <FormControl>
+
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="Scope"
+                    value={scope}
+                    onChange={(event, newValue) => handleScopeChange(newValue)}
+                    error={!!formErrors.Scope}
+                    helperText={formErrors.Scope ?? " "}
+                  >
+                    <FormControlLabel
+                      value="0"
+                      control={<Radio />}
+                      label="IP تکی:"
+                    />
+
+                    <FormControlLabel
+                      value="1"
+                      control={<Radio />}
+                      label="محدوده IP:"
+                    />
+                  </RadioGroup>
+
+                  <FormHelperText error={!!formErrors.Scope}>
+                    {formErrors.Scope ?? ' '}
+                  </FormHelperText>
+
+                  {scope === '1' ? (
+                    <>
+                      <Grid item xs={12}>
+                        <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
+                          از:
+                        </Typography>
+                        {renderIpInputs("from", rangeIpFrom, setRangeIpFrom)}
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
+                          تا:
+                        </Typography>
+                        {renderIpInputs("to", rangeIpTo, setRangeIpTo)}
+                      </Grid>
+                    </>
+                  ) : (
+                    <Grid item xs={12}>
+                      {renderIpInputs("single", singleIp, setSingleIp)}
+                    </Grid>
+                  )}
+
+                </FormControl>
+              </Grid>
+            )
+          }
+
 
         </Grid>
       </FormGroup>

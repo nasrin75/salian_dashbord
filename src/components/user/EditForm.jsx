@@ -50,11 +50,11 @@ function EditForm(props) {
   const [rangeIpFrom, setRangeIpFrom] = useState(ipStringToArray(formValues?.startIp));
   const [rangeIpTo, setRangeIpTo] = useState(ipStringToArray(formValues?.endIp));
 
-  console.log('singleIp',singleIp)
-  console.log('startIp',formValues?.startIp)
-  console.log('endIp',formValues?.endIp)
-  console.log('rangeIpFrom',rangeIpFrom)
-  console.log('rangeIpTo',rangeIpTo,ipStringToArray(formValues?.endIp),formValues?.endIp)
+  console.log('singleIp', singleIp)
+  console.log('startIp', formValues?.startIp)
+  console.log('endIp', formValues?.endIp)
+  console.log('rangeIpFrom', rangeIpFrom)
+  console.log('rangeIpTo', rangeIpTo, ipStringToArray(formValues?.endIp), formValues?.endIp)
 
   useEffect(() => {
 
@@ -71,7 +71,6 @@ function EditForm(props) {
   useEffect(() => {
     if (scope !== '1') {
       setRangeIpTo(Array(4).fill(''));
-      // setSingleIp(Array(4).fill('')); 
       return;
     }
 
@@ -118,22 +117,12 @@ function EditForm(props) {
   };
 
   const handleScopeChange = (e) => {
-  const newScope = e.target.value;
+    const newScope = e.target.value;
 
-  setScope(newScope);
-  onFieldChange('scope', newScope);
+    setScope(newScope);
+    onFieldChange('scope', newScope);
 
-  // if (newScope === '0') {
-  //   setSingleIp(['', '', '', '']);
-  //   setRangeIpFrom(['', '', '', '']);
-  //   setRangeIpTo(['', '', '', '']);
-  //   onFieldChange('endIp', '');
-  // } else if (newScope === '1') {
-  //   setRangeIpFrom(['', '', '', '']);
-  //   setSingleIp(['', '', '', '']);
-  //   onFieldChange('startIp', '');
-  // }
-};
+  };
 
   // create ip as string to send backend
   const constructFinalIpString = () => {
@@ -191,20 +180,10 @@ function EditForm(props) {
 
   const handleCheckIp = (e) => {
     const isChecked = e.target.checked;
-    console.log('handleCheckIp',isChecked)
+    console.log('handleCheckIp', isChecked)
     onFieldChange("isCheckIp", isChecked);
     setIsCheckIpBtn(isChecked);
-    if (!isChecked) {
-      // onFieldChange("scope", '0');
-      // setScope('0');
-      // onFieldChange("rangeIpFrom", '');
-      // setRangeIpFrom('');
-      // onFieldChange("rangeIpTo", '');
-      // setRangeIpTo('');
-      // onFieldChange("startIp", '');
-      // setSingleIp('');
-
-    } else {
+    if (isChecked) {
       if (scope === undefined || scope === null) {
         onFieldChange("scope", '0');
         setScope('0');
@@ -245,7 +224,7 @@ function EditForm(props) {
     }
   }, [formValues, onReset]);
 
-  console.log('scope_val',scope,typeof(scope))
+  console.log('scope_val', scope, typeof (scope))
   return (
     <Box
       component="form"
@@ -257,7 +236,7 @@ function EditForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.username ?? ''}
               onChange={(e) => onFieldChange("username", e.target.value)}
@@ -269,7 +248,7 @@ function EditForm(props) {
               disabled={!hasPermission([PERMISSION.USER_VIEW_USERNAME])}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={''}
               onChange={(e) => onFieldChange("password", e.target.value)}
@@ -281,7 +260,7 @@ function EditForm(props) {
               disabled={!hasPermission([PERMISSION.USER_VIEW_PASSWORD])}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.email ?? ''}
               onChange={(e) => onFieldChange("email", e.target.value)}
@@ -292,7 +271,7 @@ function EditForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.mobile ?? ''}
               onChange={(e) => onFieldChange("mobile", e.target.value)}
@@ -303,6 +282,79 @@ function EditForm(props) {
               fullWidth
               disabled={!hasPermission([PERMISSION.USER_VIEW_Mobile])}
             />
+          </Grid>
+
+
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
+            <FormControl>
+              <FormLabel id="demo-row-radio-buttons-group-label">وضعیت</FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="status"
+                onChange={(e) => onFieldChange("status", e.target.value, "radio")}
+              >
+                <FormControlLabel value="1" control={<Radio checked={(formValues.status == 'active' || formValues.status == '1') ?? false} />} label="فعال" />
+                <FormControlLabel value="-1" control={<Radio checked={(formValues.status == 'deactive' || formValues.status == '-1') ?? false} />} label="غیرفعال" />
+              </RadioGroup>
+              <FormHelperText error={!!formErrors.status}>
+                {formErrors.status ?? ' '}
+              </FormHelperText>
+            </FormControl>
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+            <FormControl>
+              <FormLabel id="demo-row-radio-buttons-group-label">نقش</FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="roleId"
+                onChange={(e) => onFieldChange("roleId", e.target.value, "radio")}
+
+              >
+                {
+                  roles.map(role => {
+                    return <FormControlLabel disabled={!hasPermission([PERMISSION.USER_View_ROLE])} value={role.id} control={<Radio checked={formValues.roleId == role.id ?? false} />} label={role.faName} />
+                  })
+                }
+
+              </RadioGroup>
+              <FormHelperText error={!!formErrors.roleId}>
+                {formErrors.roleId ?? ' '}
+              </FormHelperText>
+            </FormControl>
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 12}} sx={{ display: 'flex' }}>
+            <FormControl>
+              <FormLabel id="demo-row-radio-buttons-group-label">ورود با :</FormLabel>
+              <FormGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="loginTypes"
+              >
+                <FormControlLabel value="otp" control={<Checkbox
+                  checked={formValues.loginTypes?.includes("otp") || false}
+                  onChange={(e) => handleLoginTypeChange("otp", e.target.checked)
+                  } />} label="OTP" />
+                <FormControlLabel value="password" control={<Checkbox
+                  checked={formValues.loginTypes?.includes("password") || false}
+                  onChange={(e) => handleLoginTypeChange("password", e.target.checked)
+                  } />} label="Password" />
+                <FormControlLabel value="email" control={<Checkbox
+                  checked={formValues.loginTypes?.includes("email") || false}
+                  onChange={(e) => handleLoginTypeChange("email", e.target.checked)
+                  } />} label="Email" />
+                <FormControlLabel value="push" control={<Checkbox
+                  checked={formValues.loginTypes?.includes("push") || false}
+                  onChange={(e) => handleLoginTypeChange("push", e.target.checked)
+                  } />} label="Push" />
+              </FormGroup>
+              <FormHelperText error={!!formErrors.loginType}>
+                {formErrors.loginType ?? ' '}
+              </FormHelperText>
+            </FormControl>
           </Grid>
 
           <Grid size={{ xs: 12, sm: 1 }} sx={{ display: 'flex' }}>
@@ -377,78 +429,6 @@ function EditForm(props) {
               </Grid>
             )
           }
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
-            <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">وضعیت</FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="status"
-                onChange={(e) => onFieldChange("status", e.target.value, "radio")}
-              >
-                <FormControlLabel value="1" control={<Radio checked={(formValues.status == 'active' || formValues.status == '1') ?? false} />} label="فعال" />
-                <FormControlLabel value="-1" control={<Radio checked={(formValues.status == 'deactive' || formValues.status == '-1') ?? false} />} label="غیرفعال" />
-              </RadioGroup>
-              <FormHelperText error={!!formErrors.status}>
-                {formErrors.status ?? ' '}
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
-            <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">نقش</FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="roleId"
-                onChange={(e) => onFieldChange("roleId", e.target.value, "radio")}
-
-              >
-                {
-                  roles.map(role => {
-                    return <FormControlLabel disabled={!hasPermission([PERMISSION.USER_View_ROLE])} value={role.id} control={<Radio checked={formValues.roleId == role.id ?? false} />} label={role.faName} />
-                  })
-                }
-
-              </RadioGroup>
-              <FormHelperText error={!!formErrors.roleId}>
-                {formErrors.roleId ?? ' '}
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
-            <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">ورود با :</FormLabel>
-              <FormGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="loginTypes"
-              >
-                <FormControlLabel value="otp" control={<Checkbox
-                  checked={formValues.loginTypes?.includes("otp") || false}
-                  onChange={(e) => handleLoginTypeChange("otp", e.target.checked)
-                  } />} label="OTP" />
-                <FormControlLabel value="password" control={<Checkbox
-                  checked={formValues.loginTypes?.includes("password") || false}
-                  onChange={(e) => handleLoginTypeChange("password", e.target.checked)
-                  } />} label="Password" />
-                <FormControlLabel value="email" control={<Checkbox
-                  checked={formValues.loginTypes?.includes("email") || false}
-                  onChange={(e) => handleLoginTypeChange("email", e.target.checked)
-                  } />} label="Email" />
-                <FormControlLabel value="push" control={<Checkbox
-                  checked={formValues.loginTypes?.includes("push") || false}
-                  onChange={(e) => handleLoginTypeChange("push", e.target.checked)
-                  } />} label="Push" />
-              </FormGroup>
-              <FormHelperText error={!!formErrors.loginType}>
-                {formErrors.loginType ?? ' '}
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-
         </Grid>
       </FormGroup>
       <Stack direction="row" spacing={2} justifyContent="space-between">
