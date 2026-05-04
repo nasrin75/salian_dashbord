@@ -45,10 +45,16 @@ function EditForm(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [roles, setRoles] = useState([]);
   const [isCheckIpBtn, setIsCheckIpBtn] = useState(formValues.isCheckIp);
-  const [scope, setScope] = useState(formValues?.scope || 0);
+  const [scope, setScope] = useState(formValues?.scope.toString() || '0');
   const [singleIp, setSingleIp] = useState(ipStringToArray(formValues?.startIp));
   const [rangeIpFrom, setRangeIpFrom] = useState(ipStringToArray(formValues?.startIp));
   const [rangeIpTo, setRangeIpTo] = useState(ipStringToArray(formValues?.endIp));
+
+  console.log('singleIp',singleIp)
+  console.log('startIp',formValues?.startIp)
+  console.log('endIp',formValues?.endIp)
+  console.log('rangeIpFrom',rangeIpFrom)
+  console.log('rangeIpTo',rangeIpTo)
 
   useEffect(() => {
 
@@ -62,6 +68,23 @@ function EditForm(props) {
 
   }, [])
 
+  useEffect(() => {
+    if (scope !== 1) {
+      setRangeIpTo(Array(4).fill(''));
+      // setSingleIp(Array(4).fill('')); 
+      return;
+    }
+
+    // sync first 3 blocks from → to
+    setRangeIpTo(prevRangeIpTo => {
+      const newTo = [...prevRangeIpTo];
+      if (rangeIpFrom[0]) newTo[0] = rangeIpFrom[0];
+      if (rangeIpFrom[1]) newTo[1] = rangeIpFrom[1];
+      if (rangeIpFrom[2]) newTo[2] = rangeIpFrom[2];
+      return newTo;
+    });
+
+  }, [rangeIpFrom, scope]);
 
   const renderIpInputs = (type, ipState) => {
     const filed = type == 'to' ? 'endIp' : 'startIp';
@@ -95,57 +118,64 @@ function EditForm(props) {
     );
   };
 
-  const handleScopeChange = (event) => {
-    const newScope = Number(event.target.value);
-    setScope(newScope);
+  const handleScopeChange = (e) => {
+  const newScope = e.target.value;
 
-    if (newScope === 0) {
-      setSingleIp([...rangeIpFrom]);
-    } else {
-      setRangeIpFrom([...singleIp]);
-      setRangeIpTo([...singleIp]);
+  setScope(newScope);
+  onFieldChange('scope', newScope);
+
+  if (newScope === '0') {
+    setSingleIp(['', '', '', '']);
+    setRangeIpFrom(['', '', '', '']);
+    setRangeIpTo(['', '', '', '']);
+    onFieldChange('endIp', '');
+  } else if (newScope === '1') {
+    setRangeIpFrom(['', '', '', '']);
+    setSingleIp(['', '', '', '']);
+    onFieldChange('startIp', '');
+  }
+};
+
+  // create ip as string to send backend
+  const constructFinalIpString = () => {
+
+    if (scope === '0') {
+      onFieldChange('startIp', ipArrayToString(singleIp));
+      onFieldChange('endIp', '');
+
+    } else if (scope === '1') {
+      onFieldChange('endIp', ipArrayToString(rangeIpFrom));
+      onFieldChange('startIp', '');
+
     }
   };
-
   const handleIpChange = (type, index, value) => {
-    const v = value.replace(/[^0-9]/g, '').slice(0, 3);
-
-    if (type === "single") {
+    const validValue = value.replace(/[^0-9]/g, '').slice(0, 3);
+    if (type === 'single') {
       const newIp = [...singleIp];
-      newIp[index] = v;
+      newIp[index] = validValue;
       setSingleIp(newIp);
-      return;
-    }
-
-    if (type === "from") {
-      const newFrom = [...rangeIpFrom];
-      newFrom[index] = v;
-      setRangeIpFrom(newFrom);
-      setRangeIpTo([...newFrom]);
-      const newIpTo = [...rangeIpTo];
-      if (index === 0) newIpTo[0] = newFrom[0];
-      if (index === 1) newIpTo[1] = newFrom[1];
-      if (index === 2) newIpTo[2] = newFrom[2];
-
-      setRangeIpTo(newIpTo);
-      return;
-    }
-
-    if (type === "to") {
+      // Construct the full IP string when a single IP part changes
+      onFieldChange('startIp', ipArrayToString(newIp));
+    } else if (type === 'from') {
+      const newIp = [...rangeIpFrom];
+      newIp[index] = validValue;
+      setRangeIpFrom(newIp);
+      // Construct the full IP string when a range 'from' part changes
+      onFieldChange("endIp", `${ipArrayToString(newIp)},${ipArrayToString(rangeIpTo)}`);
+    } else if (type === 'to') {
       const newTo = [...rangeIpTo];
-      newTo[index] = v;
+      newTo[index] = validValue;
       setRangeIpTo(newTo);
-      setRangeIpFrom([...newTo]);
-      const newIpFrom = [...rangeIpFrom];
-      if (index === 0) newIpFrom[0] = newTo[0];
-      if (index === 1) newIpFrom[1] = newTo[1];
-      if (index === 2) newIpFrom[2] = newTo[2];
-      setRangeIpFrom(newIpFrom);
-      return;
+      // Construct the full IP string when a range 'to' part changes
+      onFieldChange("endIp", `${ipArrayToString(rangeIpFrom)},${ipArrayToString(newTo)}`);
     }
-
   };
 
+  useEffect(() => {
+    console.log("scope state changed:", scope);
+    onFieldChange('scope', scope)
+  }, [scope]);
 
   const handleLoginTypeChange = (value, isChecked) => {
     const current = formValues.loginTypes || [];
@@ -164,31 +194,31 @@ function EditForm(props) {
     const isChecked = e.target.checked;
     onFieldChange("isCheckIp", isChecked);
     setIsCheckIpBtn(isChecked);
-  if (!isChecked) {
-    onFieldChange("scope", '0'); 
-    setScope('0');
-    onFieldChange("rangeIpFrom", '');
-    setRangeIpFrom('');
-    onFieldChange("rangeIpTo", '');
-    setRangeIpTo('');
-    onFieldChange("singleIp", '');
-    setSingleIp('');
-    
-  } else {
-     if (scope === undefined || scope === null) {
-        onFieldChange("scope", '0');
-        setScope('0');
-     }
-  }
+    if (!isChecked) {
+      onFieldChange("scope", '0');
+      setScope('0');
+      onFieldChange("rangeIpFrom", '');
+      setRangeIpFrom('');
+      onFieldChange("rangeIpTo", '');
+      setRangeIpTo('');
+      onFieldChange("startIp", '');
+      setSingleIp('');
+
+    } else {
+      if (scope === undefined || scope === null) {
+        onFieldChange("scope", 0);
+        setScope(0);
+      }
+    }
   }
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
-
+      constructFinalIpString();
       setIsSubmitting(true);
       try {
         onFieldChange('scope', scope);
-        if (scope === 0) {
+        if (scope === '0') {
           onFieldChange('endIp', '');
           onFieldChange('startIp', ipArrayToString(singleIp));
           formValues.startIp = ipArrayToString(singleIp);
@@ -214,7 +244,8 @@ function EditForm(props) {
       onReset(formValues);
     }
   }, [formValues, onReset]);
-  
+
+  console.log('scope_val',scope,typeof(scope))
   return (
     <Box
       component="form"
@@ -293,15 +324,15 @@ function EditForm(props) {
             </FormControl>
           </Grid>
           {
-            isCheckIpBtn && (
+            formValues.isCheckIp && (
               <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
                 <FormControl>
 
                   <RadioGroup
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
-                    name="Scope"
-                    value={scope}
+                    name="scope"
+                    value={scope.toString()}
                     onChange={handleScopeChange}
                   >
                     <FormControlLabel

@@ -82,7 +82,7 @@ const UserCreate = () => {
   const handleFormSubmit = useCallback(async () => {
 
     const { issues } = userValidate(formValues);
- console.log('issues', issues)
+    console.log('issues', issues)
     if (issues && issues.length > 0) {
       setFormErrors(
         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
@@ -98,8 +98,8 @@ const UserCreate = () => {
         toast.success("کاربر با موفقیت ایجاد شد.")
 
         navigate(APP_ROUTES.USER_LIST_PATH);
-      }).catch(err =>{
-        
+      }).catch(err => {
+
       })
 
   }, [formValues, navigate, setFormErrors]);
