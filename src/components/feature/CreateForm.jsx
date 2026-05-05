@@ -13,6 +13,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import FormHelperText from '@mui/material/FormHelperText';
 
 
 function CreateForm(props) {
@@ -76,20 +77,20 @@ function CreateForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 8 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.Name ?? ''}
               onChange={(e) => onFieldChange("Name", e.target.value)}
               name="Name"
-              label="عنوان"
+              label="عنوان*"
               error={!!formErrors.Name}
               helperText={formErrors.Name ?? ' '}
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
-            <FormControl sx={{ m: 1, width: 300 }}>
-              <InputLabel id="demo-multiple-name-label">قطعات</InputLabel>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
+            <FormControl sx={{ width: 400 }}>
+              <InputLabel id="demo-multiple-name-label">قطعات *</InputLabel>
               <Select
                 labelId="demo-multiple-name-label"
                 id="demo-multiple-name"
@@ -97,6 +98,8 @@ function CreateForm(props) {
                 value={equipmentIds}
                 onChange={handleEquipmentIds}
                 input={<OutlinedInput label="قطعات" />}
+                error={!!formErrors.EquipmentIds}
+                helperText={formErrors.EquipmentIds ?? ' '}
                 fullWidth
               >
                 {equipments.map((eq) => (
@@ -109,6 +112,7 @@ function CreateForm(props) {
                   </MenuItem>
                 ))}
               </Select>
+               <FormHelperText>{formErrors.EquipmentIds ?? ' '}</FormHelperText>
             </FormControl>
           </Grid>
         </Grid>
@@ -131,7 +135,7 @@ CreateForm.propTypes = {
   formState: PropTypes.shape({
     errors: PropTypes.shape({
       Name: PropTypes.string,
-      EquipmentIds: PropTypes.string,
+      EquipmentIds: PropTypes.array,
     }).isRequired,
     values: PropTypes.shape({
       Name: PropTypes.string,
