@@ -14,7 +14,8 @@ import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import Switch from '@mui/material/Switch';
 import Autocomplete from '@mui/material/Autocomplete';
-import { getEquipments } from '../../api/EquipmentApi';
+import { getEquipments, getParentEquipments } from '../../api/EquipmentApi';
+import MenuItem from '@mui/material/MenuItem';
 
 function CreateForm(props) {
   const {
@@ -50,7 +51,7 @@ function CreateForm(props) {
     [formValues, onSubmit],
   );
   useEffect(() => {
-    getEquipments()
+    getParentEquipments()
       .then(data => {
         setParentEquipments(data.data.data)
       })
@@ -69,22 +70,22 @@ function CreateForm(props) {
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <Autocomplete
-              id="equipment-select-demo"
-              autoHighlight
-              disableClearable
-              sx={{ width: 400 }}
-              options={parentEquipments}
+            <TextField
+              select
+              value={formValues.ParentId ?? ''}
+              onChange={(e) => onFieldChange("ParentId", e.target.value)}
+              name="ParentId"
+              label="قطعه Parent "
               error={!!formErrors.ParentId}
-              helperText={formErrors.ParentId ?? " "}
-              getOptionLabel={(option) => option.name}
-              onChange={async (e, value) => {
-                if (!value) return;
+              helperText={formErrors.ParentId ?? ' '}
+              fullWidth
+            >
+              <MenuItem value="0" disabled>انتخاب کنید</MenuItem>
+              {parentEquipments?.map(parent => {
+                return <MenuItem value={parent.id}>{parent.name}</MenuItem>
+              })}
+            </TextField>
 
-                onFieldChange("ParentId", value.id);
-              }}
-              renderInput={(params) => <TextField {...params} label=" Parentقطعه " />}
-            />
             <FormHelperText error={!!formErrors.ParentId}>
               {formErrors.ParentId ?? " "}
             </FormHelperText>

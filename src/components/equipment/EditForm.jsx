@@ -14,7 +14,8 @@ import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import Switch from '@mui/material/Switch';
 import Autocomplete from '@mui/material/Autocomplete';
-import { getEquipments } from '../../api/EquipmentApi';
+import { getEquipments, getParentEquipments } from '../../api/EquipmentApi';
+import MenuItem from '@mui/material/MenuItem';
 
 function EditForm(props) {
   const {
@@ -30,7 +31,14 @@ function EditForm(props) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [parentEquipments, setParentEquipments] = useState();
-
+  useEffect(() => {
+    getParentEquipments()
+      .then((data) => setParentEquipments(data.data.data))
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
+      });
+    
+  }, []);
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
@@ -51,15 +59,7 @@ function EditForm(props) {
     }
   }, [formValues, onReset]);
 
-  useEffect(() => {
-    getEquipments()
-      .then(data => {
-        setParentEquipments(data.data.data)
-      })
-      .catch(() => {
-        //toast.error("مشکلی در گرفتن لیست قطعات رخ داده است.")
-      })
-  }, [])
+  console.log('parentEquipments', parentEquipments)
   return (
     <Box
       component="form"
@@ -71,28 +71,27 @@ function EditForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <Autocomplete
-              id="equipment-select-demo"
-              autoHighlight
-              disableClearable
-              sx={{ width: 400 }}
-              options={parentEquipments}
-              error={!!formErrors.ParentId}
-              helperText={formErrors.ParentId ?? " "}
-              getOptionLabel={(option) => option.name}
-              onChange={async (e, value) => {
-                if (!value) return;
-
-                onFieldChange("ParentId", value.id);
-              }}
-              renderInput={(params) => <TextField {...params} label=" Parentقطعه " />}
-            />
-            <FormHelperText error={!!formErrors.ParentId}>
-              {formErrors.ParentId ?? " "}
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <TextField
+              select
+              value={formValues.parentId ?? ''}
+              onChange={(e) => onFieldChange("parentId", e.target.value)}
+              name="parentId"
+              label="Parentقطعه"
+              error={!!formErrors.parentId}
+              helperText={formErrors.parentId ?? ' '}
+              fullWidth
+            >
+              <MenuItem value="0" disabled>انتخاب کنید</MenuItem>
+              {parentEquipments?.map(parent => {
+                return <MenuItem value={parent.id} selected={formValues.parentId === parent.id ?? false}>{parent.name}</MenuItem>
+              })}
+            </TextField>
+            <FormHelperText error={!!formErrors.parentId}>
+              {formErrors.parentId ?? " "}
             </FormHelperText>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.name ?? ''}
               onChange={(e) => onFieldChange("name", e.target.value)}

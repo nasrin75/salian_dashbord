@@ -96,11 +96,11 @@ function EditForm(props) {
             <TextField
               select
               value={formValues.locationId ?? ''}
-              onChange={(e) => onFieldChange("LocationId", e.target.value)}
-              name="LocationId"
+              onChange={(e) => onFieldChange("locationId", e.target.value)}
+              name="locationId"
               label="موقعیت"
-              error={!!formErrors.LocationId}
-              helperText={formErrors.LocationId ?? ' '}
+              error={!!formErrors.locationId}
+              helperText={formErrors.locationId ?? ' '}
               fullWidth
             >
               <MenuItem value="0" disabled>انتخاب کنید</MenuItem>

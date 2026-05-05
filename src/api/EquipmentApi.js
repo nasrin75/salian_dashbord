@@ -3,7 +3,9 @@ import Api from "./Api"
 export const getEquipments = () => {
     return Api.get('/equipment');
 }
-
+export const getParentEquipments = () => {
+    return Api.get('/equipment/parents');
+}
 export function deleteEquipment(equipmentID) {
     return Api.delete(`/equipment/${equipmentID}`)
 }

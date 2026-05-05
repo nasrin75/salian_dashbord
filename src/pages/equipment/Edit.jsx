@@ -47,28 +47,31 @@ function EquipmentEditForm({ initialValues, onSubmit }) {
         }));
     }, []);
 
-const handleFormFieldChange = useCallback(
-  (name, value, type = "text") => {
+    const handleFormFieldChange = useCallback(
+        (name, value, type = "text") => {
 
-    let finalValue = value;
+            let finalValue = value;
+            if (type === "radio") {
 
-    const newFormValues = {
-      ...formValues,
-      [name]: finalValue,
-    };
+                finalValue = Number(value);
+            }
+            const newFormValues = {
+                ...formValues,
+                [name]: finalValue,
+            };
 
-    setFormValues(newFormValues);
+            setFormValues(newFormValues);
 
-    const { issues } = EditValidation(newFormValues);
+            const { issues } = EditValidation(newFormValues);
 
-    setFormErrors({
-      ...formErrors,
-      [name]: issues?.find(i => i.path?.[0] === name)?.message,
-    });
+            setFormErrors({
+                ...formErrors,
+                [name]: issues?.find(i => i.path?.[0] === name)?.message,
+            });
 
-  },
-  [formValues, formErrors],
-);
+        },
+        [formValues, formErrors],
+    );
 
     const handleFormReset = useCallback(() => {
         setFormValues(initialValues);
@@ -120,7 +123,7 @@ export default function Edit() {
             .then(data => {
                 setEquipment(data.data.data)
                 setIsLoading(false);
-            }).catch(err =>{})
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [equipmentID]);
