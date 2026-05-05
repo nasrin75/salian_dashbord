@@ -1,135 +1,110 @@
 import React, { useEffect, useState } from 'react';
-import { Checkbox, FormControlLabel, Typography, Box, Divider, Grid } from '@mui/material';
+import { Box, Typography, Divider } from '@mui/material';
 import { getPermissionByCategory } from '../../api/PermissionApi';
+import PermissionNode from '../Common/PermissionNode';
 
-// Helper function to flatten the permission tree (if needed for simpler column distribution)
-const flattenPermissions = (permissions, parentId = null) => {
-  let flatList = [];
-  for (const perm of permissions) {
-    flatList.push({ ...perm, parentId: parentId }); // Ensure parentId is correctly set for children
-    if (perm.children && perm.children.length > 0) {
-      flatList = flatList.concat(flattenPermissions(perm.children, perm.id));
-    }
-  }
-  return flatList;
-};
-const PermissionNode = ({ permission, selectedPermissions, handlePermissionSelection }) => {
-  return (
-    <Box key={permission.id} sx={{ paddingLeft: '30px', mb: 1 }}> 
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={selectedPermissions.includes(permission.id)}
-            onChange={(e) => handlePermissionSelection(permission.id, e.target.checked)}
-          />
-        }
-        label={
-          <Typography
-            sx={{
-              fontWeight: permission.parentId == null ? 'bold' : '',
-            }}
-          >
-            {permission.title}
-          </Typography>
-        }
-      />
-
-      {permission.children && permission.children.length > 0 && (
-         <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}>
-          {permission.children.map((child) => (
-            <PermissionNode
-              key={child.id}
-              permission={child}
-              selectedPermissions={selectedPermissions}
-              handlePermissionSelection={handlePermissionSelection}
-            />
-          ))}
-        </Grid>
-      )}
-    </Box>
-  );
-};
-
-const processApiData = (apiData) => {
-  const groupedByCategory = {};
-
-  apiData.forEach(permission => {
-    const category = permission.category || "بدون دسته بندی"; 
-    if (!groupedByCategory[category]) {
-      groupedByCategory[category] = [];
-    }
-
-    groupedByCategory[category].push({
-      ...permission,
-      id: permission.id, 
-      children: [], 
-      parentId: null
-    });
-  });
-  return groupedByCategory;
-};
 const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
-  // Initialize with an empty object because the data is now grouped by category
   const [permissionsByCategory, setPermissionsByCategory] = useState({});
-  const [selectedPermissions, setSelectedPermissions] = useState([]);
+  const [selected, setSelected] = useState([]);
 
   useEffect(() => {
     getPermissionByCategory()
-      .then(response => {
-        setPermissionsByCategory(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching permissions:", error);
-      });
-      
-      setSelectedPermissions(formState.values)
+      .then((res) => setPermissionsByCategory(res.data.data))
+      .catch(() => {});
+
+    setSelected(formState.values || []);
   }, []);
 
-  const handlePermissionSelection = (id, checked) => {
-    
-    setSelectedPermissions((prevSelected) => {
-      let newPermissions;
-      if (checked) {
-        // Add permission ID if not already present
-        newPermissions = [...prevSelected, id];
-      } else {
-        // Remove permission ID
-        newPermissions = prevSelected.filter(x => x !== id);
+  const togglePermission = (permission, checked) => {
+    setSelected((prev) => {
+      let newList = new Set(prev);
+
+      const toggleRecursively = (perm, check) => {
+        if (check) newList.add(perm.id);
+        else newList.delete(perm.id);
+
+        if (perm.children)
+          perm.children.forEach((c) => toggleRecursively(c, check));
+      };
+
+      // Parent → children
+      toggleRecursively(permission, checked);
+
+      // Child → parent refresh
+      if (!checked && permission.parentId) {
+        const findParent = (categoryData) => {
+          for (let root of categoryData)
+            if (root.id === permission.parentId) return root;
+          return null;
+        };
+
+        const category = Object.keys(permissionsByCategory).find(cat =>
+          permissionsByCategory[cat].some(x => x.id === permission.parentId)
+        );
+
+        const parent = category ? findParent(permissionsByCategory[category]) : null;
+
+        if (parent) {
+          const allChildSelected = parent.children.every(ch => newList.has(ch.id));
+          if (allChildSelected) newList.add(parent.id);
+          else newList.delete(parent.id);
+        }
       }
-      // Update the form state
-      onFieldChange("permissionIds", newPermissions);
-      return newPermissions;
+
+      const updated = Array.from(newList);
+      onFieldChange("permissionIds", updated);
+      return updated;
     });
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // The selectedPermissions state already holds the flat list of IDs.
-    onSubmit({ permissionIds: selectedPermissions });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({ permissionIds: selected });
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
-      {Object.keys(permissionsByCategory).map((categoryName) => (
-        <Box key={categoryName} sx={{ mb: 3 }}> 
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>{categoryName}</Typography>
-          {/* Render the root permissions for this category */}
-          {permissionsByCategory[categoryName].map((permission) => (
-            <PermissionNode
-              key={permission.id}
-              permission={permission}
-              selectedPermissions={selectedPermissions}
-              handlePermissionSelection={handlePermissionSelection}
-            />
-          ))}
-          <Divider sx={{ mt: 2 }} /> 
+    <Box component="form" onSubmit={handleSubmit} sx={{ p: 3 }}>
+      {Object.keys(permissionsByCategory).map((cat) => (
+        <Box key={cat} sx={{ mb: 4 }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+            {cat}
+          </Typography>
+
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 2,
+            }}
+          >
+            {permissionsByCategory[cat].map((root) => (
+              <Box
+                key={root.id}
+                sx={{
+                  width: { xs: '100%', sm: '47%', md: '31%', lg: '23%' },
+                  p: 2,
+                }}
+              >
+                <PermissionNode
+                  permission={root}
+                  selected={selected}
+                  onToggle={togglePermission}
+                />
+              </Box>
+            ))}
+          </Box>
+
+          <Divider sx={{ mt: 3 }} />
         </Box>
       ))}
 
-      <Box sx={{ mt: 3, textAlign: 'right' }}> 
-        <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>ذخیره</button>
+      <Box sx={{ mt: 3, textAlign: 'right' }}>
+        <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>
+          ذخیره
+        </button>
       </Box>
     </Box>
   );
 };
+
 export default AssignPermissionForm;
