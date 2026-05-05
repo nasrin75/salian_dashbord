@@ -131,7 +131,7 @@ export function userValidate(user) {
       addIssue('انتخاب نوع IP الزامی است', ['Scope']);
     } else {
       // SingleIp
-      console.log("user.RangeIp", user.RangeIp, 'scope:', user.Scope)
+
       if (Number(user.Scope) === 0) {
         if (!user.SingleIp || String(user.SingleIp).trim() === '') {
           addIssue('IP را وارد کنید', ['SingleIp']);

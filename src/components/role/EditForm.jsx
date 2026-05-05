@@ -57,7 +57,7 @@ function EditForm(props) {
               value={formValues.faName ?? ''}
               onChange={(e) => onFieldChange("faName", e.target.value)}
               name="faName"
-              label="عنوان فارسی"
+              label="عنوان فارسی *"
               error={!!formErrors.faName}
               helperText={formErrors.faName ?? ' '}
               fullWidth
@@ -68,7 +68,7 @@ function EditForm(props) {
               value={formValues.enName ?? ''}
               onChange={(e) => onFieldChange("enName", e.target.value)}
               name="enName"
-              label="عنوان انگلیسی"
+              label="عنوان انگلیسی *"
               error={!!formErrors.enName}
               helperText={formErrors.enName ?? ' '}
               fullWidth

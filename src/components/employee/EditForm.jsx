@@ -73,7 +73,7 @@ function EditForm(props) {
               value={formValues.name ?? ''}
               onChange={(e) => onFieldChange("name", e.target.value)}
               name="name"
-              label="نام"
+              label="نام *"
               error={!!formErrors.name}
               helperText={formErrors.name ?? ' '}
               fullWidth
@@ -98,7 +98,7 @@ function EditForm(props) {
               value={formValues.locationId ?? ''}
               onChange={(e) => onFieldChange("locationId", e.target.value)}
               name="locationId"
-              label="موقعیت"
+              label="موقعیت *"
               error={!!formErrors.locationId}
               helperText={formErrors.locationId ?? ' '}
               fullWidth

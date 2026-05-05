@@ -30,7 +30,6 @@ const SingleEmailForm = () => {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(data)
     }
 
     // add user ids in array like :[1,2,3]

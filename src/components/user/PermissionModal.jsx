@@ -8,10 +8,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import RadioGroup from '@mui/material/RadioGroup';
-import { useEffect, useState } from 'react';
-import { getPermissions } from '../../api/PermissionApi';
 
 const style = {
     position: 'absolute',

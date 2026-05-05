@@ -65,7 +65,6 @@ function UserForm(props) {
     }
   };
   useEffect(() => {
-    console.log("scope state changed:", scope);
     onFieldChange('Scope', scope)
   }, [scope]);
 
@@ -88,7 +87,6 @@ function UserForm(props) {
   }, [rangeIpFrom, scope]);
 
   const renderIpInputs = (type, ipState, setIpState) => {
-console.log('aa',type, ipState);
     return (
       <Grid container spacing={1} alignItems="center" sx={{ mb: type === 'single' ? 2 : 0 }}>
         {[3, 2, 1, 0].map((index) => (
@@ -120,7 +118,6 @@ console.log('aa',type, ipState);
 
   // Reset IPs when scope changes
   const handleScopeChange = (newScope) => {
-    console.log("handleScopeChange newScope:", newScope);
 
     setScope(newScope);
     onFieldChange('Scope', newScope);
@@ -135,7 +132,6 @@ console.log('aa',type, ipState);
       setSingleIp(['', '', '', '']);
       onFieldChange('SingleIp', '');
     }
-    console.log("Final scope value after changes:", newScope);
   };
 
 
@@ -210,7 +206,7 @@ console.log('aa',type, ipState);
               value={formValues.Username ?? ''}
               onChange={(e) => onFieldChange("Username", e.target.value)}
               name="Username"
-              label="نام کاربری"
+              label="نام کاربری *"
               error={!!formErrors.Username}
               helperText={formErrors.Username ?? ' '}
               fullWidth
@@ -221,7 +217,7 @@ console.log('aa',type, ipState);
               value={formValues.Password ?? ''}
               onChange={(e) => onFieldChange("Password", e.target.value)}
               name="Password"
-              label="رمزعبور"
+              label="رمزعبور *"
               error={!!formErrors.Password}
               helperText={formErrors.Password ?? ' '}
               fullWidth
@@ -233,7 +229,7 @@ console.log('aa',type, ipState);
               value={formValues.Email ?? ''}
               onChange={(e) => onFieldChange("Email", e.target.value)}
               name="Email"
-              label="ایمیل"
+              label="ایمیل *"
               error={!!formErrors.Email}
               helperText={formErrors.Email ?? ' '}
               fullWidth
@@ -254,7 +250,7 @@ console.log('aa',type, ipState);
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}></Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">وضعیت</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">وضعیت *</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
@@ -275,7 +271,7 @@ console.log('aa',type, ipState);
 
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">نقش</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">نقش *</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
@@ -298,7 +294,7 @@ console.log('aa',type, ipState);
           </Grid>
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">ورود با :</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">ورود با :*</FormLabel>
               <FormGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"

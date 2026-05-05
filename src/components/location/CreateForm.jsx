@@ -56,7 +56,7 @@ function CreateForm(props) {
               value={formValues.Title ?? ''}
               onChange={(e) => onFieldChange("Title", e.target.value)}
               name="Title"
-              label="عنوان بخش"
+              label="عنوان بخش *"
               error={!!formErrors.Title}
               helperText={formErrors.Title ?? ' '}
               fullWidth
@@ -68,7 +68,7 @@ function CreateForm(props) {
               value={formValues.Abbreviation ?? ''}
               onChange={(e) => onFieldChange("Abbreviation", e.target.value)}
               name="Abbreviation"
-              label="مخفف"
+              label="مخفف *"
               error={!!formErrors.Abbreviation}
               helperText={formErrors.Abbreviation ?? ' '}
               fullWidth

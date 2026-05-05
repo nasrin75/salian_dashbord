@@ -42,7 +42,7 @@ function DashboardHeader({ logo, title, menuOpen, onToggleMenu, isLogin = false 
   const navigate = useNavigate();
 
   const redirectProfilePage = useCallback(() => {
-    console.log('redirectProfilePage',APP_ROUTES.PROFILE_PATH)
+    
     navigate(APP_ROUTES.PROFILE_PATH)
   }, [navigate])
 

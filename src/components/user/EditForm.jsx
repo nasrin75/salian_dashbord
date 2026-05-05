@@ -45,16 +45,10 @@ function EditForm(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [roles, setRoles] = useState([]);
   const [isCheckIpBtn, setIsCheckIpBtn] = useState(formValues.isCheckIp);
-  const [scope, setScope] = useState(formValues?.scope.toString() || '0');
+  const [scope, setScope] = useState(formValues?.scope?.toString() || '0');
   const [singleIp, setSingleIp] = useState(ipStringToArray(formValues?.startIp));
   const [rangeIpFrom, setRangeIpFrom] = useState(ipStringToArray(formValues?.startIp));
   const [rangeIpTo, setRangeIpTo] = useState(ipStringToArray(formValues?.endIp));
-
-  console.log('singleIp', singleIp)
-  console.log('startIp', formValues?.startIp)
-  console.log('endIp', formValues?.endIp)
-  console.log('rangeIpFrom', rangeIpFrom)
-  console.log('rangeIpTo', rangeIpTo, ipStringToArray(formValues?.endIp), formValues?.endIp)
 
   useEffect(() => {
 
@@ -161,7 +155,7 @@ function EditForm(props) {
   };
 
   useEffect(() => {
-    console.log("scope state changed:", scope);
+   
     onFieldChange('scope', scope)
   }, [scope]);
 
@@ -180,7 +174,7 @@ function EditForm(props) {
 
   const handleCheckIp = (e) => {
     const isChecked = e.target.checked;
-    console.log('handleCheckIp', isChecked)
+    
     onFieldChange("isCheckIp", isChecked);
     setIsCheckIpBtn(isChecked);
     if (isChecked) {
@@ -224,7 +218,7 @@ function EditForm(props) {
     }
   }, [formValues, onReset]);
 
-  console.log('scope_val', scope, typeof (scope))
+
   return (
     <Box
       component="form"
@@ -241,7 +235,7 @@ function EditForm(props) {
               value={formValues.username ?? ''}
               onChange={(e) => onFieldChange("username", e.target.value)}
               name="username"
-              label="نام کاربری"
+              label="نام کاربری *"
               error={!!formErrors.username}
               helperText={formErrors.username ?? ' '}
               fullWidth
@@ -265,7 +259,7 @@ function EditForm(props) {
               value={formValues.email ?? ''}
               onChange={(e) => onFieldChange("email", e.target.value)}
               name="email"
-              label="ایمیل"
+              label="ایمیل *"
               error={!!formErrors.email}
               helperText={formErrors.email ?? ' '}
               fullWidth
@@ -287,7 +281,7 @@ function EditForm(props) {
 
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">وضعیت</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">وضعیت *</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
@@ -305,7 +299,7 @@ function EditForm(props) {
 
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">نقش</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">نقش *</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
@@ -328,7 +322,7 @@ function EditForm(props) {
 
           <Grid size={{ xs: 12, sm: 12}} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">ورود با :</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">ورود با : *</FormLabel>
               <FormGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"

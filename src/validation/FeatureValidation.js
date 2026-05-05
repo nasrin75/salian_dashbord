@@ -25,13 +25,24 @@ export function CreateValidation(user) {
 
 export function EditValidation(user) {
   let issues = [];
-
-  if (!user.name) {
+if (!user.name) {
     issues = [...issues, { message: 'عنوان الزامی است.', path: ['name'] }];
+  } else if (user.name.length < 3) {
+    issues = [...issues, { message: 'عنوان باید حداقل ۳ کاراکتر باشد.', path: ['name'] }];
+  } else if (user.name.length > 100) {
+    issues = [...issues, { message: 'عنوان باید حداکثر ۱۰۰ کاراکتر باشد.', path: ['name'] }];
   }
-  if (!user.equipmentIds) {
-    issues = [...issues, { message: ' انتخاب حداقل یک قطعه الزامی است', path: ['equipmentIds'] }];
+
+  if (!Array.isArray(user.equipmentIds) || user.equipmentIds.length === 0) {
+   issues = [...issues, { message: 'انتخاب حداقل یک قطعه الزامی است', path: ['equipmentIds'] }];
+  } else if (user.equipmentIds.length < 1) {
+    issues.push({
+      message: 'تعداد قطعات باید حداقل ۱ باشد',
+      path: ['equipmentIds'],
+    });
+    issues = [...issues, { message: 'تعداد قطعات باید حداقل ۱ باشد', path: ['equipmentIds'] }];
   }
+
 
   return { issues };
 }

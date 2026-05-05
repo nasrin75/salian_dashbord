@@ -59,7 +59,6 @@ function EditForm(props) {
     }
   }, [formValues, onReset]);
 
-  console.log('parentEquipments', parentEquipments)
   return (
     <Box
       component="form"
@@ -96,7 +95,7 @@ function EditForm(props) {
               value={formValues.name ?? ''}
               onChange={(e) => onFieldChange("name", e.target.value)}
               name="name"
-              label=" نام قطعه"
+              label=" نام قطعه *"
               error={!!formErrors.name}
               helperText={formErrors.name ?? ' '}
               fullWidth
@@ -104,7 +103,7 @@ function EditForm(props) {
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 12 }} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">نوع قطعه</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">نوع قطعه *</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"

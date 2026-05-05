@@ -71,7 +71,7 @@ function CreateForm(props) {
                             value={formValues.Name ?? ''}
                             onChange={(e) => onFieldChange("Name", e.target.value)}
                             name="Name"
-                            label="نام"
+                            label="نام *"
                             error={!!formErrors.Name}
                             helperText={formErrors.Name ?? ' '}
                             fullWidth
@@ -96,7 +96,7 @@ function CreateForm(props) {
                             value={formValues.LocationId ?? ''}
                             onChange={(e) => onFieldChange("LocationId", e.target.value)}
                             name="LocationId"
-                            label="موقعیت"
+                            label="موقعیت *"
                             error={!!formErrors.LocationId}
                             helperText={formErrors.LocationId ?? ' '}
                             fullWidth

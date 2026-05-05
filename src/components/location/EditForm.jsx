@@ -60,7 +60,7 @@ function EditForm(props) {
               value={formValues.title ?? ''}
               onChange={(e) => onFieldChange("title", e.target.value)}
               name="title"
-              label="عنوان بخش"
+              label="عنوان بخش *"
               error={!!formErrors.title}
               helperText={formErrors.title ?? ' '}
               fullWidth
@@ -71,7 +71,7 @@ function EditForm(props) {
               value={formValues.abbreviation ?? ''}
               onChange={(e) => onFieldChange("abbreviation", e.target.value)}
               name="abbreviation"
-              label="مخفف"
+              label="مخفف *"
               error={!!formErrors.abbreviation}
               helperText={formErrors.abbreviation ?? ' '}
               fullWidth

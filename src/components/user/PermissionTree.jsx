@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox, FormControlLabel, Typography, Box, Divider, Grid } from '@mui/material';
-import { getPermissions } from '../../api/PermissionApi';
+import { getPermissionByCategory } from '../../api/PermissionApi';
 
 // Helper function to flatten the permission tree (if needed for simpler column distribution)
 const flattenPermissions = (permissions, parentId = null) => {
@@ -57,7 +57,7 @@ const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
   const [selectedPermissions, setSelectedPermissions] = useState([]);
 
   useEffect(() => {
-    getPermissions()
+    getPermissionByCategory()
       .then(response => {
         setPermissionsByCategory(response.data.data);
       })

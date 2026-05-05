@@ -41,18 +41,13 @@ function EditForm(props) {
       })
 
     if (formValues?.equipments) {
-      setEquipmentIds(formValues.equipments.map(x => x.id));
+      let selectedIds = formValues.equipments.map(x => x.id);
+      
+      setEquipmentIds(selectedIds);
     }
   }, [formValues.equipments]);
 
-  useEffect(() => {
-    if (formValues?.equipments) {
-      setEquipmentIds(formValues.equipments.map(x => x.id))
-    }
-  }, [formValues.equipments])
-
-  console.log('equipments',equipments)
-  console.log('equipmentIds',equipmentIds)
+ 
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();

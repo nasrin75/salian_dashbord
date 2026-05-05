@@ -95,7 +95,7 @@ function CreateForm(props) {
               value={formValues.Name ?? ''}
               onChange={(e) => onFieldChange("Name", e.target.value)}
               name="Name"
-              label="نام قطعه"
+              label="نام قطعه *"
               error={!!formErrors.Name}
               helperText={formErrors.Name ?? ' '}
               fullWidth
@@ -105,7 +105,7 @@ function CreateForm(props) {
 
           <Grid size={{ xs: 12, sm: 6, md: 12 }} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">نوع قطعه</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">نوع قطعه *</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"

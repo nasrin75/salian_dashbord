@@ -23,7 +23,7 @@ const AuthProvider = ({ children }) => {
             await login(data)
                 .then(data => {
                     const result = data.data.data;
-                    console.log(data.data.data)
+                    
                     const token = result.token;
                     setToken(token)
                     StoreTokenInLocalStorage(token)

@@ -67,7 +67,7 @@ const UserCreate = () => {
       };
 
       setFormValues(newFormValues);
-      //console.log('setFormValues', newFormValues)
+
 
       const { issues } = userValidate(newFormValues);
 
@@ -82,7 +82,6 @@ const UserCreate = () => {
   const handleFormSubmit = useCallback(async () => {
 
     const { issues } = userValidate(formValues);
-    console.log('issues', issues)
     if (issues && issues.length > 0) {
       setFormErrors(
         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
@@ -91,7 +90,6 @@ const UserCreate = () => {
     }
     setFormErrors({});
 
-    console.log('handleFormSubmit', formValues)
 
     createUser(JSON.stringify(formValues))
       .then(() => {
