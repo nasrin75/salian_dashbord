@@ -39,7 +39,7 @@ Api.interceptors.response.use(
       toast.error('مشکل در اتصال به سرور.');
       return Promise.reject({ handled: true });
     }
-console.log(error.response.data.message)
+
     const message = error.response.data?.message;
 
     switch (error.response.status) {
@@ -73,7 +73,8 @@ console.log(error.response.data.message)
         toast.error(`خطا: ${error.response.status}`);
     }
 
-    return Promise.resolve();
+    return Promise.reject();
+    //return Promise.resolve();
   }
 );
 

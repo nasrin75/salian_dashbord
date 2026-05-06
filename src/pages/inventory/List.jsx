@@ -25,6 +25,7 @@ import { IconButton } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 //import { useGridApiRef } from '@mui/x-data-grid';
 import { DataGridPro, useGridApiRef } from '@mui/x-data-grid-pro';
+import InventortAction from '../../components/inventory/InventoryAction';
 
 
 const INITIAL_PAGE_SIZE = 10;
@@ -92,8 +93,6 @@ function ExportExcelButton({ rows = [], selectedRows = [] }) {
     );
 }
 
-
-
 function Export({ inventories, selectedRows }) {
     return (
         <div style={{ display: "flex", gap: "10px", padding: "8px" }}>
@@ -102,8 +101,6 @@ function Export({ inventories, selectedRows }) {
         </div>
     );
 }
-
-
 
 export default function List() {
     const apiRef = useGridApiRef();
@@ -457,6 +454,7 @@ export default function List() {
             marginTop='20px'
             actions={hasPermission([PERMISSION.INVENTORY_CREATE]) &&
                 (<Stack direction="row" alignItems="center" spacing={1}>
+                     <InventortAction />
                     <Button
                         variant="contained"
                         onClick={handleCreateClick}
@@ -464,8 +462,9 @@ export default function List() {
                     >
                         افزودن به انبار
                     </Button>
+                   
                     <Export inventories={inventories} selectedRows={selectedRows} />
-
+                       
                 </Stack>)
             }
         >

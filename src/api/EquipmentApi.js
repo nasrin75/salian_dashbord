@@ -26,5 +26,5 @@ export const getInventorySubMenu = () => {
 }
 
 export const getEquipmentFeatures = (equipmentID) => {
-    return Api.get(`/equipment/features/${equipmentID}`)
+    return Api.post(`/equipment/features/${equipmentID}`)
 }

@@ -21,3 +21,7 @@ export const updateInventory = (data) => {
 export const addDuplicateInventory = (data) => {
     return Api.post('/inventory/addDuplicate', data)
 }
+
+export const getExternalEquipmentInventories = (equipmentID) => {
+    return Api.post(`/equipment/inventory/externalType?equipmentId=${equipmentID}`)
+}

@@ -12,15 +12,15 @@ const INITIAL_FORM_VALUES = {
     ItNumber: null,
     ItParentNumber: null,
     EmployeeId: null,
-    LocationId: null,
+    //LocationId: null,
     EquipmentId: null,
+    BrandId: null,
     Status: null,
     PropertyNumber: '',
     SerialNumber: '',
     InvoiceNumber: null,
     InvoiceImage: null,
     Description: null,
-    BrandName: '',
     ModelName: '',
     ExpireWarrantyDate: null,
     DeliveryDate: null,
@@ -73,7 +73,9 @@ export default function Create() {
                     }
                 }
             }
-
+            if (type === 'radio') {
+                finalValue = Number(value)
+            }
             const newFormValues = {
                 ...formValues,
                 [name]: finalValue,
@@ -107,7 +109,7 @@ export default function Create() {
                 toast.success("عملیات با موفقیت انجام شد.")
                 navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
             })
-            .catch(() =>{ 
+            .catch(() => {
                 //toast.error("مشکلی در افزودن به انبار رخ داده است")
             })
 
