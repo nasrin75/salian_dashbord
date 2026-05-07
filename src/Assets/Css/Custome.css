@@ -37,6 +37,14 @@ body {
     margin-right: 10px !important;
 }
 
+.muirtl-1c7m9lw-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-popupIndicator{
+    border: none !important;
+    background: inherit !important;
+}
+.muirtl-1c7m9lw-MuiButtonBase-root-MuiIconButton-root-MuiAutocomplete-popupIndicator:hover{
+    border: none !important;
+    background: inherit !important;
+}
 /* .css-13pe1bg-MuiPickersSectionList-root-MuiPickersInputBase-sectionsContainer-MuiPickersOutlinedInput-sectionsContainer{
     width: 298px !important;
 } */

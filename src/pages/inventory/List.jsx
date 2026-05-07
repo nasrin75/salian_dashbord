@@ -336,7 +336,6 @@ export default function List() {
         () => [
             { field: 'id', headerName: 'ID', width: 100 },
             { field: 'employee', headerName: 'مالک', width: 140 },
-            { field: 'location', headerName: 'بخش', width: 140 },
             { field: 'propertyNumber', headerName: 'شماره اموال', width: 140 },
             { field: 'brandName', headerName: 'برند', width: 140 },
             { field: 'modelName', headerName: 'مدل', width: 140 },

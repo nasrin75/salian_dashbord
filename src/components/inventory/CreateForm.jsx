@@ -22,6 +22,8 @@ import FormLabel from "@mui/material/FormLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import { getBrands } from "../../api/BrandApi";
 import { getExternalEquipmentInventories } from "../../api/InventoryApi";
+import { GridKeyboardArrowRight } from "@mui/x-data-grid";
+import { Typography } from "@mui/material";
 
 function CreateForm(props) {
   const { formState, onFieldChange, onSubmit, submitButtonLabel } = props;
@@ -30,6 +32,7 @@ function CreateForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [invoiceNumber, setInvoiceNumber] = useState(false);
   const [isShowItPatentInput, setIsShowItPatentInput] = useState(false);
   const [equipments, setEquipments] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -124,6 +127,11 @@ function CreateForm(props) {
     const file = event.target.files[0];
     if (!file) return;
 
+    if (!formValues.InvoiceNumber){
+      toast.error(" برای اپلود تصویر شماره فاکتور الزامی است");
+      return
+    } 
+//console.log('inv',formValues.invoiceNumber,formValues.InvoiceNumber);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -131,7 +139,9 @@ function CreateForm(props) {
       const formData = new FormData();
       formData.append("file", file);
       const token = localStorage.getItem("token");
+          formData.append("invoiceNumber", `${formValues.InvoiceNumber}`);
 
+      //TODO: uncomment
       const res = await fetch(process.env.REACT_APP_API_BASE_URL + "/upload", {
         method: "POST",
         body: formData,
@@ -140,10 +150,9 @@ function CreateForm(props) {
         },
       });
 
-      const data = await res.json();
+       const data = await res.json();
 
-      //send image name that is created after uploaded file
-      onFieldChange("InvoiceImage", data.fileName);
+      onFieldChange("InvoiceImage", data.filePath);
 
       toast.success("فایل با موفقیت آپلود شد!");
     } catch (err) {
@@ -162,7 +171,26 @@ function CreateForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: "100%" }}>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          {/* User */}
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <Autocomplete
+              id="employee-select-demo"
+              disableClearable
+              sx={{ width: 400 }}
+              options={employees}
+              autoHighlight
+              getOptionLabel={(option) => option.name}
+              onChange={(event, value) =>
+                onFieldChange("EmployeeId", value?.id ?? null)
+              }
+              renderInput={(params) => <TextField {...params} label="مالک" />}
+            />
+            <FormHelperText error={!!formErrors.EmployeeId}>
+              {formErrors.EmployeeId ?? " "}
+            </FormHelperText>
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Autocomplete
               id="equipment-select-demo"
               autoHighlight
@@ -182,7 +210,8 @@ function CreateForm(props) {
           {/* It parent */}
           {
             isShowItPatentInput && (
-              <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+              <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}
+              >
                 <Autocomplete
                   id="equipment-select-demo"
                   autoHighlight
@@ -202,26 +231,8 @@ function CreateForm(props) {
             )
           }
 
-          {/* User */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <Autocomplete
-              id="employee-select-demo"
-              disableClearable
-              sx={{ width: 400 }}
-              options={employees}
-              autoHighlight
-              getOptionLabel={(option) => option.name}
-              onChange={(event, value) =>
-                onFieldChange("EmployeeId", value?.id ?? null)
-              }
-              renderInput={(params) => <TextField {...params} label="مالک" />}
-            />
-            <FormHelperText error={!!formErrors.EmployeeId}>
-              {formErrors.EmployeeId ?? " "}
-            </FormHelperText>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.PropertyNumber ?? ""}
               onChange={(e) => onFieldChange("PropertyNumber", e.target.value)}
@@ -232,7 +243,7 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.SerialNumber ?? ""}
               onChange={(e) => onFieldChange("SerialNumber", e.target.value)}
@@ -243,7 +254,7 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.ItNumber ?? null}
               onChange={(e) => onFieldChange("ItNumber", e.target.value, 'number')}
@@ -254,19 +265,8 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
-          {/* <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.ItParentNumber ?? null}
-              onChange={(e) => onFieldChange("ItParentNumber", e.target.value, 'number')}
-              name="ItParentNumber"
-              label="شماره IT Parent"
-              error={!!formErrors.ItParentNumber}
-              helperText={formErrors.ItParentNumber ?? " "}
-              fullWidth
-            />
-          </Grid> */}
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Autocomplete
               id="equipment-select-demo"
               autoHighlight
@@ -288,7 +288,7 @@ function CreateForm(props) {
             </FormHelperText>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.ModelName ?? null}
               onChange={(e) => onFieldChange("ModelName", e.target.value)}
@@ -301,19 +301,9 @@ function CreateForm(props) {
           </Grid>
 
 
-          {/* start Description */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              label="توضیحات"
-              multiline
-              onChange={(e) => onFieldChange("Description", e.target.value)}
-              //rows={2}
-              maxRows={Infinity}
-              fullWidth
-            />
-          </Grid>
+
           {/* start DeliveryDate */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ تحویل"
               error={!!formErrors.DeliveryDate}
@@ -342,7 +332,7 @@ function CreateForm(props) {
           </Grid>
 
           {/* start ExpireWarrantyDate */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ پایان گارانتی"
               value={
@@ -368,7 +358,7 @@ function CreateForm(props) {
           </Grid>
 
           {/* start InvoiceNumber */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.InvoiceNumber ?? null}
               onChange={(e) => onFieldChange("InvoiceNumber", e.target.value)}
@@ -380,8 +370,9 @@ function CreateForm(props) {
             />
           </Grid>
           {/* upload Image */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Button
+            disabled={!formValues.InvoiceNumber}
               component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
@@ -393,7 +384,7 @@ function CreateForm(props) {
               <img
                 src={
                   process.env.REACT_APP_BASE_URL +
-                  `/images/inventory/${formValues.InvoiceImage}`
+                  `/Uploads/${formValues.InvoiceImage}`
                 }
                 alt="Invoice"
                 width={100}
@@ -401,8 +392,29 @@ function CreateForm(props) {
               />
             )}
           </Grid>
+
+          {/* start Description */}
+          <Grid size={{ xs: 12, sm: 5 }} sx={{ display: "flex" }}>
+            <TextField
+              sx={{
+                '& .MuiInputBase-root': {
+                  minRows: 50,
+                  height: '200px'
+                }
+              }}
+              id="outlined-multiline-flexible-grid"
+              label="توضیحات"
+              multiline
+              //value={data.Body}
+              onChange={(e) => onFieldChange('Description', e.target.value)}
+              variant="outlined"
+              placeholder="اینجا بنویسید..."
+              fullWidth
+            />
+          </Grid>
+
           {/* status part */}
-          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">
                 وضعیت
@@ -438,27 +450,33 @@ function CreateForm(props) {
             </FormControl>
           </Grid>
           {/* end status part */}
-
           {/* show equipment features */}
+          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              مشخصات:
+            </Typography>
+          </Grid>
+
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }} spacing={3}>
-            {features.map((feature) => (
-              <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
-                <TextField
-                  //sx={{ width: 400 }}
-                  label={feature.name}
-                  value={featureValues[feature.id] || ""}
-                  onChange={(e) =>
 
-                    setFeatureValues((prev) => ({
-                      ...prev,
-                      [feature.id]: e.target.value,
-                    }))
+              {features.map((feature) => (
+                <Grid key={feature.id} size={{ xs: 12, sm: 3 }} paddingRight="5px">
+                  <TextField
+                    //sx={{ width: 400 }}
+                    label={feature.name}
+                    value={featureValues[feature.id] || ""}
+                    onChange={(e) =>
 
-                  }
-                  fullWidth
-                />
-              </Grid>
-            ))}
+                      setFeatureValues((prev) => ({
+                        ...prev,
+                        [feature.id]: e.target.value,
+                      }))
+
+                    }
+                    fullWidth
+                  />
+                </Grid>
+              ))}
           </Grid>
         </Grid>
 
