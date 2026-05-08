@@ -49,7 +49,7 @@ function CreateForm(props) {
               value={formValues.FaName ?? ''}
               onChange={(e) => onFieldChange("FaName", e.target.value)}
               name="FaName"
-              label="عنوان فارسی"
+              label="عنوان فارسی *"
               error={!!formErrors.FaName}
               helperText={formErrors.FaName ?? ' '}
               fullWidth
@@ -60,7 +60,7 @@ function CreateForm(props) {
               value={formValues.EnName ?? ''}
               onChange={(e) => onFieldChange("EnName", e.target.value)}
               name="EnName"
-              label="عنوان انگلیسی"
+              label="عنوان انگلیسی *"
               error={!!formErrors.EnName}
               helperText={formErrors.EnName ?? ' '}
               fullWidth

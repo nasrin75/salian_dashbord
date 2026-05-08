@@ -3,13 +3,13 @@ export const API_ROUTES = [
 ]
 
 export const APP_ROUTES = {
-    LOGIN_PATH: 'login',
+    LOGIN_PATH: '/login',
     //User
-    USER_LIST_PATH: 'users',
-    USER_CREATE_PATH: 'user/create',
-    USER_EDIT_PATH: 'user/edit/:userId',
-    USER_PERMISSION : 'user/permission',
-    USER_ASSIGN_PERMISSION_PATH:'user/assignPermission/:userID',
+    USER_LIST_PATH: '/users',
+    USER_CREATE_PATH: '/user/create',
+    USER_EDIT_PATH: '/user/edit/:userId',
+    USER_PERMISSION: '/user/permission',
+    USER_ASSIGN_PERMISSION_PATH: '/user/assignPermission/:userID',
 
     //Employee
     EMPLOYEE_LIST_PATH: '/employees',
@@ -25,25 +25,22 @@ export const APP_ROUTES = {
     INVENTORY_LIST_PATH: '/inventories',
     INVENTORY_CREATE_PATH: '/inventory/create',
     INVENTORY_EDIT_PATH: '/inventory/edit/:inventoryID',
+    INVENTORY_HISTORY_PATH: '/inventory/:inventoryID/history',
+    INVENTORY_CREATE_DUPLICATE_PATH: '/inventory/:inventoryID/duplicate',
 
     //Profile
-    PROFILE_SETTING_PATH: '/profile/setting',
+    PROFILE_PATH: '/profile',
 
     //Locations
     LOCATION_LIST_PATH: '/setting/locations',
     LOCATION_CREATE_PATH: '/setting/location/create',
     LOCATION_EDIT_PATH: '/setting/location/edit/:locationID',
 
-    //ActionTypes
-    ACTION_TYPE_LIST_PATH: '/setting/actionTypes',
-    ACTION_TYPE_CREATE_PATH: '/setting/actionType/create',
-    ACTION_TYPE_EDIT_PATH: '/setting/actionType/edit/:actionID',
-
     //Roles
     ROLE_LIST_PATH: '/setting/roles',
     ROLE_CREATE_PATH: '/setting/role/create',
     ROLE_EDIT_PATH: '/setting/role/edit/:roleID',
-    ROLE_ASSIGN_PERMISSION_PATH : '/setting/role/:roleID/assignPermission',
+    ROLE_ASSIGN_PERMISSION_PATH: '/setting/role/:roleID/assignPermission',
 
     //Permissions
     PERMISSION_LIST_PATH: '/setting/permissions',
@@ -54,4 +51,16 @@ export const APP_ROUTES = {
     FEATURE_LIST_PATH: '/setting/features',
     FEATURE_CREATE_PATH: '/setting/feature/create',
     FEATURE_EDIT_PATH: '/setting/feature/edit/:featureID',
+
+    //Histories
+    HISTORY_LIST_PATH: '/histories',
+    HISTORY_DETAILS_PATH: '/history/:historyID',
+
+    NOTIFICATION_LIST_PATH: '/notifications',
+
+    //Setting
+    SETTING_LIST_PATH: '/settings',
+
+    NOT_FOUND_PATH: '/NotFound',
+    UNAUTHORIZED_PATH: '/Unauthorized',
 }

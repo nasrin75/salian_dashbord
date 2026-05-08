@@ -72,7 +72,7 @@ export default function Create() {
             .then(() => {
                 toast.success("ویژگی جدید با موفقیت ایجاد شد.")
                 navigate(APP_ROUTES.FEATURE_LIST_PATH);
-            })
+            }).catch(err => { })
 
     }, [formValues, navigate, setFormErrors]);
 

@@ -1,18 +1,18 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import EditForm from '../../components/actionType/EditForm';
+import EditForm from '../../components/profile/EditForm';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
-import { EditValidation } from '../../validation/ActionTypeValidation';
+import { EditValidation } from '../../validation/ProfileValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ActionTypeDetails, updateActionType } from '../../api/ActionTypeApi';
-import { APP_ROUTES } from '../../utlis/constants/routePath';
+import { getDetails, updateProfile } from '../../api/ProfileApi';
+import { getSettings, updateSetting } from '../../api/SettingApi';
+import SettingsForm from '../../components/settings/SettingsForm';
 
-function ActionTypeEditForm({ initialValues, onSubmit }) {
+function SettingEditForm({ initialValues, onSubmit }) {
     const navigate = useNavigate();
 
     const [formState, setFormState] = useState(() => ({
@@ -47,66 +47,69 @@ function ActionTypeEditForm({ initialValues, onSubmit }) {
         }));
     }, []);
 
-const handleFormFieldChange = useCallback(
-  (name, value, type = "text") => {
+    const handleFormFieldChange = useCallback(
+        (name, value) => {
 
-    let finalValue = value;
+            const newItems = Object.values(formValues).map(item => {
+                if (item.key == name) {
+                    return { ...item, value }
+                }
+                return item;
+            })
 
-    const newFormValues = {
-      ...formValues,
-      [name]: finalValue,
-    };
+            const newFormValues = { ...newItems };
 
-    setFormValues(newFormValues);
+            setFormValues(newFormValues);
 
-    const { issues } = EditValidation(newFormValues);
+            const { issues } = EditValidation(newFormValues);
 
-    setFormErrors({
-      ...formErrors,
-      [name]: issues?.find(i => i.path?.[0] === name)?.message,
-    });
+            setFormErrors({
+                ...formErrors,
+                [name]: issues?.find(i => i.path?.[0] === name)?.message,
+            });
 
-  },
-  [formValues,setFormValues, formErrors],
-);
+        },
+        [formValues, setFormValues, formErrors],
+    );
 
     const handleFormReset = useCallback(() => {
         setFormValues(initialValues);
     }, [initialValues, setFormValues]);
 
     const handleFormSubmit = useCallback(async () => {
-        const { issues } = EditValidation(formValues);
-        if (issues && issues.length > 0) {
-            setFormErrors(
-                Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
-            );
-            return;
-        }
-        setFormErrors({});
+
+        // const { issues } = EditValidation(formValues);
+
+        // if (issues && issues.length > 0) {
+        //     setFormErrors(
+        //         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
+        //     );
+        //     return;
+        // }
+        // setFormErrors({});
 
         try {
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate(APP_ROUTES.ACTION_TYPE_LIST_PATH);
-        } catch (editError) {}
+        } catch (editError) {
+            toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+        }
     }, [formValues, navigate, onSubmit, setFormErrors]);
 
     return (
-        <EditForm
+        <SettingsForm
             formState={formState}
             onFieldChange={handleFormFieldChange}
             onSubmit={handleFormSubmit}
             onReset={handleFormReset}
-            submitButtonLabel="Save"
+            submitButtonLabel="ذخیره"
         />
     );
 }
 
-export default function ActionTypeEdit() {
-    const { actionID } = useParams();
-    const navigate = useNavigate();
-    const [actionType, setActionType] = useState(null);
+export default function Setting() {
+    const [settings, setSettings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -114,30 +117,30 @@ export default function ActionTypeEdit() {
         setError(null);
         setIsLoading(true);
 
-        ActionTypeDetails(actionID)
+        getSettings()
             .then(data => {
-                setActionType(data.data['result'])
+                setSettings(data.data.data)
+
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
-    }, [actionID]);
+    }, [setSettings]);
 
     useEffect(() => {
         loadData();
     }, [loadData]);
 
-
     const handleSubmit = useCallback(
+
         async (formValues) => {
-            updateActionType(formValues)
+            updateSetting(formValues)
                 .then(data => {
-                    setActionType('handlesubmit', data.data['result'])
+                    setSettings(data.data.data)
                     setIsLoading(false);
-                    navigate(APP_ROUTES.ACTION_TYPE_LIST_PATH);
-                })
+                }).catch(err => { })
         },
-        [actionID],
+        [settings],
     );
 
     const renderEdit = useMemo(() => {
@@ -166,15 +169,15 @@ export default function ActionTypeEdit() {
             );
         }
 
-        return actionType ? (
-            <ActionTypeEditForm initialValues={actionType} onSubmit={handleSubmit} />
+        return settings ? (
+            <SettingEditForm initialValues={settings} onSubmit={handleSubmit} />
         ) : null;
-    }, [isLoading, error, actionType, handleSubmit]);
+    }, [isLoading, error, settings, handleSubmit]);
 
 
     return (
         <PageContainer
-            title={"ویرایش عملیات"}
+            title={"تنظیمات کلی"}
         >
             <Divider sx={{ marginBottom: "4%" }} />
             <Box sx={{ display: 'flex', flex: 1 }}>{renderEdit}</Box>

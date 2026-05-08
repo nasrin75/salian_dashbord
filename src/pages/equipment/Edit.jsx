@@ -47,28 +47,31 @@ function EquipmentEditForm({ initialValues, onSubmit }) {
         }));
     }, []);
 
-const handleFormFieldChange = useCallback(
-  (name, value, type = "text") => {
+    const handleFormFieldChange = useCallback(
+        (name, value, type = "text") => {
 
-    let finalValue = value;
+            let finalValue = value;
+            if (type === "radio") {
 
-    const newFormValues = {
-      ...formValues,
-      [name]: finalValue,
-    };
+                finalValue = Number(value);
+            }
+            const newFormValues = {
+                ...formValues,
+                [name]: finalValue,
+            };
 
-    setFormValues(newFormValues);
+            setFormValues(newFormValues);
 
-    const { issues } = EditValidation(newFormValues);
+            const { issues } = EditValidation(newFormValues);
 
-    setFormErrors({
-      ...formErrors,
-      [name]: issues?.find(i => i.path?.[0] === name)?.message,
-    });
+            setFormErrors({
+                ...formErrors,
+                [name]: issues?.find(i => i.path?.[0] === name)?.message,
+            });
 
-  },
-  [formValues, formErrors],
-);
+        },
+        [formValues, formErrors],
+    );
 
     const handleFormReset = useCallback(() => {
         setFormValues(initialValues);
@@ -100,7 +103,7 @@ const handleFormFieldChange = useCallback(
             onFieldChange={handleFormFieldChange}
             onSubmit={handleFormSubmit}
             onReset={handleFormReset}
-            submitButtonLabel="Save"
+            submitButtonLabel="ذخیره"
         />
     );
 }
@@ -118,9 +121,9 @@ export default function Edit() {
 
         EquipmentDetails(equipmentID)
             .then(data => {
-                setEquipment(data.data['result'])
+                setEquipment(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [equipmentID]);
@@ -134,10 +137,10 @@ export default function Edit() {
         async (formValues) => {
             updateEquipment(formValues)
                 .then(data => {
-                    setEquipment('handlesubmit', data.data['result'])
+                    setEquipment('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.EQUIPMENT_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [equipmentID],
     );

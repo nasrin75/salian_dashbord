@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { getLocations } from '../../api/LocationApi';
 import MenuItem from '@mui/material/MenuItem';
+import { toast } from 'react-toastify';
 
 function CreateForm(props) {
     const {
@@ -33,9 +34,11 @@ function CreateForm(props) {
 
         getLocations()
             .then((data) => {
-                setLocations(data.data['result'])
+                setLocations(data.data.data)
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                //toast.error("مشکلی در گرفتن لیست بخش ها رخ داده است.")
+            })
 
     }, [])
 
@@ -63,19 +66,19 @@ function CreateForm(props) {
         >
             <FormGroup>
                 <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-                    <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+                    <Grid size={{ xs: 12, sm: 3}} sx={{ display: 'flex' }}>
                         <TextField
                             value={formValues.Name ?? ''}
                             onChange={(e) => onFieldChange("Name", e.target.value)}
                             name="Name"
-                            label="نام"
+                            label="نام *"
                             error={!!formErrors.Name}
                             helperText={formErrors.Name ?? ' '}
                             fullWidth
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+                    <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
                         <TextField
                             value={formValues.Email ?? ''}
                             onChange={(e) => onFieldChange("Email", e.target.value)}
@@ -87,13 +90,13 @@ function CreateForm(props) {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+                    <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
                         <TextField
                             select
                             value={formValues.LocationId ?? ''}
                             onChange={(e) => onFieldChange("LocationId", e.target.value)}
                             name="LocationId"
-                            label="موقعیت"
+                            label="موقعیت *"
                             error={!!formErrors.LocationId}
                             helperText={formErrors.LocationId ?? ' '}
                             fullWidth

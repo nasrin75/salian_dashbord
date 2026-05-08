@@ -63,7 +63,7 @@ export default function Create() {
         [formValues, formErrors],
     );
     const handleFormSubmit = React.useCallback(async () => {
-        console.log('locationCreate',formValues)
+        
         const { issues } = CreateValidation(formValues);
         if (issues && issues.length > 0) {
             setFormErrors(
@@ -77,7 +77,7 @@ export default function Create() {
             .then(() => {
                 toast.success("بخش جدید با موفقیت ایجاد شد.")
                 navigate(APP_ROUTES.LOCATION_LIST_PATH);
-            })
+            }).catch(err => { })
 
     }, [formValues, navigate, setFormErrors]);
 

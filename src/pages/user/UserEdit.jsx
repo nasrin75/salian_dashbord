@@ -1,4 +1,3 @@
-import * as React from 'react';
 import PropTypes from 'prop-types';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -7,99 +6,115 @@ import EditForm from '../../components/user/EditForm';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
 import { updateUser, userDetails } from '../../api/UserApi';
-import { userEditFormValidate } from '../../validation/UserValidation';
+import { userEditValidator } from '../../validation/UserValidation';
 import Divider from '@mui/material/Divider';
-import { useNavigate,useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import useAuth from '../../hooks/useAuth/useAuth';
 
 function UserEditForm({ initialValues, onSubmit }) {
+   const { hasPermission } = useAuth();
   const { userId } = useParams();
   const navigate = useNavigate();
 
-  const [formState, setFormState] = React.useState(() => ({
+  const [formState, setFormState] = useState(() => ({
     values: initialValues,
     errors: {},
   }));
   const formValues = formState.values;
   const formErrors = formState.errors;
-  console.log('UserEditForm',formValues)
 
-  const setFormValues = React.useCallback((newFormValues) => {
+  const setFormValues = useCallback((newFormValues) => {
     setFormState((previousState) => ({
       ...previousState,
       values: newFormValues,
     }));
   }, []);
 
-  React.useEffect(()=>{
-    if(initialValues){
+  useEffect(() => {
+    if (initialValues) {
       setFormState({
-        values:{
+        values: {
           ...initialValues,
-          loginTypes:initialValues.loginTypes || []
+          loginTypes: initialValues.loginTypes || []
         },
-        errors:{}
+        errors: {}
       })
     }
-  },[initialValues])
+  }, [initialValues])
 
-  const setFormErrors = React.useCallback((newFormErrors) => {
+  const setFormErrors = useCallback((newFormErrors) => {
     setFormState((previousState) => ({
       ...previousState,
       errors: newFormErrors,
     }));
   }, []);
+  const handleIpUpdate = useCallback((ipValues) => {
+    setFormValues({
+      ...formValues,
+      ips: {
+        ...formValues.ips,
+        ...ipValues
+      }
+    });
+  }, [formValues, setFormValues]);
 
-  const handleFormFieldChange =(name, value) => {
+  const handleFormFieldChange = useCallback(
+    (name, value, type = "text") => {
 
-        setFormState(prev =>({
-        ...prev,
-        values:{
-          ...prev.values,
-          [name]: value
-        }
-      }));
-      console.log('newFormValues',formState)
+      let finalValue = value;
 
-      // setFormValues(newFormValues);
-      // validateField(newFormValues);
-    };
+      if (type === "number") {
+        finalValue = value === "" ? null : Number(value);
+      }
 
-    console.log('state loginType',formState.values.loginTypes)
-  // const handleFormFieldChange = React.useCallback(
-  //   (name, value) => {
-  //     const validateField = async (values) => {
-  //       const { issues } = userEditFormValidate(values);
-  //       setFormErrors({
-  //         ...formErrors,
-  //         [name]: issues?.find((issue) => issue.path?.[0] === name)?.message,
-  //       });
-  //     };
+      if (type === "checkbox") {
+        finalValue = Boolean(value);
+      }
 
-  //     // const newFormValues = { ...formValues, [name]: value };
-  //     //     setFormValues(newFormValues);
-  //     // validateField(newFormValues);
-  //    const newFormValues = setFormState(prev =>({
-  //       ...prev,
-  //       values:{
-  //         ...prev.values,
-  //         [name]: value
-  //       }
-  //     }));
-  //     console.log('newFormValues',formState)
+      if (name === "Status") {
+        finalValue = value =="active" ? 1: -1;
+      }
 
-  //     // setFormValues(newFormValues);
-  //     // validateField(newFormValues);
-  //   },
-  //   //[formValues, formErrors, setFormErrors, setFormValues],
-  // );
+      if (type === "radio") {
 
-  const handleFormReset = React.useCallback(() => {
+        finalValue = Number(value);
+      }
+
+      const newFormValues = {
+        ...formValues,
+        [name]: finalValue,
+      };
+      if (type === "doubleString") {
+        setFormValues({
+          ...formValues,
+          ips: {
+            ...formValues.ips,
+            ...value
+          }
+        });
+      }
+      setFormValues(newFormValues);
+
+      const { issues } = userEditValidator(newFormValues);
+
+      setFormErrors({
+        ...formErrors,
+        [name]: issues?.find(i => i.path?.[0] === name)?.message,
+      });
+
+    },
+    [formValues, formErrors, setFormErrors, setFormValues],
+  );
+
+  const handleFormReset = useCallback(() => {
     setFormValues(initialValues);
   }, [initialValues, setFormValues]);
 
-  const handleFormSubmit = React.useCallback(async () => {
-    const { issues } = userEditFormValidate(formValues);
+  const handleFormSubmit = useCallback(async () => {
+    const { issues } = userEditValidator(formValues);
+
     if (issues && issues.length > 0) {
       setFormErrors(
         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
@@ -112,7 +127,7 @@ function UserEditForm({ initialValues, onSubmit }) {
       await onSubmit(formValues);
       toast.success("کاربر با موفقیت ویرایش شد.")
 
-       navigate(APP_ROUTES.USER_LIST_PATH);
+      navigate(APP_ROUTES.USER_LIST_PATH);
     } catch (editError) {
       //toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
     }
@@ -124,65 +139,54 @@ function UserEditForm({ initialValues, onSubmit }) {
       onFieldChange={handleFormFieldChange}
       onSubmit={handleFormSubmit}
       onReset={handleFormReset}
-      submitButtonLabel="Save"
+      onIpChange={handleIpUpdate}
+      hasPermission ={hasPermission}
+      submitButtonLabel="ذخیره"
     />
   );
 }
 
-// UserEditForm.propTypes = {
-//   initialValues: PropTypes.shape({
-//     age: PropTypes.number,
-//     isFullTime: PropTypes.bool,
-//     joinDate: PropTypes.string,
-//     name: PropTypes.string,
-//     role: PropTypes.oneOf(['Development', 'Finance', 'Market']),
-//   }).isRequired,
-//   onSubmit: PropTypes.func.isRequired,
-// };
-
 export default function UserEdit() {
   const { userId } = useParams();
 
-  const [user, setUser] = React.useState(null);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const loadData = React.useCallback(async () => {
+  const loadData = useCallback(async () => {
     setError(null);
     setIsLoading(true);
 
-    console.log('sssss', Number(userId))
     userDetails(userId)
       .then(data => {
-        console.log('dtaaaa', userId, data.data['result'])
-        setUser(data.data['result'])
+        setUser(data.data.data)
         setIsLoading(false);
-      })
+      }).catch(err => { })
 
     setIsLoading(false);
   }, [userId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadData();
   }, [loadData]);
 
 
-  const handleSubmit = React.useCallback(
-    async (formValues) => {
-      updateUser(formValues)
-        .then(data => {
-          console.log('handlesubmit', userId)
-          setUser('handlesubmit', data.data['result'])
-          setIsLoading(false);
-        })
+  const handleSubmit = useCallback(
 
-      // const updatedData = await updateEmployee(Number(userId), formValues);
-      // setUser(updatedData);
+    async (formValues) => {
+      
+      updateUser(JSON.stringify(formValues))
+        .then(data => {
+          setUser('handlesubmit', data.data.data)
+          setIsLoading(false);
+        }).catch(err =>{})
+
+      
     },
     [userId],
   );
 
-  const renderEdit = React.useMemo(() => {
+  const renderEdit = useMemo(() => {
     if (isLoading) {
       return (
         <Box

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -13,6 +13,9 @@ import Radio from '@mui/material/Radio';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import Switch from '@mui/material/Switch';
+import Autocomplete from '@mui/material/Autocomplete';
+import { getEquipments, getParentEquipments } from '../../api/EquipmentApi';
+import MenuItem from '@mui/material/MenuItem';
 
 function CreateForm(props) {
   const {
@@ -26,9 +29,12 @@ function CreateForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [parentEquipments, setParentEquipments] = useState();
+
   const [data, setData] = useState({
     Name: '',
     Type: '',
+    ParentId: '',
   });
 
   const handleSubmit = useCallback(
@@ -44,7 +50,15 @@ function CreateForm(props) {
     },
     [formValues, onSubmit],
   );
-
+  useEffect(() => {
+    getParentEquipments()
+      .then(data => {
+        setParentEquipments(data.data.data)
+      })
+      .catch(() => {
+        //toast.error("مشکلی در گرفتن لیست قطعات رخ داده است.")
+      })
+  }, [])
   return (
     <Box
       component="form"
@@ -55,22 +69,43 @@ function CreateForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+            <TextField
+              select
+              value={formValues.ParentId ?? ''}
+              onChange={(e) => onFieldChange("ParentId", e.target.value)}
+              name="ParentId"
+              label="قطعه Parent "
+              error={!!formErrors.ParentId}
+              helperText={formErrors.ParentId ?? ' '}
+              fullWidth
+            >
+              <MenuItem value="0" disabled>انتخاب کنید</MenuItem>
+              {parentEquipments?.map(parent => {
+                return <MenuItem value={parent.id}>{parent.name}</MenuItem>
+              })}
+            </TextField>
+
+            <FormHelperText error={!!formErrors.ParentId}>
+              {formErrors.ParentId ?? " "}
+            </FormHelperText>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.Name ?? ''}
               onChange={(e) => onFieldChange("Name", e.target.value)}
               name="Name"
-              label="نام قطعه"
+              label="نام قطعه *"
               error={!!formErrors.Name}
               helperText={formErrors.Name ?? ' '}
               fullWidth
             />
           </Grid>
-          
-          
-          <Grid size={{ xs: 12, sm: 6 ,md:12}} sx={{ display: 'flex' }}>
+
+
+          <Grid size={{ xs: 12, sm: 6, md: 12 }} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">نوع قطعه</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">نوع قطعه *</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
@@ -85,13 +120,13 @@ function CreateForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 ,md:12}} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 6, md: 12 }} sx={{ display: 'flex' }}>
             <FormControl>
               <FormGroup
                 name="IsShowInMenu"
-                onChange={(e)=>onFieldChange("IsShowInMenu",e.target.value,'switch')}
+                onChange={(e) => onFieldChange("IsShowInMenu", e.target.value, 'switch')}
               >
-                <FormControlLabel control={<Switch />} label="نمایش در زیر منو انبار" />    
+                <FormControlLabel control={<Switch />} label="نمایش در زیر منو انبار" />
               </FormGroup>
               <FormHelperText error={!!formErrors.isShow}>
                 {formErrors.isShow ?? ' '}

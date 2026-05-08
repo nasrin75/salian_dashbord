@@ -26,11 +26,6 @@ function CreateForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [data, setData] = useState({
-  //   Title: '',
-  //   Abbreviation: '',
-  //   isShow: false,
-  // });
 
   const handleSubmit = useCallback(
     async (event) => {
@@ -56,24 +51,24 @@ function CreateForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.Title ?? ''}
               onChange={(e) => onFieldChange("Title", e.target.value)}
               name="Title"
-              label="عنوان بخش"
+              label="عنوان بخش *"
               error={!!formErrors.Title}
               helperText={formErrors.Title ?? ' '}
               fullWidth
             />
           </Grid>
           
-           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.Abbreviation ?? ''}
               onChange={(e) => onFieldChange("Abbreviation", e.target.value)}
               name="Abbreviation"
-              label="مخفف"
+              label="مخفف *"
               error={!!formErrors.Abbreviation}
               helperText={formErrors.Abbreviation ?? ' '}
               fullWidth

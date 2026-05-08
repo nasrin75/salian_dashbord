@@ -13,7 +13,7 @@ import { APP_ROUTES } from '../../utlis/constants/routePath';
 import { getUserPermissions } from '../../api/UserApi';
 import AssignPermissionForm from '../../components/user/AssignPermissionForm';
 
-function PermissionEditForm({ initialValues, onSubmit,userID }) {
+function PermissionEditForm({ initialValues, onSubmit, userID }) {
     const navigate = useNavigate();
 
     const [formState, setFormState] = useState(() => ({
@@ -48,42 +48,21 @@ function PermissionEditForm({ initialValues, onSubmit,userID }) {
         }));
     }, []);
 
-    // const handleFormFieldChange = useCallback(
-    //     (name, value) => {
-
-    //         console.log("handleFormFieldChange :: ",name,value)
-    //         let finalValue = value;
-
-    //         // const newFormValues={
-    //         //     userId : userID,
-    //         //     permissionIds :value
-    //         // }
-    //         const newFormValues = {
-    //             ...formValues,
-    //             [name] : value,
-    //         };
+    const handleFormFieldChange = useCallback(
+        (name, value, type = "text") => {
             
+            let finalValue = value;
 
-    //         setFormValues(newFormValues);
+            const newFormValues = {
+                ...formValues,
+                [name]: finalValue,
+            };
 
-    //     },
-    //     [formValues],
-    // );
-const handleFormFieldChange = useCallback(
-  (name, value, type = "text") => {
-console.log("handleFormFieldChange :: ",name,value)
-    let finalValue = value;
+            setFormValues(newFormValues);
 
-    const newFormValues = {
-      ...formValues,
-      [name]: finalValue,
-    };
-
-    setFormValues(newFormValues);
-
-  },
-  [formValues,setFormValues, formErrors],
-);
+        },
+        [formValues, setFormValues, formErrors],
+    );
 
     const handleFormSubmit = useCallback(async () => {
         try {
@@ -118,9 +97,9 @@ export default function AssignPermission() {
 
         getUserPermissions(userID)
             .then(data => {
-                setUserPermissions(data.data['result'])
+                setUserPermissions(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [userID]);
@@ -132,17 +111,17 @@ export default function AssignPermission() {
 
     const handleSubmit = useCallback(
         async (formValues) => {
-            console.log("handleSubmit",formValues)
-            const request={
-                userId:userID,
-                permissionIds:formValues.permissionIds,
+            
+            const request = {
+                UserId: userID,
+                PermissionIds: formValues.permissionIds,
             }
             assignUserPermission(request)
                 .then(data => {
-                    setUserPermissions('handlesubmit', data.data['result'])
+                    setUserPermissions('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.USER_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [userID],
     );
@@ -174,7 +153,7 @@ export default function AssignPermission() {
         }
 
         return userPermissions ? (
-            <PermissionEditForm initialValues={userPermissions} onSubmit={handleSubmit} userID={userID}/>
+            <PermissionEditForm initialValues={userPermissions} onSubmit={handleSubmit} userID={userID} />
         ) : null;
     }, [isLoading, error, userPermissions, handleSubmit]);
 

@@ -45,30 +45,36 @@ function EditForm(props) {
   useEffect(() => {
     //Equipment List
     getEquipments()
-      .then((data) => setEquipments(data.data["result"]))
-      .catch(() => toast("مشکلی در گرفتن لیست قطعات رخ داده است"));
+      .then((data) => setEquipments(data.data.data))
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
+      });
 
     //Location List
     getLocations()
-      .then((data) => setLocations(data.data["result"]))
-      .catch(() => toast("مشکلی در گرفتن لیست بخش ها رخ داده است"));
+      .then((data) => setLocations(data.data.data))
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست بخش ها رخ داده است")
+      });
 
     //Location List
     getEmployees()
-      .then((data) => setEmployees(data.data["result"]))
-      .catch(() => toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است"));
-      
+      .then((data) => setEmployees(data.data.data))
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است")
+      });
+
   }, []);
 
   //get features by equipment to enter featureValues
   const getFeaturesData = async (equipmentID) => {
     await getEquipmentFeatures(equipmentID)
       .then((data) => {
-        const list = data.data["result"];
+        const list = data.data.data;
         setFeatures(list);
       })
       .catch(() => {
-        toast.error("خطا در دریافت ویژگی‌ها");
+        //toast.error("خطا در دریافت ویژگی‌ها");
       });
   };
 
@@ -85,11 +91,16 @@ function EditForm(props) {
       const formData = new FormData();
       formData.append("file", file);
 
+      const token = localStorage.getItem("token");
+
       const res = await fetch(process.env.REACT_APP_API_BASE_URL + "/upload", {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
       });
-      console.log(process.env.REACT_APP_API_BASE_URL + "/upload");
+
       const data = await res.json();
 
       //send image name that is created after uploaded file
@@ -116,7 +127,6 @@ function EditForm(props) {
           })),
         };
 
-        console.log("payload", payload);
         await onSubmit(payload);
       } finally {
         setIsSubmitting(false);
@@ -148,7 +158,7 @@ function EditForm(props) {
               autoHighlight
               disableClearable
               sx={{ width: 400 }}
-              value={equipments.find(eq=>eq.id === formValues.equipmentId) || null}
+              value={equipments.find(eq => eq.id === formValues.equipmentId) || null}
               options={equipments}
               getOptionLabel={(option) => option.name}
               onChange={async (e, value) => {
@@ -165,7 +175,7 @@ function EditForm(props) {
               id="employee-select-demo"
               sx={{ width: 400 }}
               options={employees}
-               value={employees.find(em=>em.id === formValues.employeeId) || null}
+              value={employees.find(em => em.id === formValues.employeeId) || null}
               autoHighlight
               disableClearable
               getOptionLabel={(option) => option.name}
@@ -180,7 +190,7 @@ function EditForm(props) {
               id="location-select-demo"
               sx={{ width: 400 }}
               options={locations}
-              value={locations.find(l=>l.id === formValues.locationId) || null}
+              value={locations.find(l => l.id === formValues.locationId) || null}
               autoHighlight
               disableClearable
               onChange={(event, value) =>
@@ -268,28 +278,6 @@ function EditForm(props) {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.size ?? null}
-              onChange={(e) => onFieldChange("size", e.target.value)}
-              name="size"
-              label="سایز"
-              error={!!formErrors.size}
-              helperText={formErrors.size ?? " "}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.capacity ?? null}
-              onChange={(e) => onFieldChange("capacity", e.target.value)}
-              name="capacity"
-              label="capacity"
-              error={!!formErrors.capacity}
-              helperText={formErrors.capacity ?? " "}
-              fullWidth
-            />
-          </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.invoiceNumber ?? null}
@@ -403,25 +391,25 @@ function EditForm(props) {
                 />
                 <FormControlLabel
                   value="-2"
-                  control={<Radio checked={(formValues.status == "unuse" || formValues.status =="-2") ?? false}  />}
+                  control={<Radio checked={(formValues.status == "unuse" || formValues.status == "-2") ?? false} />}
                   label="استفاده نشده"
                 />
                 <FormControlLabel
                   value="1"
-                  control={<Radio checked={(formValues.status == "inuse" || formValues.status =="1")  ?? false}  />}
+                  control={<Radio checked={(formValues.status == "inuse" || formValues.status == "1") ?? false} />}
                   label="استفاده شده"
                 />
                 <FormControlLabel
                   value="2"
-                  control={<Radio checked={(formValues.status == "sendToCharge" || formValues.status =="2") ?? false}  />}
+                  control={<Radio checked={(formValues.status == "sendToCharge" || formValues.status == "2") ?? false} />}
                   label="ارسال جهت شارژ"
                 />
                 <FormControlLabel
                   value="3"
-                  control={<Radio checked={(formValues.status == "backFromCharge" || formValues.status =="3")  ?? false}  />}
+                  control={<Radio checked={(formValues.status == "backFromCharge" || formValues.status == "3") ?? false} />}
                   label="بازگشت از شارژ"
                 />
-                <FormControlLabel value="4" control={<Radio checked={(formValues.status == "repair" || formValues.status =="4") ?? false}  />} label="تعمیر" />
+                <FormControlLabel value="4" control={<Radio checked={(formValues.status == "repair" || formValues.status == "4") ?? false} />} label="تعمیر" />
               </RadioGroup>
               <FormHelperText error={!!formErrors.status}>
                 {formErrors.status ?? " "}
@@ -438,7 +426,7 @@ function EditForm(props) {
                   //sx={{ width: 400 }}
                   label={feature.name}
                   //value={featureValues[feature.id] || ""}
-                                    onChange={(e) =>
+                  onChange={(e) =>
 
                     setFeatureValues((prev) => ({
                       ...prev,

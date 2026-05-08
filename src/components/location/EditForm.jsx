@@ -55,23 +55,23 @@ function EditForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.title ?? ''}
               onChange={(e) => onFieldChange("title", e.target.value)}
               name="title"
-              label="عنوان بخش"
+              label="عنوان بخش *"
               error={!!formErrors.title}
               helperText={formErrors.title ?? ' '}
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.abbreviation ?? ''}
               onChange={(e) => onFieldChange("abbreviation", e.target.value)}
               name="abbreviation"
-              label="مخفف"
+              label="مخفف *"
               error={!!formErrors.abbreviation}
               helperText={formErrors.abbreviation ?? ' '}
               fullWidth

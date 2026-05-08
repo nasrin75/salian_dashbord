@@ -12,6 +12,7 @@ const INITIAL_FORM_VALUES = {
     Name: '',
     Type: '',
     IsShowInMenu: false,
+    ParentId: null,
 };
 
 export default function Create() {
@@ -47,6 +48,10 @@ export default function Create() {
             if (type == 'switch') {
                 finalValue = value == 'on' ? true : false;
             }
+            if (type === "radio") {
+
+                finalValue = Number(value);
+            }
             const newFormValues = {
                 ...formValues,
                 [name]: finalValue,
@@ -78,7 +83,7 @@ export default function Create() {
             .then(() => {
                 toast.success("قطعه جدید با موفقیت ایجاد شد.")
                 navigate(APP_ROUTES.EQUIPMENT_LIST_PATH);
-            })
+            }).catch(err => { })
 
     }, [formValues, navigate, setFormErrors]);
 

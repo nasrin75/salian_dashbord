@@ -106,13 +106,13 @@ export default function List() {
 
         getFeatures()
             .then(data => {
-                setFeatures(data.data['result'])
+                setFeatures(data.data.data)
 
                 setIsLoading(false)
 
             }).catch((err) => {
-                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
-                toast.error(message);
+                // let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+                // toast.error(message);
             })
 
         setIsLoading(false);
@@ -156,9 +156,9 @@ export default function List() {
                         toast.success("ویژگی با موفقیت حذف شد.")
                         setIsLoading(false)
 
-                    }).catch(() =>
-                        toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
-                    )
+                    }).catch(() => {
+                        //toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+                    })
                 setIsLoading(false);
             }
         },
@@ -175,8 +175,8 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'name', headerName: 'عنوان', width: 240, align: 'right', },
-            { field: 'equipments', headerName: 'نام قطعات', width: 240, align: 'right', },
+            { field: 'name', headerName: 'عنوان', width: 240 },
+            { field: 'equipments', headerName: 'نام قطعات', width: 240 },
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
@@ -248,6 +248,7 @@ export default function List() {
                     loading={isLoading}
                     initialState={initialState}
                     showToolbar
+                    localeText={{ noRowsLabel: "موردی یافت نشد" }}
                     pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
                     sx={{
                         [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {

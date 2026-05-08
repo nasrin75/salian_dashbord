@@ -1,27 +1,32 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, forwardRef } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import { DataGrid, GridActionsCellItem, gridClasses } from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import ManageHistoryRounded from '@mui/icons-material/ManageHistoryRounded';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
-import { deleteActionType, getActionTypes } from '../../api/ActionTypeApi';
-import { APP_ROUTES } from '../../utlis/constants/routePath';
+import { deleteHistory, getHistories } from '../../api/HistoryApi';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
+import dayjs from 'dayjs';
+import Slide from '@mui/material/Slide';
+import DetailsModal from '../../components/History/DetailsModal';
+import useTranslate from '../../hooks/useTranslate/useTranslate';
 
 const INITIAL_PAGE_SIZE = 10;
-
+const Transition = forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { hasPermission } = useAuth();
+    const { getMessage } = useTranslate()
+    const [openModal, setOpenModal] = useState(false)
+    const [selectedRow, setSelectedRow] = useState({})
     const dialogs = useDialogs();
 
     const [paginationModel, setPaginationModel] = useState({
@@ -39,10 +44,13 @@ export default function List() {
         searchParams.get('sort') ? JSON.parse(searchParams.get('sort') ?? '') : [],
     );
 
-    const [actionTypes, setActionTypes] = useState([]);
+    const [historys, setHistories] = useState([]);
 
     const [isLoading, setIsLoading] = useState(true);
 
+    const closeModal = () => {
+        setOpenModal(false)
+    }
     const handlePaginationModelChange = useCallback(
         (model) => {
             setPaginationModel(model);
@@ -100,19 +108,31 @@ export default function List() {
         [navigate, pathname, searchParams],
     );
 
+    const handleHistoryDetails = (row) => {
+        setOpenModal(true)
+
+        setSelectedRow(row)
+    };
+
     const loadData = useCallback(async () => {
         setIsLoading(true);
 
-        getActionTypes()
+        const request = {
+            'entityName': searchParams.get('entityName'),
+            'entityId': searchParams.get('entityId'),
+        };
+
+        getHistories(request)
             .then(data => {
-                setActionTypes(data.data['result'])
+                setHistories(data.data.data)
 
                 setIsLoading(false)
 
-            }).catch((err) => {
-                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
-                toast.error(message);
-            })
+            }).catch(err => { })
+            // .catch((err) => {
+            //     let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+            //     toast.error(message);
+            // })
 
         setIsLoading(false);
     }, [paginationModel, sortModel, filterModel, searchParams]);
@@ -121,25 +141,13 @@ export default function List() {
         loadData();
     }, [loadData]);
 
-
-    const handleCreateClick = useCallback(() => {
-        navigate(APP_ROUTES.ACTION_TYPE_CREATE_PATH);
-    }, [navigate]);
-
-    const handleActionTypeEditPage = useCallback(
-        (actionTypeID) => () => {
-            navigate(`/setting/actionType/edit/${actionTypeID}`);
-        },
-        [navigate],
-    );
-
-    const handelDeleteActionType = useCallback(
-        (actionType) => async () => {
+    const handelDeleteHistory = useCallback(
+        (history) => async () => {
 
             const confirmed = await dialogs.confirm(
-                `آبا از حذف عملیات  ${actionType.faName} مطمئنید?`,
+                `آبا از حذف تاریخچه  ${history.id} مطمئنید?`,
                 {
-                    title: `حذف عملیات?`,
+                    title: `حذف تاریخچه?`,
                     severity: 'خطا',
                     okText: 'حذف',
                     cancelText: 'انصراف',
@@ -149,15 +157,15 @@ export default function List() {
             if (confirmed) {
                 setIsLoading(true);
 
-                deleteActionType(actionType.id)
+                deleteHistory(history.id)
                     .then(() => {
                         loadData();
                         toast.success("عملیات با موفقیت حذف شد.")
                         setIsLoading(false)
 
-                    }).catch(() =>
-                        toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
-                    )
+                    }).catch(() =>{
+                         //toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+                    })
                 setIsLoading(false);
             }
         },
@@ -170,69 +178,91 @@ export default function List() {
         }),
         [],
     );
-    const isAlow = hasPermission([PERMISSION.ACTION_TYPE_EDIT, PERMISSION.ACTION_TYPE_DELETE]);
 
+    const isAlow = hasPermission([PERMISSION.HISTORY_DELETE, PERMISSION.HISTORY_VIEW]);
     const columns = useMemo(
         () => [
-            { field: 'faName', headerName: 'عنوان فارسی', width: 240, align: 'right', },
-            { field: 'enName', headerName: 'عنوان انگلیسی', width: 240, align: 'right' },
-            { field: 'isShow', headerName: 'نمایش', width: 240, align: 'center', type: "boolean" },
-            { field: 'operationCount', headerName: 'تعداد عملیات', width: 140, align: 'center' },
+            { field: 'id', headerName: 'شناسه', width: 140 },
+            {
+                field: 'actionType',
+                headerName: 'عملیات',
+                width: 140,
+                renderCell: params => {
+                    return getMessage(params.row.actionType)
+                }
+            },
+            {
+                field: 'entity',
+                headerName: 'بخش',
+                width: 140,
+                renderCell: params => {
+                    const mgs = params.row.newData?.Status != null
+                        ? getMessage(params.row.entity) + " ( " + getMessage(params.row.newData?.Status) + " )"
+                        : getMessage(params.row.entity);
+
+                    return <Link className='link' to={`${params.row.id}`}>{mgs}</Link>
+                }
+            },
+            {
+                field: 'user', headerName: 'کاربر', width: 140,
+                renderCell: params => {
+                    return <Link className='link' to={`users?userId=${params.row.userId}`}> {params.row.user}</Link>
+                }
+            },
+            { field: 'ip', headerName: 'IP', width: 140},
+            {
+                field: 'createdAt',
+                headerName: 'آخرین بروزرسانی',
+                width: 240,
+                type: 'date',
+                valueFormatter: params => dayjs(params).format("YYYY/MM/DD h:m:s"),
+            },
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
                 type: 'actions',
                 flex: 1,
                 align: 'center',
+                width: 140,
                 getActions: ({ row }) => {
                     const actions = [];
-                    if (hasPermission([PERMISSION.ACTION_TYPE_EDIT])) {
-                        actions.push(<GridActionsCellItem
-                            key="edit-item"
-                            icon={<EditIcon />}
-                            label="Edit"
-                            onClick={handleActionTypeEditPage(row.id)}
-                        />)
-                    }
-
-                    if (hasPermission([PERMISSION.ACTION_TYPE_DELETE])) {
+                    if (hasPermission([PERMISSION.HISTORY_DELETE])) {
                         actions.push(<GridActionsCellItem
                             key="delete-item"
                             icon={<DeleteIcon />}
                             label="Delete"
-                            onClick={handelDeleteActionType(row)}
+                            onClick={handelDeleteHistory(row)}
+                        />)
+                    }
+
+                    if (hasPermission([PERMISSION.HISTORY_VIEW])) {
+
+                        actions.push(<GridActionsCellItem
+                            key="details-item"
+                            icon={<ManageHistoryRounded />}
+                            label="details"
+                            onClick={() => handleHistoryDetails(row)}
                         />)
                     }
                     return actions;
                 }
             },] : [])
         ],
-        [handleActionTypeEditPage, handelDeleteActionType],
+        [handelDeleteHistory],
     );
 
-    const pageTitle = 'عملیات ها';
+    const pageTitle = 'تاریخچه';
 
     return (
         <PageContainer
             title={pageTitle}
             marginTop='20px'
-            actions={hasPermission([PERMISSION.ACTION_TYPE_CREATE]) &&
-                (<Stack direction="row" alignItems="center" spacing={1}>
-                    <Button
-                        variant="contained"
-                        onClick={handleCreateClick}
-                        startIcon={<AddIcon />}
-                    >
-                        افزودن عملیات
-                    </Button>
-                </Stack>)
-            }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>
 
                 <DataGrid
-                    rows={actionTypes}
-                    rowCount={actionTypes.length}
+                    rows={historys}
+                    rowCount={historys.length}
                     columns={columns}
                     align="center"
                     pagination
@@ -245,10 +275,12 @@ export default function List() {
                     onSortModelChange={handleSortModelChange}
                     filterModel={filterModel}
                     onFilterModelChange={handleFilterModelChange}
+                    //onRowClick={handleRowClick}
                     disableRowSelectionOnClick
                     loading={isLoading}
                     initialState={initialState}
                     showToolbar
+                    localeText={{ noRowsLabel: "موردی یافت نشد" }}
                     pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
                     sx={{
                         [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {
@@ -272,7 +304,11 @@ export default function List() {
                         },
                     }}
                 />
+
             </Box>
+            <DetailsModal open={openModal} close={closeModal} data={selectedRow} />
+
+
         </PageContainer>
     );
 }

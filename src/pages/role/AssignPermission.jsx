@@ -49,8 +49,8 @@ function PermissionEditForm({ initialValues, onSubmit }) {
 
     const handleFormFieldChange = useCallback(
         (name, value) => {
-            console.log("handleFormFieldChange :: ", name, value)
 
+            
             const newFormValues = {
                 ...formValues,
                 [name]: value,
@@ -95,9 +95,9 @@ export default function AssignPermission() {
 
         getRolePermissions(roleID)
             .then(data => {
-                setRolePermissions(data.data['result'])
+                setRolePermissions(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [roleID]);
@@ -109,17 +109,17 @@ export default function AssignPermission() {
 
     const handleSubmit = useCallback(
         async (formValues) => {
-            console.log("handleSubmit", formValues)
+
             const request = {
                 roleId: roleID,
                 permissionIds: formValues.permissionIds,
             }
             assignRolePermission(request)
                 .then(data => {
-                    setRolePermissions('handlesubmit', data.data['result'])
+                    setRolePermissions('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.ROLE_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [roleID],
     );

@@ -12,18 +12,16 @@ const INITIAL_FORM_VALUES = {
     ItNumber: null,
     ItParentNumber: null,
     EmployeeId: null,
-    LocationId: null,
+    //LocationId: null,
     EquipmentId: null,
+    BrandId: null,
     Status: null,
     PropertyNumber: '',
     SerialNumber: '',
     InvoiceNumber: null,
     InvoiceImage: null,
     Description: null,
-    BrandName: '',
     ModelName: '',
-    Capacity: null,
-    Size: null,
     ExpireWarrantyDate: null,
     DeliveryDate: null,
     Features: []
@@ -58,12 +56,25 @@ export default function Create() {
     const handleFormFieldChange = React.useCallback(
         (name, value, type = "text") => {
             let finalValue = value;
+            if (type === 'number') {
+                finalValue = finalValue
+                    .replace(/([۰-۹])/g, (digit) => {
+                        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+                        return persianDigits.indexOf(digit);
+                    })
+                    .replace(/[^0-9]/g, ''); //delete charachter is not english
 
-            if (type == 'switch') {
-                finalValue = value == 'on' ? true : false;
+                if (finalValue === '') {
+                    finalValue = null;
+                } else {
+                    finalValue = Number(finalValue);
+                    if (isNaN(finalValue)) {
+                        finalValue = null;
+                    }
+                }
             }
-            if (type == 'radio' || type == 'number') {
-                finalValue = Number(value);
+            if (type === 'radio') {
+                finalValue = Number(value)
             }
             const newFormValues = {
                 ...formValues,
@@ -98,7 +109,9 @@ export default function Create() {
                 toast.success("عملیات با موفقیت انجام شد.")
                 navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
             })
-            .catch(() => toast.error("مشکلی در افزودن به انبار رخ داده است"))
+            .catch(() => {
+                //toast.error("مشکلی در افزودن به انبار رخ داده است")
+            })
 
     }, [navigate, setFormErrors]);
 

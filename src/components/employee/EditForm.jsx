@@ -1,4 +1,4 @@
-import { useState,useEffect,useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -28,9 +28,11 @@ function EditForm(props) {
 
     getLocations()
       .then((data) => {
-        setLocations(data.data['result'])
+        setLocations(data.data.data)
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        //console.log(err)
+      })
 
   }, [])
 
@@ -66,19 +68,19 @@ function EditForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.name ?? ''}
               onChange={(e) => onFieldChange("name", e.target.value)}
               name="name"
-              label="نام"
+              label="نام *"
               error={!!formErrors.name}
               helperText={formErrors.name ?? ' '}
               fullWidth
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.email ?? ''}
               onChange={(e) => onFieldChange("email", e.target.value)}
@@ -90,15 +92,15 @@ function EditForm(props) {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               select
               value={formValues.locationId ?? ''}
-              onChange={(e) => onFieldChange("LocationId", e.target.value)}
-              name="LocationId"
-              label="موقعیت"
-              error={!!formErrors.LocationId}
-              helperText={formErrors.LocationId ?? ' '}
+              onChange={(e) => onFieldChange("locationId", e.target.value)}
+              name="locationId"
+              label="موقعیت *"
+              error={!!formErrors.locationId}
+              helperText={formErrors.locationId ?? ' '}
               fullWidth
             >
               <MenuItem value="0" disabled>انتخاب کنید</MenuItem>

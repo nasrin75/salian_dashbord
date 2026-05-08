@@ -5,9 +5,11 @@ export const getPermissions = () =>{
 }
 
 export const deletePermission = (permissionID) => {
-    return Api.delete(`/permission/delete?id=${permissionID}`)
+    return Api.delete(`/permission/${permissionID}`)
 }
-
+export const getPermissionByCategory =() =>{
+    return Api.get('/permission/byCategory');
+}
 export const PermissionDetails = (permissionID) => {
     return Api.get(`/permission/${permissionID}`)
 }

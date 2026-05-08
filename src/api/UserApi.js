@@ -1,24 +1,28 @@
 import Api from "./Api";
 
-export const getUsers = () => {
-    return Api.get('/user')
+export const getUsers = (request) => {
+    return Api.get('/user', request)
 }
 
 export const createUser = (data) => {
-    return Api.post('/user/create', data)
+    return Api.post('/user', data)
 }
 export function deleteUser(userID) {
-    return Api.delete(`/user/delete?id=${userID}`)
+    return Api.delete(`/user/${userID}`)
 }
 export const userDetails = (userID) => {
     return Api.get(`/user/${userID}`)
 }
 export const updateUser = (data) => {
-    return Api.get("/user/edit", data)
+    return Api.put("/user", data)
 }
 export const getUserPermissions = (userID) => {
     return Api.post(`/user/permissions?userId=${userID}`)
 }
 export const getMyPermission = () => {
     return Api.get('/myPermissions')
+}
+
+export const getMee = () => {
+    return Api.get('/user/me')
 }

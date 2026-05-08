@@ -118,13 +118,18 @@ export default function UserList() {
   const loadData = useCallback(async () => {
     setIsLoading(true);
 
-    getUsers()
+    const request = {
+      'userId': searchParams.get("userId")
+    }
+    getUsers(request)
       .then(data => {
-        setUsers(data.data['result'])
+        setUsers(data.data.data)
 
         setIsLoading(false)
 
-      }).catch(() => toast.error("عدم دسترسی"))
+      }).catch(() => { 
+        //toast.error("عدم دسترسی") 
+      })
 
     setIsLoading(false);
   }, [paginationModel, sortModel, filterModel, searchParams]);
@@ -152,6 +157,11 @@ export default function UserList() {
     [navigate],
   );
 
+  const handleInventoryHistoty = useCallback(
+    (userID) => () => {
+      navigate(APP_ROUTES.HISTORY_LIST_PATH + `?entityId=${userID}&entityName=Users`)
+    }, [navigate]
+  )
   const handelDeleteUser = useCallback(
     (user) => async () => {
 
@@ -194,16 +204,15 @@ export default function UserList() {
 
   const columns = useMemo(
     () => [
-      { field: 'username', headerName: 'نام کاربری', width: 240, align: 'right' },
-      { field: 'mobile', headerName: 'موبایل', width: 140, align: 'right' },
-      { field: 'email', headerName: 'ایمیل', width: 240, align: 'right' },
-      { field: 'role', headerName: 'نقش', width: 140, align: 'right' },
+      { field: 'username', headerName: 'نام کاربری', width: 240 },
+      { field: 'mobile', headerName: 'موبایل', width: 140 },
+      { field: 'email', headerName: 'ایمیل', width: 240 },
+      { field: 'role', headerName: 'نقش', width: 140 },
       {
         field: 'status',
         headerName: 'وضعیت',
         width: 140,
         type: 'string',
-        align: 'right',
         renderCell: params => params.row.status == 'Active' ? 'فعال' : 'غیرفعال'
       },
       ...(isAlow ? [{
@@ -244,7 +253,7 @@ export default function UserList() {
               key="log-item"
               icon={<History />}
               label="log"
-            // onClick={handelDeleteEmployee(row)}
+              onClick={handleInventoryHistoty(row.id)}
             />)
           }
           return actions;
@@ -295,6 +304,7 @@ export default function UserList() {
           loading={isLoading}
           initialState={initialState}
           showToolbar
+          localeText={{ noRowsLabel: "موردی یافت نشد" }}
           pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
           sx={{
             [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {

@@ -86,15 +86,7 @@ function EditForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 8 }} sx={{ display: 'flex' }}>
-            <TextField
-              value={formValues.password ?? ''}
-              name="password"
-              label="رمزعبور"
-              helperText=""
-              fullWidth
-            />
-          </Grid>
+         
           <Grid size={{ xs: 12, sm: 8 }} sx={{ display: 'flex' }}>
             <TextField
               onChange={(e) => onFieldChange("newPassword", e.target.value)}

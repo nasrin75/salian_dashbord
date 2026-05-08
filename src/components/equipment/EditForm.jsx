@@ -13,6 +13,9 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import Switch from '@mui/material/Switch';
+import Autocomplete from '@mui/material/Autocomplete';
+import { getEquipments, getParentEquipments } from '../../api/EquipmentApi';
+import MenuItem from '@mui/material/MenuItem';
 
 function EditForm(props) {
   const {
@@ -27,7 +30,15 @@ function EditForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [parentEquipments, setParentEquipments] = useState();
+  useEffect(() => {
+    getParentEquipments()
+      .then((data) => setParentEquipments(data.data.data))
+      .catch(() => {
+        //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
+      });
+    
+  }, []);
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
@@ -59,12 +70,32 @@ function EditForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <TextField
+              select
+              value={formValues.parentId ?? ''}
+              onChange={(e) => onFieldChange("parentId", e.target.value)}
+              name="parentId"
+              label="Parentقطعه"
+              error={!!formErrors.parentId}
+              helperText={formErrors.parentId ?? ' '}
+              fullWidth
+            >
+              <MenuItem value="0" disabled>انتخاب کنید</MenuItem>
+              {parentEquipments?.map(parent => {
+                return <MenuItem value={parent.id} selected={formValues.parentId === parent.id ?? false}>{parent.name}</MenuItem>
+              })}
+            </TextField>
+            <FormHelperText error={!!formErrors.parentId}>
+              {formErrors.parentId ?? " "}
+            </FormHelperText>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.name ?? ''}
               onChange={(e) => onFieldChange("name", e.target.value)}
               name="name"
-              label=" نام قطعه"
+              label=" نام قطعه *"
               error={!!formErrors.name}
               helperText={formErrors.name ?? ' '}
               fullWidth
@@ -72,14 +103,21 @@ function EditForm(props) {
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 12 }} sx={{ display: 'flex' }}>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">نوع قطعه</FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">نوع قطعه *</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
+                value={
+                  formValues.type === 'internal'
+                    ? '1'
+                    : formValues.type === 'external'
+                      ? '2'
+                      : formValues.type
+                }
                 onChange={(e) => onFieldChange("type", e.target.value, "radio")}
               >
-                <FormControlLabel value="1" control={<Radio checked={formValues.type == ("internal" || formValues.type == '1') ?? false} />} label="Internal" />
-                <FormControlLabel value="2" control={<Radio checked={formValues.type == ("external" || formValues.type == '2') ?? false} />} label="External" />
+                <FormControlLabel value="1" control={<Radio />} label="Internal" />
+                <FormControlLabel value="2" control={<Radio />} label="External" />
               </RadioGroup>
               <FormHelperText error={!!formErrors.type}>
                 {formErrors.type ?? ' '}
@@ -117,12 +155,12 @@ EditForm.propTypes = {
     errors: PropTypes.shape({
       name: PropTypes.string,
       type: PropTypes.string,
-      isShowInMenu:PropTypes.bool,
+      isShowInMenu: PropTypes.bool,
     }).isRequired,
     values: PropTypes.shape({
       name: PropTypes.string,
       type: PropTypes.string,
-      isShowInMenu:PropTypes.bool,
+      isShowInMenu: PropTypes.bool,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,

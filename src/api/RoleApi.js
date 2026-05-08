@@ -5,14 +5,14 @@ export const getRoles = () => {
 }
 
 export const deleteRole = (roleID) => {
-    return Api.delete(`/role/delete?id=${roleID}`)
+    return Api.delete(`/role/${roleID}`)
 }
 
 export const RoleDetails = (roleID) => {
     return Api.get(`/role/${roleID}`)
 }
 export const createRole = (data) => {
-    return Api.post('/role/create', data)
+    return Api.post('/role', data)
 }
 
 export const updateRole = (data) => {

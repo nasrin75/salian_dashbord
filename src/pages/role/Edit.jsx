@@ -100,7 +100,7 @@ const handleFormFieldChange = useCallback(
             onFieldChange={handleFormFieldChange}
             onSubmit={handleFormSubmit}
             onReset={handleFormReset}
-            submitButtonLabel="Save"
+            submitButtonLabel="ذخیره"
         />
     );
 }
@@ -118,9 +118,9 @@ export default function RoleEdit() {
 
         RoleDetails(roleID)
             .then(data => {
-                setRole(data.data['result'])
+                setRole(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [roleID]);
@@ -134,10 +134,10 @@ export default function RoleEdit() {
         async (formValues) => {
             updateRole(formValues)
                 .then(data => {
-                    setRole('handlesubmit', data.data['result'])
+                    setRole('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.ROLE_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [roleID],
     );

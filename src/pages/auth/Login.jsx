@@ -14,12 +14,15 @@ import ForgotPassword from '../../components/auth/ForgotPassword';
 import AppTheme from '../../shared-theme/AppTheme';
 import ColorModeSelect from '../../shared-theme/ColorModeSelect';
 import { GoogleIcon } from '../../components/auth/CustomIcons';
-import { useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
+import { ArcaptchaWidget } from 'arcaptcha-react';
+import { toast } from 'react-toastify';
+import { sendOtp } from '../../api/AuthApi';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -65,12 +68,12 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 export default function Login(props) {
   const auth = useAuth();
-
+  const arRef = createRef()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [isShowOtpInput, setIsShowOtpInput] = useState(false)
   const [isSendOtp, setIsSendOtp] = useState(false)
-
+  const [counter, setCounter] = useState(0);
   const [usernameError, setUsernameError] = useState(false);
   const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
   const [passwordError, setPasswordError] = useState(false);
@@ -80,49 +83,68 @@ export default function Login(props) {
   const handleClickOpen = () => {
     setOpen(true);
   };
-  //console.log('isshow:: ', isShowOtpInput);
+
   const handleClose = () => {
     setOpen(false);
   };
 
-  console.log({
-    username: username,
-    password: password,
-    IsOtp: isShowOtpInput,
-    haveSendOtp: isSendOtp
-  });
   const handleSubmit = (event) => {
     event.preventDefault();
-    //console.log('auth: ',auth)
+
     const data = new FormData(event.currentTarget);
     const resp = auth.loginAction({
       Username: username,
       Password: password,
-      IsOtp: isShowOtpInput //TODO:handel it
+      IsOtp: isShowOtpInput
     })
 
     if (passwordError || usernameError) {
       event.preventDefault();
       return;
     }
-
-    // console.log({
-    //   username: username,
-    //   password: password,
-    //   IsOtp: isShowOtpInput,
-    //   //SendOtp:setIsSendOtp
-    // });
   };
 
   const handleLoginType = (e, type = "password") => {
     e.preventDefault();
-    setIsShowOtpInput(!isShowOtpInput)
+    setIsShowOtpInput(prev => !prev);
   }
 
-  const sendOtp = () => {
-    setIsSendOtp(true)
-  }
+  const sendOtpService = async (e) => {
+    e.preventDefault();
+  
+    if (!username || username.trim() === "") {
+      toast.error("نام کاربری اجباری است.");
+      return; 
+    }
+  
+    const request = { username: username };
+    setIsSendOtp(true);
+  
+    try {
+      const data = await sendOtp(request);
+      toast.success("کد با موفقیت ارسال شد");
+      setCounter(180);
+    } catch (err) {
+      toast.error("ارسال کد با خطا مواجه شد");
+    }
+  };
 
+  //counter
+  useEffect(() => {
+    let timer;
+    if (counter > 0) {
+      timer = setInterval(() => {
+        setCounter((prevValue) => prevValue - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [counter]);
+  
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
   {
     {
       if (!auth.token) {
@@ -216,14 +238,23 @@ export default function Login(props) {
                         color={passwordError ? 'error' : 'primary'}
 
                       />
-                      {/* <Button  variant="text">ارسال کد</Button> */}
-                      <Button
-                        onClick={() => sendOtp()}
-                        size='small'
-                        className='otp-btn'
-                        sx={{ marginTop: 2 }}>
-                        ارسال کد
-                      </Button>
+                     
+                        {counter > 0 ? (
+                  <Typography variant="body2" sx={{ mt: 2, textAlign: 'center', color: 'text.secondary', fontWeight: 'bold' }}>
+                    ارسال مجدد کد تا {formatTime(counter)} دیگر
+                  </Typography>
+                ) : (
+                  <Button
+                    type='button'
+                    onClick={sendOtpService}
+                    size='small'
+                    variant="outlined"
+                     className='otp-btn'
+                    sx={{ mt: 2 }}>
+                    ارسال کد
+                  </Button>
+                )}
+
                     </FormControl>
 
                   )
@@ -251,12 +282,20 @@ export default function Login(props) {
                 >
                   فراموشی رمزعبور
                 </Link>
+
+                <ArcaptchaWidget
+                  ref={arRef}
+                  site-key="ul1hwg7g62"
+                  //callback={this.getToken}
+                  theme="dark" //it's not required. Default is light
+                  lang="en" //it's not required. Default is fa
+                />
               </Box>
             </Card>
           </SignInContainer>
         </AppTheme>)
       } else {
-        return <Navigate to={APP_ROUTES.INVENTORY_LIST_PATH+'?equipment=ALL'} />
+        return <Navigate to={APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL'} />
       }
     }
   }

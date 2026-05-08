@@ -99,7 +99,7 @@ const handleFormFieldChange = useCallback(
             onFieldChange={handleFormFieldChange}
             onSubmit={handleFormSubmit}
             onReset={handleFormReset}
-            submitButtonLabel="Save"
+            submitButtonLabel="ذخیره"
         />
     );
 }
@@ -117,9 +117,9 @@ export default function PermissionEdit() {
 
         PermissionDetails(permissionID)
             .then(data => {
-                setPermission(data.data['result'])
+                setPermission(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [permissionID]);
@@ -133,10 +133,10 @@ export default function PermissionEdit() {
         async (formValues) => {
             updatePermission(formValues)
                 .then(data => {
-                    setPermission('handlesubmit', data.data['result'])
+                    setPermission('handlesubmit', data.data.data)
                     setIsLoading(false);
                     navigate(APP_ROUTES.PERMISSION_LIST_PATH);
-                })
+                }).catch(err => { })
         },
         [permissionID],
     );

@@ -107,13 +107,13 @@ export default function List() {
 
         getRoles()
             .then(data => {
-                setRoles(data.data['result'])
+                setRoles(data.data.data)
 
                 setIsLoading(false)
 
             }).catch((err) => {
-                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
-                toast.error(message);
+                // let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+                // toast.error(message);
             })
 
         setIsLoading(false);
@@ -185,8 +185,8 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'faName', headerName: 'عنوان فارسی', width: 240, align: 'right', },
-            { field: 'enName', headerName: 'عنوان انگلیسی', width: 240, align: 'right' },
+            { field: 'faName', headerName: 'عنوان فارسی', width: 240 },
+            { field: 'enName', headerName: 'عنوان انگلیسی', width: 240},
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
@@ -266,6 +266,7 @@ export default function List() {
                     loading={isLoading}
                     initialState={initialState}
                     showToolbar
+                    localeText={{ noRowsLabel: "موردی یافت نشد" }}
                     pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
                     sx={{
                         [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {

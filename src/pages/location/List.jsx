@@ -106,13 +106,13 @@ export default function List() {
 
         getLocations()
             .then(data => {
-                setLocations(data.data['result'])
+                setLocations(data.data.data)
 
                 setIsLoading(false)
 
             }).catch((err) => {
-                let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
-                toast.error(message);
+                // let message = err.status == 401 ? "لطفا دوباره وارد شوید." : "مشکلی در گرفتن اطلاعات رخ داده است";
+                // toast.error(message);
             })
 
         setIsLoading(false);
@@ -156,9 +156,9 @@ export default function List() {
                         toast.success("عملیات با موفقیت حذف شد.")
                         setIsLoading(false)
 
-                    }).catch(() =>
-                        toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
-                    )
+                    }).catch(() => {
+                        //toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
+                    })
                 setIsLoading(false);
             }
         },
@@ -176,9 +176,9 @@ export default function List() {
 
     const columns = useMemo(
         () => [
-            { field: 'title', headerName: 'نام', width: 240, align: 'right', },
-            { field: 'abbreviation', headerName: 'مخفف', width: 140, align: 'right' },
-            { field: 'isShow', headerName: 'نمایش', width: 140, align: 'right', type: "boolean" },
+            { field: 'title', headerName: 'نام', width: 240 },
+            { field: 'abbreviation', headerName: 'مخفف', width: 140 },
+            { field: 'isShow', headerName: 'نمایش', width: 140, type: "boolean" },
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
@@ -250,6 +250,7 @@ export default function List() {
                     loading={isLoading}
                     initialState={initialState}
                     showToolbar
+                    localeText={{ noRowsLabel: "موردی یافت نشد" }}
                     pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
                     sx={{
                         [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {

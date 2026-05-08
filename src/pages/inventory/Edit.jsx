@@ -91,7 +91,7 @@ function InventoryEditForm({ initialValues, onSubmit }) {
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate(APP_ROUTES.INVENTORY_LIST_PATH);
+            navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -103,7 +103,7 @@ function InventoryEditForm({ initialValues, onSubmit }) {
             onFieldChange={handleFormFieldChange}
             onSubmit={handleFormSubmit}
             onReset={handleFormReset}
-            submitButtonLabel="Save"
+            submitButtonLabel="ذخیره"
         />
     );
 }
@@ -123,8 +123,10 @@ export default function Edit() {
         InventoryDetails(inventoryID)
             .then(data => {
                 
-                setInventory(data.data['result'])
+                setInventory(data.data.data)
                 setIsLoading(false);
+            }).catch(err =>{
+                //console.log(err)
             })
 
         setIsLoading(false);
@@ -139,10 +141,10 @@ export default function Edit() {
         async (formValues) => {
             updateInventory(formValues)
                 .then(data => { 
-                    setInventory(data.data['result'])
+                    setInventory(data.data.data)
                     setIsLoading(false);
-                    navigate(APP_ROUTES.INVENTORY_LIST_PATH);
-                })
+                    navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
+                }).catch(err => { })
         },
         [inventoryID],
     );
@@ -181,7 +183,7 @@ export default function Edit() {
 
     return (
         <PageContainer
-            title={"ویرایش پرسنل"}
+            title={"ویرایش انبار"}
         >
             <Divider sx={{ marginBottom: "4%" }} />
             <Box sx={{ display: 'flex', flex: 1 }}>{renderEdit}</Box>

@@ -77,7 +77,7 @@ export const inputsCustomizations = {
                 border: `1px solid ${green[50]}`,
                 '&:hover': {
                   backgroundImage: 'none',
-                  backgroundColor: green[300],
+                  backgroundColor: green[900],
                   boxShadow: 'none',
                 },
                 '&:active': {

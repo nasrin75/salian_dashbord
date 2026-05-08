@@ -140,10 +140,10 @@ export const dataDisplayCustomizations = {
                 borderColor: green[800],
                 backgroundColor: green[900],
                 [`& .${chipClasses.label}`]: {
-                  color: green[300],
+                  color: green[700],
                 },
                 [`& .${chipClasses.icon}`]: {
-                  color: green[300],
+                  color: green[700],
                 },
               }),
             },

@@ -24,6 +24,8 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { getInventorySubMenu } from '../../../api/EquipmentApi';
 import useAuth from '../../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../../utlis/constants/Permissions';
+import { APP_ROUTES } from '../../../utlis/constants/routePath';
+import logo from '../../../Assets/images/logo.png';
 
 function DashboardSidebar({
   expanded = true,
@@ -47,8 +49,10 @@ function DashboardSidebar({
 
   useEffect(() => {
     getInventorySubMenu()
-      .then(data => setInventorySubMenu(data.data['result']))
-      .catch(err => console.log(err))
+      .then(data => setInventorySubMenu(data.data.data))
+      .catch(err => {
+        //console.log(err)
+      })
   }, [])
 
   useEffect(() => {
@@ -116,11 +120,9 @@ function DashboardSidebar({
           component="nav"
           aria-label={`${viewport.charAt(0).toUpperCase()}${viewport.slice(1)}`}
           sx={{
-            height: '100vh',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
-            overflow: 'hidden',
+            overflowY: 'auto',
             scrollbarGutter: mini ? 'stable' : 'auto',
             overflowX: 'hidden',
             pt: !mini ? 0 : 2,
@@ -129,12 +131,33 @@ function DashboardSidebar({
               : {}),
           }}
         >
+          {!mini && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                py: 2,
+              }}
+            >
+              <img
+                src={logo}
+                alt="Dashboard Logo"
+                style={{
+                  height: '48px',
+                  width: 'auto',
+                  objectFit: 'contain',
+                }}
+              />
+            </Box>
+          )}
           <List
             dense
             sx={{
               padding: mini ? 0 : 0.5,
               mb: 4,
               width: mini ? MINI_DRAWER_WIDTH : 'auto',
+              flexGrow: 1,
             }}
           >
             {
@@ -207,6 +230,27 @@ function DashboardSidebar({
               )
             }
             {
+              hasPermission([PERMISSION.HISTORY_LIST]) && (
+                <DashboardSidebarPageItem
+                  id="histories"
+                  title="تاریخچه"
+                  icon={<BuildCircleOutlined />}
+                  href="/histories"
+                //selected={!!matchPath('/history/*', pathname) || pathname === '/'}
+                />
+              )
+            }
+            {
+              hasPermission([PERMISSION.NOTIFICATION_LIST]) && (
+                <DashboardSidebarPageItem
+                  id="notifications"
+                  title="اطلاع رسانی"
+                  icon={<BuildCircleOutlined />}
+                  href="/notifications"
+                />
+              )
+            }
+            {
               hasPermission([PERMISSION.LOCATION_LIST, PERMISSION.ACTION_TYPE_LIST, PERMISSION.ROLE_LIST, PERMISSION.PERMISSION_LIST, PERMISSION.FEATURE_LIST]) && (
                 <DashboardSidebarPageItem
                   id="setting"
@@ -227,19 +271,19 @@ function DashboardSidebar({
                       }}
                     >
                       {
+                        hasPermission([PERMISSION.SETTING_LIST]) && (<DashboardSidebarPageItem
+                          id="setting"
+                          title="تنظیمات کلی"
+                          href="/settings"
+                          selected={!!matchPath(APP_ROUTES.SETTING_LIST_PATH, pathname)}
+                        />)
+                      }
+                      {
                         hasPermission([PERMISSION.LOCATION_LIST]) && (<DashboardSidebarPageItem
                           id="locations"
                           title="بخش ها"
                           href="/setting/locations"
-                          selected={!!matchPath('/setting/locations', pathname)}
-                        />)
-                      }
-                      {
-                        hasPermission([PERMISSION.ACTION_TYPE_LIST]) && (<DashboardSidebarPageItem
-                          id="actionTypes"
-                          title="نوع عملیات"
-                          href="/setting/actionTypes"
-                          selected={!!matchPath('/setting/actionTypes', pathname)}
+                          selected={!!matchPath(APP_ROUTES.LOCATION_LIST_PATH, pathname)}
                         />)
                       }
                       {
@@ -247,16 +291,15 @@ function DashboardSidebar({
                           id="roles"
                           title="نقش ها"
                           href="/setting/roles"
-                          selected={!!matchPath('/setting/roles', pathname)}
+                          selected={!!matchPath(APP_ROUTES.ROLE_LIST_PATH, pathname)}
                         />)
                       }
-
                       {
                         hasPermission([PERMISSION.PERMISSION_LIST]) && (<DashboardSidebarPageItem
                           id="permissions"
                           title="دسترسی ها"
                           href="/setting/permissions"
-                          selected={!!matchPath('/setting/permissions', pathname)}
+                          selected={!!matchPath(APP_ROUTES.PERMISSION_LIST_PATH, pathname)}
                         />)
                       }
                       {
@@ -264,16 +307,15 @@ function DashboardSidebar({
                           id="features"
                           title="ویژگی قطعات"
                           href="/setting/features"
-                          selected={!!matchPath('/settings/features', pathname)}
+                          selected={!!matchPath(APP_ROUTES.FEATURE_LIST_PATH, pathname)}
                         />)
                       }
-
                     </List>
                   }
                 />)
             }
 
-            <DashboardSidebarPageItem
+            {/* <DashboardSidebarPageItem
               id="profile"
               title="پروفایل"
               icon={<AccountCircle />}
@@ -290,22 +332,24 @@ function DashboardSidebar({
                     pl: mini ? 0 : 1,
                     minWidth: 240,
                   }}
-                >
+                > 
                   <DashboardSidebarPageItem
                     id="profile-setting"
-                    title="تنظیمات"
-                    href="/profile/setting"
-                    selected={!!matchPath('/profile/setting', pathname)}
+                    title="پروفایل"
+                    href="/profile"
+                    selected={!!matchPath('/profile', pathname)}
+                    icon={<SettingsOutlined />}
                   />
-                </List>
-              }
-            />
+                {/* </List>
+              } 
+            />*/}
           </List>
         </Box>
       </Fragment>
     ),
-    [mini, hasDrawerTransitions, isFullyExpanded, expandedItemIds, pathname],
+    [mini, hasDrawerTransitions, isFullyExpanded, expandedItemIds, pathname, theme.mixins.toolbar.minHeight], // Toolbar height را اینجا اضافه کنید اگر لازم بود
   );
+
 
   const getDrawerSharedSx = useCallback(
     (isTemporary) => {
@@ -318,7 +362,6 @@ function DashboardSidebar({
         ...getDrawerWidthTransitionMixin(expanded),
         ...(isTemporary ? { position: 'absolute' } : {}),
         [`& .MuiDrawer-paper`]: {
-          position: 'absolute',
           width: drawerWidth,
           boxSizing: 'border-box',
           backgroundImage: 'none',
@@ -354,6 +397,7 @@ function DashboardSidebar({
         onClose={handleSetSidebarExpanded(false)}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.
+          disableScrollLock: true
         }}
         sx={{
           display: {

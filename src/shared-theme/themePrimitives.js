@@ -38,7 +38,7 @@ export const green = {
   400: 'hsl(120, 44%, 53%)',
   500: 'hsl(120, 59%, 30%)',
   600: 'hsl(120, 70%, 25%)',
-  700: '#466457',
+  700: '#46645a',
   800: 'hsl(120, 84%, 10%)',
   900: 'hsl(120, 87%, 6%)',
 };
@@ -123,7 +123,7 @@ export const getDesignTokens = (mode) => {
         }),
       },
       success: {
-        light: green[300],
+        light: green[700],
         main: green[400],
         dark: green[800],
         ...(mode === 'dark' && {
@@ -133,13 +133,13 @@ export const getDesignTokens = (mode) => {
         }),
       },
       grey: {
-        ...gray,
+        ...green,
       },
-      divider: mode === 'dark' ? alpha(gray[700], 0.6) : alpha(gray[300], 0.4),
+      divider: mode === 'dark' ? alpha(green[700], 0.6) : alpha(green[300], 0.4),
       background: {
         default: 'hsl(0, 0%, 99%)',
-        paper: 'hsl(220, 35%, 97%)',
-        ...(mode === 'dark' && { default: gray[900], paper: 'hsl(220, 30%, 7%)' }),
+        paper: 'hsl(144, 33%, 97%)',
+        ...(mode === 'dark' && { default: green[900], paper: 'hsl(220, 30%, 7%)' }),
       },
       text: {
         primary: gray[800],
@@ -147,7 +147,7 @@ export const getDesignTokens = (mode) => {
         warning: orange[400],
         ...(mode === 'dark' && {
           primary: 'hsl(0, 0%, 100%)',
-          secondary: gray[400],
+          secondary: green[400],
         }),
       },
       action: {
@@ -241,26 +241,26 @@ export const colorSchemes = {
         dark: red[800],
       },
       success: {
-        light: green[300],
+        light: green[700],
         main: green[400],
         dark: green[800],
       },
       grey: {
         ...gray,
       },
-      divider: alpha(gray[300], 0.4),
+      divider: alpha(green[700], 0.4),
       background: {
         default: 'hsl(0, 0%, 99%)',
         paper: 'hsl(220, 35%, 97%)',
       },
       text: {
         primary: gray[800],
-        secondary: gray[600],
+        secondary: green[700],
         warning: orange[400],
       },
       action: {
-        hover: alpha(gray[200], 0.2),
-        selected: `${alpha(gray[200], 0.3)}`,
+        hover: alpha(green[900], 0.2),
+        selected: `${alpha(green[900], 0.3)}`,
       },
       baseShadow:
         'hsla(220, 30%, 5%, 0.07) 0px 4px 16px 0px, hsla(220, 25%, 10%, 0.07) 0px 8px 16px -5px',

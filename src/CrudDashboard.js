@@ -13,6 +13,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from './config/dateConfig';
 import "dayjs/locale/fa"
 import AuthProvider from './hooks/useAuth/AuthProvider';
+import TranslateProvider from './hooks/useTranslate/TranslateProvider';
 
 const themeComponents = {
   ...dataGridCustomizations,
@@ -23,23 +24,25 @@ const themeComponents = {
 
 export default function CrudDashboard(props) {
   return (
-    
-      <LocalizationProvider
-        dateAdapter={AdapterDayjs}
-        adapterLocale="fa"
-        dateLibInstance={dayjs}
-      >
-        <AppTheme {...props} themeComponents={themeComponents}>
-          <CssBaseline enableColorScheme />
-          {/* <NotificationsProvider> */}
-          <DialogsProvider>
-             <AuthProvider>
+
+    <LocalizationProvider
+      dateAdapter={AdapterDayjs}
+      adapterLocale="fa"
+      dateLibInstance={dayjs}
+    >
+      <AppTheme {...props} themeComponents={themeComponents}>
+        <CssBaseline enableColorScheme />
+
+        <DialogsProvider>
+          <AuthProvider>
+            <TranslateProvider>
               <Routes />
-            </AuthProvider>
-          </DialogsProvider>
-          {/* </NotificationsProvider> */}
-        </AppTheme>
-      </LocalizationProvider>
-     
+            </TranslateProvider>
+          </AuthProvider>
+        </DialogsProvider>
+
+      </AppTheme>
+    </LocalizationProvider>
+
   );
 }

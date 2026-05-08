@@ -6,7 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import EditForm from '../../components/employee/EditForm';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
-import { updateEmployee, employeeDetails, EmployeeDetails } from '../../api/EmployeeApi';
+import { updateEmployee, EmployeeDetails } from '../../api/EmployeeApi';
 import { EditValidation } from '../../validation/EmployeeValidation';
 import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -95,7 +95,7 @@ function EmployeeEditForm({ initialValues, onSubmit }) {
             onFieldChange={handleFormFieldChange}
             onSubmit={handleFormSubmit}
             onReset={handleFormReset}
-            submitButtonLabel="Save"
+            submitButtonLabel="ذخیره"
         />
     );
 }
@@ -111,13 +111,12 @@ export default function Edit() {
         setError(null);
         setIsLoading(true);
 
-        console.log('sssss', employeeID)
         EmployeeDetails(employeeID)
             .then(data => {
-                console.log('dtaaaa', employeeID, data.data['result'])
-                setEmployee(data.data['result'])
+
+                setEmployee(data.data.data)
                 setIsLoading(false);
-            })
+            }).catch(err => { })
 
         setIsLoading(false);
     }, [employeeID]);
@@ -131,13 +130,13 @@ export default function Edit() {
         async (formValues) => {
             updateEmployee(formValues)
                 .then(data => {
-                    console.log('handlesubmit', employeeID)
-                    setEmployee('handlesubmit', data.data['result'])
+
+                    setEmployee('handlesubmit', data.data.data)
                     setIsLoading(false);
-                     navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
-                })
+                    navigate(APP_ROUTES.EMPLOYEE_LIST_PATH);
+                }).catch(err => { })
         },
-        [employeeID],
+        [employeeID, navigate],
     );
 
     const renderEdit = useMemo(() => {

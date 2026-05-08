@@ -14,7 +14,6 @@ import { deleteEquipment, getEquipments } from '../../api/EquipmentApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
-
 const INITIAL_PAGE_SIZE = 10;
 
 export default function List() {
@@ -106,11 +105,11 @@ export default function List() {
 
         getEquipments()
             .then(data => {
-                setEquipments(data.data['result'])
+                setEquipments(data.data.data)
 
                 setIsLoading(false)
 
-            })
+            }).catch(err => {})
 
         setIsLoading(false);
     }, [paginationModel, sortModel, filterModel, searchParams]);
@@ -126,7 +125,7 @@ export default function List() {
 
     const handleEquipmentEditPage = useCallback(
         (equipmentID) => () => {
-            console.log(equipmentID)
+
             navigate(`/equipment/edit/${equipmentID}`);
         },
         [navigate],
@@ -154,9 +153,9 @@ export default function List() {
                         toast.success("عملیات با موفقیت حذف شد.")
                         setIsLoading(false)
 
-                    }).catch(() =>
+                    }).catch(() => {
                         toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
-                    )
+                    })
                 setIsLoading(false);
             }
         },
@@ -166,21 +165,39 @@ export default function List() {
     const initialState = useMemo(
         () => ({
             pagination: { paginationModel: { pageSize: INITIAL_PAGE_SIZE } },
+            columns: {
+                columnVisibilityModel: {
+                    // Hide columns, the other columns will remain visible
+                    sendToChargeCount: false,
+                    backFromChargeCount: false,
+                    repairCount: false,
+                    uselessCount: false,
+                }
+            }
         }),
         [],
     );
 
     const isAlow = hasPermission([PERMISSION.EQUIPMENT_EDIT, PERMISSION.EQUIPMENT_DELETE]);
-    
+
     const columns = useMemo(
         () => [
-            { field: 'id', headerName: 'شماره ', width: 240, align: 'right', },
-            { field: 'name', headerName: 'نام قطعه', width: 140, align: 'right' },
-            { field: 'type', headerName: 'نوع قطعه', width: 140, align: 'right' },
-            { field: 'usedCount', headerName: 'تعداداستفاده شده', width: 140, align: 'right' },
-            { field: 'unusedCount', headerName: 'تعداداستفاده نشده', width: 240, align: 'right' },
+            { field: 'id', headerName: 'شماره ', width: 240 },
+            { field: 'name', headerName: 'نام قطعه', width: 140 },
+            { field: 'parentName', headerName: ' قطعه والد', width: 140 },
+            { field: 'type', headerName: 'نوع قطعه', width: 140,
+                type: 'string',
+        renderCell: params => params.row.type == 1 ? 'Internal' : 'External'
+             },
+            { field: 'usedCount', headerName: 'تعداداستفاده شده', width: 160 },
+            { field: 'unsedCount', headerName: 'تعداداستفاده نشده', width: 160 },
+            { field: 'sendToChargeCount', headerName: 'ارسال جهت شارژ', width: 160 },
+            { field: 'backFromChargeCount', headerName: 'برگشت از شارژ', width: 160 },
+            { field: 'repairCount', headerName: 'تعمیر', width: 100 },
+            { field: 'uselessCount', headerName: 'اسقاطی', width: 100 },
             ...(isAlow ? [{
                 field: '',
+                width: 340,
                 headerName: 'عملیات',
                 type: 'actions',
                 flex: 1,
@@ -231,7 +248,6 @@ export default function List() {
             }
         >
             <Box sx={{ width: '100%', marginTop: '5px', paddingRight: '5px' }}>
-
                 <DataGrid
                     rows={equipments}
                     rowCount={equipments.length}
@@ -251,6 +267,7 @@ export default function List() {
                     loading={isLoading}
                     initialState={initialState}
                     showToolbar
+                    localeText={{ noRowsLabel: "موردی یافت نشد" }}
                     pageSizeOptions={[5, INITIAL_PAGE_SIZE, 25]}
                     sx={{
                         [`& .${gridClasses.columnHeader}, & .${gridClasses.cell}`]: {
