@@ -11,7 +11,7 @@ import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 
-function InventoryEditForm({ initialValues, onSubmit}) {
+function InventoryEditForm({ initialValues, onSubmit }) {
     const { inventoryID } = useParams();
     const navigate = useNavigate();
 
@@ -51,7 +51,7 @@ function InventoryEditForm({ initialValues, onSubmit}) {
 
     const handleFormFieldChange = useCallback(
         (name, value, type = "text") => {
-console.log('handleFormFieldChange',name, value)
+
             let finalValue = value;
             if (type == 'radio') {
                 finalValue = Number(value);
@@ -61,7 +61,7 @@ console.log('handleFormFieldChange',name, value)
                 [name]: finalValue,
             };
 
-console.log('newFormValues',newFormValues)
+
             setFormValues(newFormValues);
 
             const { issues } = EditValidation(newFormValues);
@@ -93,7 +93,7 @@ console.log('newFormValues',newFormValues)
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-          //  navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
+            navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -140,12 +140,12 @@ export default function Edit() {
         loadData();
     }, [loadData]);
 
-   
+
     const handleSubmit = useCallback(
         async (formValues) => {
-            console.log('handleSubmit formValues',formValues)
+            console.log('handleSubmit formValues', formValues)
             updateInventory(formValues)
-                .then(data => { 
+                .then(data => {
                     setInventory(data.data.data)
                     setIsLoading(false);
                     //navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
@@ -163,20 +163,20 @@ export default function Edit() {
     //                 navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
     //             }).catch(err => { })
     //         },
-                
-        // async (valuesToSend) => {
-        //     try {
-        //         const response = await updateInventory(valuesToSend);
-        //         setInventory(response.data.data)
-        //         setIsLoading(false);
-        //         toast.success("ویرایش با موفقیت انجام شد.");
-        //         navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
-        //     } catch (err) {
-        //         setIsLoading(false);
-        //         toast.error("مشکلی در گرفتن اطلاعات رخ داده است");
-        //         console.error("Error updating inventory:", err);
-        //     }
-        // },
+
+    // async (valuesToSend) => {
+    //     try {
+    //         const response = await updateInventory(valuesToSend);
+    //         setInventory(response.data.data)
+    //         setIsLoading(false);
+    //         toast.success("ویرایش با موفقیت انجام شد.");
+    //         navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
+    //     } catch (err) {
+    //         setIsLoading(false);
+    //         toast.error("مشکلی در گرفتن اطلاعات رخ داده است");
+    //         console.error("Error updating inventory:", err);
+    //     }
+    // },
     //     [inventoryID], 
     // );
     const renderEdit = useMemo(() => {

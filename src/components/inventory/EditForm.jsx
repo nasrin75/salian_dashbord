@@ -41,7 +41,7 @@ function EditForm(props) {
   const [brands, setBrands] = useState([]);
   const [equipments, setEquipments] = useState([]);
   const [employees, setEmployees] = useState([]);
-
+  const [filePath, setFilePath] = useState('');
   const [itParentList, setItParentList] = useState([]);
   const [features, setFeatures] = useState([]);
   const [featureValues, setFeatureValues] = useState({});
@@ -93,19 +93,19 @@ function EditForm(props) {
       setFeatureValues(initialArray);
     }
   }, [formValues, allPossibleFeatures]);
-const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
-        setFeatureValues(prevValues => {
-            const updatedValues = prevValues.map(item => {
-                if (item.featureId === featureIdToUpdate) {
-                    return { ...item, value: newValue };
-                }
-                return item; 
-            });
-            onFieldChange('features',updatedValues)
-            return updatedValues;
-        });
-        
-    }, []);
+  const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
+    setFeatureValues(prevValues => {
+      const updatedValues = prevValues.map(item => {
+        if (item.featureId === featureIdToUpdate) {
+          return { ...item, value: newValue };
+        }
+        return item;
+      });
+      onFieldChange('features', updatedValues)
+      return updatedValues;
+    });
+
+  }, []);
 
   useEffect(() => {
 
@@ -154,7 +154,7 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
   }
 
   const getInventoryFeatures = async () => {
-    console.log('formValues.equipmentId',formValues.equipmentId)
+    console.log('formValues.equipmentId', formValues.equipmentId)
     await getEquipmentFeatures(formValues.equipmentId)
       .then((data) => {
         const list = data.data.data;
@@ -177,6 +177,7 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("invoiceNumber", `${formValues.invoiceNumber}`);
 
       const token = localStorage.getItem("token");
 
@@ -191,14 +192,16 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
       const data = await res.json();
 
       //send image name that is created after uploaded file
-      onFieldChange("InvoiceImage", data.fileName);
-
+      onFieldChange("InvoiceImage", data.url);
+      setFilePath(data.url);
       toast.success("فایل با موفقیت آپلود شد!");
     } catch (err) {
       console.error(err);
       toast.error("آپلود فایل با خطا مواجه شد.");
     }
   };
+
+  console.log('filePath', filePath)
   //send data
   const handleSubmit = useCallback(
     async (event) => {
@@ -257,7 +260,7 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
               getOptionLabel={(option) => option.name}
               onChange={async (e, value) => handleEquipmentChanges(e, value)}
               renderInput={(params) => <TextField {...params} label="قطعه" />}
-              
+
             />
           </Grid>
           {
@@ -413,7 +416,7 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
           </Grid>
 
           {/* upload Image */}
-          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
             <Button
               component="label"
               variant="contained"
@@ -422,15 +425,12 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
               آپلود تصویر فاکتور
               <input hidden type="file" onChange={handleFileUpload} />
             </Button>
-            {formValues.invoiceImage && (
+            {formValues.invoiceImageurl || filePath && (
               <img
-                src={
-                  process.env.REACT_APP_BASE_URL +
-                  `/Uploads/${formValues.invoiceImage}`
-                }
+                src={filePath}
                 alt="Invoice"
                 width={100}
-                style={{ marginTop: 8 }}
+                style={{ margin: 8 }}
               />
             )}
           </Grid>
@@ -498,20 +498,20 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }} spacing={3}>
             {allPossibleFeatures?.map((feature) => {
-                const currentValue = featureValues.find(f => f.featureId === feature.id)?.value || '';
+              const currentValue = featureValues.find(f => f.featureId === feature.id)?.value || '';
 
-                return (
-                    <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
-                        <TextField
-                            label={feature.name}
-                            value={currentValue} 
-                            onChange={(e) =>
-                                handleFeatureChange(feature.id, e.target.value)
-                            }
-                            fullWidth
-                        />
-                    </Grid>
-                );
+              return (
+                <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
+                  <TextField
+                    label={feature.name}
+                    value={currentValue}
+                    onChange={(e) =>
+                      handleFeatureChange(feature.id, e.target.value)
+                    }
+                    fullWidth
+                  />
+                </Grid>
+              );
             })}
           </Grid>
 
