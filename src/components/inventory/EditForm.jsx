@@ -22,7 +22,6 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 import { getExternalEquipmentInventories } from '../../api/InventoryApi';
 import { getBrands } from '../../api/BrandApi';
-import { useParams } from 'react-router-dom';
 import { Typography } from '@mui/material';
 
 function EditForm(props) {
@@ -34,7 +33,6 @@ function EditForm(props) {
     submitButtonLabel,
   } = props;
 
-  const equipmentID = useParams();
 
   const formValues = formState.values;
   const formErrors = formState.errors;
@@ -133,14 +131,11 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
     console.log(formValues)
   }, [formValues?.features]);
 
-  console.log('allPossibleFeatures', allPossibleFeatures)
   const handleEquipmentChanges = async (e, value) => {
     if (!value) return;
 
-    console.log("handleEquipmentChanges", value?.type)
     const EquipmentId = value.id;
-    onFieldChange("employeeId", value?.id ?? null)
-    //onFieldChange("EquipmentId", EquipmentId)
+    onFieldChange("equipmentId", value?.id ?? null)
     setIsShowItPatentInput(false);
     if (value.type == 1) { // 1 = intenral , 2= external
 
@@ -155,15 +150,11 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
         });
     }
 
-    //getInventoryFeatures();
+    getInventoryFeatures();
   }
-  //get features by equipment to enter featureValues
-  // const getFeaturesData = async (equipmentID) => {
-  //   getInventoryFeatures();
-  // };
-  //console.log('allPossibleFeatures',allPossibleFeatures)
+
   const getInventoryFeatures = async () => {
-    //setFeatures(formValues.feature)
+    console.log('formValues.equipmentId',formValues.equipmentId)
     await getEquipmentFeatures(formValues.equipmentId)
       .then((data) => {
         const list = data.data.data;
@@ -175,7 +166,6 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
       });
   }
 
-  console.log('finally',featureValues);
   //Uploaded file func
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -209,7 +199,6 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
       toast.error("آپلود فایل با خطا مواجه شد.");
     }
   };
-  console.log('featureValues', featureValues)
   //send data
   const handleSubmit = useCallback(
     async (event) => {
@@ -217,26 +206,6 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
       setIsSubmitting(true);
 
       try {
-        //console.log('subfeatureValues',featureValues);
-        // const payload = {
-        //   ...formValues,
-        //   features: Object.keys(featureValues).map((id) => ({
-        //     FeatureId: Number(id),
-        //     Value: featureValues[id],
-        //   })),
-        // };
-
-        // const newFeature = Object.keys(featureValues).map((id) => ({
-        //   featureId: Number(id),
-        //   value: featureValues[id],
-        //   //name:featureValues[Name]
-        // }));
-
-        // // console.log('featureValues',featureValues)
-        // console.log('newFeature', newFeature)
-        // onFieldChange('features', newFeature)
-        // console.log('newFeature', newFeature)
-        //await onSubmit(payload);
         await onSubmit();
       } finally {
         setIsSubmitting(false);
@@ -287,17 +256,8 @@ const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
               options={equipments}
               getOptionLabel={(option) => option.name}
               onChange={async (e, value) => handleEquipmentChanges(e, value)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="قطعه"
-                  sx={{
-                    '& .MuiInputBase-input': {
-                      paddingInlineStart: '15px',
-                    },
-                  }}
-                />
-              )}
+              renderInput={(params) => <TextField {...params} label="قطعه" />}
+              
             />
           </Grid>
           {
