@@ -192,7 +192,7 @@ function EditForm(props) {
       const data = await res.json();
 
       //send image name that is created after uploaded file
-      onFieldChange("InvoiceImage", data.url);
+      onFieldChange("invoiceImageUrl", data.url);
       setFilePath(data.url);
       toast.success("فایل با موفقیت آپلود شد!");
     } catch (err) {
@@ -430,7 +430,7 @@ function EditForm(props) {
                 src={filePath}
                 alt="Invoice"
                 width={100}
-                style={{ margin: 8 }}
+                style={{ margin: 3 }}
               />
             )}
           </Grid>
