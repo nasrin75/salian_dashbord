@@ -6,7 +6,6 @@ import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import { getLocations } from '../../api/LocationApi';
 import Autocomplete from '@mui/material/Autocomplete';
 import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
@@ -20,7 +19,11 @@ import { toast } from 'react-toastify';
 import { getEquipmentFeatures, getEquipments } from '../../api/EquipmentApi';
 import { getEmployees } from '../../api/EmployeeApi';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
+import { getExternalEquipmentInventories } from '../../api/InventoryApi';
+import { getBrands } from '../../api/BrandApi';
 import { useParams } from 'react-router-dom';
+import { Typography } from '@mui/material';
 
 function EditForm(props) {
   const {
@@ -32,15 +35,19 @@ function EditForm(props) {
   } = props;
 
   const equipmentID = useParams();
+
   const formValues = formState.values;
   const formErrors = formState.errors;
-
+  const [isShowItPatentInput, setIsShowItPatentInput] = useState(formValues.itParentNumber ?? false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [locations, setLocations] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [equipments, setEquipments] = useState([]);
   const [employees, setEmployees] = useState([]);
+
+  const [itParentList, setItParentList] = useState([]);
   const [features, setFeatures] = useState([]);
   const [featureValues, setFeatureValues] = useState({});
+  const [allPossibleFeatures, setAllPossibleFeatures] = useState([]);
 
   useEffect(() => {
     //Equipment List
@@ -50,11 +57,10 @@ function EditForm(props) {
         //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
       });
 
-    //Location List
-    getLocations()
-      .then((data) => setLocations(data.data.data))
+    getBrands()
+      .then((data) => setBrands(data.data.data))
       .catch(() => {
-        //toast("مشکلی در گرفتن لیست بخش ها رخ داده است")
+        //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
       });
 
     //Location List
@@ -64,21 +70,81 @@ function EditForm(props) {
         //toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است")
       });
 
-  }, []);
-
-  //get features by equipment to enter featureValues
-  const getFeaturesData = async (equipmentID) => {
-    await getEquipmentFeatures(equipmentID)
+    getExternalEquipmentInventories(formValues.equipmentId)
       .then((data) => {
         const list = data.data.data;
-        setFeatures(list);
+        setItParentList(list);
       })
       .catch(() => {
         //toast.error("خطا در دریافت ویژگی‌ها");
       });
-  };
+    getInventoryFeatures();
+    //setFeatureValues(formValues.features)
+  }, []);
+
+    useEffect(() => {
+
+      getEquipmentFeatures(formValues.equipmentId) 
+        .then((data) => {
+          setAllPossibleFeatures(data.data.data); 
+        })
+        .catch(() => {
+          console.error("Failed to fetch all possible features.");
+          setAllPossibleFeatures([]);
+        });
+
+      const initialValues = {};
+      if (formValues?.features && formValues.features.length > 0) {
+        formValues.features.forEach(feature => {
+          initialValues[feature.featureId] = feature.value; 
+        });
+      }
+      setFeatureValues(initialValues);
+
+    }, [formValues?.features]); 
 
 
+  const handleEquipmentChanges = async (e, value) => {
+    if (!value) return;
+
+    console.log("handleEquipmentChanges", value?.type)
+    const EquipmentId = value.id;
+    onFieldChange("employeeId", value?.id ?? null)
+    //onFieldChange("EquipmentId", EquipmentId)
+    setIsShowItPatentInput(false);
+    if (value.type == 1) { // 1 = intenral , 2= external
+
+      setIsShowItPatentInput(true);
+      await getExternalEquipmentInventories(EquipmentId)
+        .then((data) => {
+          const list = data.data.data;
+          setItParentList(list);
+        })
+        .catch(() => {
+          //toast.error("خطا در دریافت ویژگی‌ها");
+        });
+    }
+
+    //getInventoryFeatures();
+  }
+  //get features by equipment to enter featureValues
+  // const getFeaturesData = async (equipmentID) => {
+  //   getInventoryFeatures();
+  // };
+
+  const getInventoryFeatures = async () => {
+    //setFeatures(formValues.feature)
+    await getEquipmentFeatures(formValues.equipmentId)
+      .then((data) => {
+        const list = data.data.data;
+        setFeatures(list);
+        console.log('setFeatures', list)
+      })
+      .catch(() => {
+        //toast.error("خطا در دریافت ویژگی‌ها");
+      });
+  }
+ 
   //Uploaded file func
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -119,20 +185,22 @@ function EditForm(props) {
       setIsSubmitting(true);
 
       try {
+        console.log('subfeatureValues',featureValues);
         const payload = {
           ...formValues,
-          Features: Object.keys(featureValues).map((id) => ({
+          features: Object.keys(featureValues).map((id) => ({
             FeatureId: Number(id),
             Value: featureValues[id],
           })),
         };
-
+        console.log('submit',payload)
+onFieldChange('features',payload)
         await onSubmit(payload);
       } finally {
         setIsSubmitting(false);
       }
     },
-    [formValues, featureValues, onSubmit]
+    [formValues, featureValues, onSubmit,features]
   );
 
   const handleReset = useCallback(() => {
@@ -152,25 +220,7 @@ function EditForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: "100%" }}>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <Autocomplete
-              id="equipment-select-demo"
-              autoHighlight
-              disableClearable
-              sx={{ width: 400 }}
-              value={equipments.find(eq => eq.id === formValues.equipmentId) || null}
-              options={equipments}
-              getOptionLabel={(option) => option.name}
-              onChange={async (e, value) => {
-                if (!value) return value;
-
-                onFieldChange("equipmentId", value?.id ?? null);
-                getFeaturesData(value.id);
-              }}
-              renderInput={(params) => <TextField {...params} label="قطعه" />}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Autocomplete
               id="employee-select-demo"
               sx={{ width: 400 }}
@@ -185,54 +235,53 @@ function EditForm(props) {
               renderInput={(params) => <TextField {...params} label="مالک" />}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Autocomplete
-              id="location-select-demo"
-              sx={{ width: 400 }}
-              options={locations}
-              value={locations.find(l => l.id === formValues.locationId) || null}
+              id="equipment-select-demo"
               autoHighlight
               disableClearable
-              onChange={(event, value) =>
-                onFieldChange("locationId", value?.id ?? null)
-              }
-              getOptionLabel={(option) => option.title}
+              sx={{ width: 400 }}
+              value={equipments.find(eq => eq.id === formValues.equipmentId) || null}
+              options={equipments}
+              getOptionLabel={(option) => option.name}
+              onChange={async (e, value) => handleEquipmentChanges(e, value)}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="بخش"
-                  slotProps={{
-                    htmlInput: {
-                      ...params.inputProps,
+                  label="قطعه"
+                  sx={{
+                    '& .MuiInputBase-input': {
+                      paddingInlineStart: '15px',
                     },
                   }}
                 />
               )}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.propertyNumber ?? ""}
-              onChange={(e) => onFieldChange("propertyNumber", e.target.value)}
-              name="propertyNumber"
-              label="شماره اموال"
-              error={!!formErrors.propertyNumber}
-              helperText={formErrors.propertyNumber ?? " "}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.serialNumber ?? ""}
-              onChange={(e) => onFieldChange("serialNumber", e.target.value)}
-              name="serialNumber"
-              label="شماره سریال"
-              error={!!formErrors.serialNumber}
-              helperText={formErrors.serialNumber ?? " "}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          {
+            isShowItPatentInput && (
+              <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}
+              >
+                <Autocomplete
+                  id="equipment-select-demo"
+                  autoHighlight
+                  disableClearable
+                  sx={{ width: 400 }}
+                  value={itParentList.find(eq => eq.id == formValues.itParentNumber) || null}
+                  options={itParentList}
+                  error={!!formErrors.itParentNumber}
+                  helperText={formErrors.itParentNumber ?? " "}
+                  getOptionLabel={(option) => option.name}
+                  onChange={async (e, value) => onFieldChange("itParentNumber", value?.id ?? null)}
+                  renderInput={(params) => <TextField {...params} label="شماره IT Parent" />}
+                />
+                <FormHelperText error={!!formErrors.itParentNumber}>
+                  {formErrors.itParentNumber ?? " "}
+                </FormHelperText>
+              </Grid>
+            )
+          }
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.itNumber ?? null}
               onChange={(e) => onFieldChange("itNumber", e.target.value, 'number')}
@@ -243,30 +292,52 @@ function EditForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
-              value={formValues.itParentNumber ?? null}
-              onChange={(e) => onFieldChange("itParentNumber", e.target.value, 'number')}
-              name="itParentNumber"
-              label="شماره IT Parent"
-              error={!!formErrors.itParentNumber}
-              helperText={formErrors.itParentNumber ?? " "}
+              value={formValues.propertyNumber ?? ""}
+              onChange={(e) => onFieldChange("propertyNumber", e.target.value)}
+              name="propertyNumber"
+              label="شماره اموال"
+              error={!!formErrors.propertyNumber}
+              helperText={formErrors.propertyNumber ?? " "}
+              fullWidth
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <TextField
+              value={formValues.serialNumber ?? ""}
+              onChange={(e) => onFieldChange("serialNumber", e.target.value)}
+              name="serialNumber"
+              label="شماره سریال"
+              error={!!formErrors.serialNumber}
+              helperText={formErrors.serialNumber ?? " "}
               fullWidth
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.brandName ?? null}
-              onChange={(e) => onFieldChange("brandName", e.target.value)}
-              name="brandName"
-              label="برند"
-              error={!!formErrors.brandName}
-              helperText={formErrors.brandName ?? " "}
-              fullWidth
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <Autocomplete
+              id="equipment-select-demo"
+              autoHighlight
+              disableClearable
+              sx={{ width: 400 }}
+              value={brands.find(eq => eq.id === formValues.brandId) || null}
+              options={brands}
+              error={!!formErrors.brandId}
+              helperText={formErrors.brandId ?? " "}
+              getOptionLabel={(option) => option.name}
+              onChange={async (e, value) => {
+                if (!value) return;
+
+                onFieldChange("brandId", value.id);
+              }}
+              renderInput={(params) => <TextField {...params} label="برند" />}
             />
+            <FormHelperText error={!!formErrors.brandId}>
+              {formErrors.brandId ?? " "}
+            </FormHelperText>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.modelName ?? null}
               onChange={(e) => onFieldChange("modelName", e.target.value)}
@@ -278,30 +349,9 @@ function EditForm(props) {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.invoiceNumber ?? null}
-              onChange={(e) => onFieldChange("invoiceNumber", e.target.value)}
-              name="invoiceNumber"
-              label="شماره فاکتور"
-              error={!!formErrors.invoiceNumber}
-              helperText={formErrors.invoiceNumber ?? " "}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              label="توضیحات"
-              multiline
-              value={formValues.description ?? null}
-              onChange={(e) => onFieldChange("description", e.target.value)}
-              rows={2}
-              maxRows={Infinity}
-              fullWidth
-            />
-          </Grid>
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ تحویل"
               value={
@@ -324,7 +374,7 @@ function EditForm(props) {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ پایان گارانتی"
               value={
@@ -348,8 +398,20 @@ function EditForm(props) {
               }}
             />
           </Grid>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <TextField
+              value={formValues.invoiceNumber ?? null}
+              onChange={(e) => onFieldChange("invoiceNumber", e.target.value)}
+              name="invoiceNumber"
+              label="شماره فاکتور"
+              error={!!formErrors.invoiceNumber}
+              helperText={formErrors.invoiceNumber ?? " "}
+              fullWidth
+            />
+          </Grid>
+
           {/* upload Image */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Button
               component="label"
               variant="contained"
@@ -362,13 +424,32 @@ function EditForm(props) {
               <img
                 src={
                   process.env.REACT_APP_BASE_URL +
-                  `/images/inventory/${formValues.invoiceImage}`
+                  `/Uploads/${formValues.invoiceImage}`
                 }
                 alt="Invoice"
                 width={100}
                 style={{ marginTop: 8 }}
               />
             )}
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 5 }} sx={{ display: "flex" }}>
+            <TextField
+              sx={{
+                '& .MuiInputBase-root': {
+                  minRows: 50,
+                  height: '200px'
+                }
+              }}
+              id="outlined-multiline-flexible-grid"
+              label="توضیحات"
+              multiline
+              value={formValues.description}
+              onChange={(e) => onFieldChange('Description', e.target.value)}
+              variant="outlined"
+              placeholder="اینجا بنویسید..."
+              fullWidth
+            />
           </Grid>
           {/* status part */}
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
@@ -399,17 +480,6 @@ function EditForm(props) {
                   control={<Radio checked={(formValues.status == "inuse" || formValues.status == "1") ?? false} />}
                   label="استفاده شده"
                 />
-                <FormControlLabel
-                  value="2"
-                  control={<Radio checked={(formValues.status == "sendToCharge" || formValues.status == "2") ?? false} />}
-                  label="ارسال جهت شارژ"
-                />
-                <FormControlLabel
-                  value="3"
-                  control={<Radio checked={(formValues.status == "backFromCharge" || formValues.status == "3") ?? false} />}
-                  label="بازگشت از شارژ"
-                />
-                <FormControlLabel value="4" control={<Radio checked={(formValues.status == "repair" || formValues.status == "4") ?? false} />} label="تعمیر" />
               </RadioGroup>
               <FormHelperText error={!!formErrors.status}>
                 {formErrors.status ?? " "}
@@ -419,26 +489,30 @@ function EditForm(props) {
           {/* end status part */}
 
           {/* show equipment features */}
-          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }} spacing={3}>
-            {features.map((feature) => (
-              <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
-                <TextField
-                  //sx={{ width: 400 }}
-                  label={feature.name}
-                  //value={featureValues[feature.id] || ""}
-                  onChange={(e) =>
-
-                    setFeatureValues((prev) => ({
-                      ...prev,
-                      [feature.id]: e.target.value,
-                    }))
-
-                  }
-                  fullWidth
-                />
-              </Grid>
-            ))}
+          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              مشخصات:
+            </Typography>
           </Grid>
+              <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }} spacing={3}>
+      {allPossibleFeatures?.map((feature) => ( 
+        <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
+          <TextField
+            label={feature.name} 
+            value={featureValues[feature.id] || ''} 
+            onChange={(e) =>
+              setFeatureValues((prev) => ({
+                ...prev,
+                [feature.id]: e.target.value, 
+              }))
+            }
+            fullWidth
+          />
+        </Grid>
+      ))}
+    </Grid>
+
+
         </Grid>
       </FormGroup>
       <Stack direction="row" spacing={2} justifyContent="space-between">

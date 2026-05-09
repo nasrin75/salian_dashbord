@@ -11,7 +11,7 @@ import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 
-function InventoryEditForm({ initialValues, onSubmit }) {
+function InventoryEditForm({ initialValues, onSubmit, onValuesChange }) {
     const { inventoryID } = useParams();
     const navigate = useNavigate();
 
@@ -27,6 +27,10 @@ function InventoryEditForm({ initialValues, onSubmit }) {
             ...previousState,
             values: newFormValues,
         }));
+
+        if (onValuesChange) {
+            onValuesChange(newFormValues);
+        }
     }, []);
 
     useEffect(() => {
@@ -52,7 +56,7 @@ function InventoryEditForm({ initialValues, onSubmit }) {
         (name, value, type = "text") => {
 
             let finalValue = value;
-            if(type == 'radio'){
+            if (type == 'radio') {
                 finalValue = Number(value);
             }
             const newFormValues = {
@@ -114,18 +118,21 @@ export default function Edit() {
     const [inventory, setInventory] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [formValues, setFormValues] = useState({});
 
     const loadData = useCallback(async () => {
         setError(null);
         setIsLoading(true);
 
-        
+
         InventoryDetails(inventoryID)
             .then(data => {
-                
-                setInventory(data.data.data)
+                const response = data.data.data;
+                setInventory(response)
                 setIsLoading(false);
-            }).catch(err =>{
+                setFormValues(response);
+                setIsLoading(false);
+            }).catch(err => {
                 //console.log(err)
             })
 
@@ -136,19 +143,37 @@ export default function Edit() {
         loadData();
     }, [loadData]);
 
+    const handleFormValuesChange = useCallback((newFormValues) => {
+        setFormValues(newFormValues);
+    }, []);
+    // const handleSubmit = useCallback(
+    //     async (formValues) => {
+    //         updateInventory(formValues)
+    //             .then(data => { 
+    //                 setInventory(data.data.data)
+    //                 setIsLoading(false);
+    //                 navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
+    //             }).catch(err => { })
+    //     },
+    //     [inventoryID],
+    // );
 
     const handleSubmit = useCallback(
-        async (formValues) => {
-            updateInventory(formValues)
-                .then(data => { 
-                    setInventory(data.data.data)
-                    setIsLoading(false);
-                    navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
-                }).catch(err => { })
+        async (valuesToSend) => {
+            try {
+                const response = await updateInventory(valuesToSend);
+                setInventory(response.data.data)
+                setIsLoading(false);
+                toast.success("ویرایش با موفقیت انجام شد.");
+                navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
+            } catch (err) {
+                setIsLoading(false);
+                toast.error("مشکلی در گرفتن اطلاعات رخ داده است");
+                console.error("Error updating inventory:", err);
+            }
         },
-        [inventoryID],
+        [navigate], // inventoryID دیگر اینجا لازم نیست چون از formValues استفاده میکنیم
     );
-
     const renderEdit = useMemo(() => {
         if (isLoading) {
             return (
@@ -176,9 +201,9 @@ export default function Edit() {
         }
 
         return inventory ? (
-            <InventoryEditForm initialValues={inventory} onSubmit={handleSubmit} />
+            <InventoryEditForm initialValues={inventory} onSubmit={handleSubmit} onValuesChange={handleFormValuesChange} />
         ) : null;
-    }, [isLoading, error, inventory, handleSubmit]);
+    }, [isLoading, error, inventory, handleSubmit, handleFormValuesChange]);
 
 
     return (
