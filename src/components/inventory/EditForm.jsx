@@ -82,28 +82,58 @@ function EditForm(props) {
     //setFeatureValues(formValues.features)
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
+    if (formValues?.features && formValues.features.length > 0) {
+      setFeatureValues(formValues.features);
+    } else {
 
-      getEquipmentFeatures(formValues.equipmentId) 
-        .then((data) => {
-          setAllPossibleFeatures(data.data.data); 
-        })
-        .catch(() => {
-          console.error("Failed to fetch all possible features.");
-          setAllPossibleFeatures([]);
+      const initialArray = allPossibleFeatures.map(feature => ({
+        featureId: feature.id,
+        name: feature.name,
+        value: '',
+      }));
+      setFeatureValues(initialArray);
+    }
+  }, [formValues, allPossibleFeatures]);
+const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
+        setFeatureValues(prevValues => {
+            const updatedValues = prevValues.map(item => {
+                if (item.featureId === featureIdToUpdate) {
+                    return { ...item, value: newValue };
+                }
+                return item; 
+            });
+            onFieldChange('features',updatedValues)
+            return updatedValues;
         });
+        
+    }, []);
 
-      const initialValues = {};
-      if (formValues?.features && formValues.features.length > 0) {
-        formValues.features.forEach(feature => {
-          initialValues[feature.featureId] = feature.value; 
-        });
-      }
-      setFeatureValues(initialValues);
+  useEffect(() => {
 
-    }, [formValues?.features]); 
+    getEquipmentFeatures(formValues.equipmentId)
+      .then((data) => {
+        setAllPossibleFeatures(data.data.data);
+      })
+      .catch(() => {
+        console.error("Failed to fetch all possible features.");
+        setAllPossibleFeatures([]);
+      });
 
+    const initialValues = {};
+    if (formValues?.features && formValues.features.length > 0) {
+      formValues.features.forEach(feature => {
+        initialValues[feature.featureId] = feature.value;
+        //initialValues[feature.Name] = feature.name; 
+      });
+    }
+    //setFeatureValues(initialValues);
+    //p.1
+    setFeatureValues(formValues?.features);
+    console.log(formValues)
+  }, [formValues?.features]);
 
+  console.log('allPossibleFeatures', allPossibleFeatures)
   const handleEquipmentChanges = async (e, value) => {
     if (!value) return;
 
@@ -131,20 +161,21 @@ function EditForm(props) {
   // const getFeaturesData = async (equipmentID) => {
   //   getInventoryFeatures();
   // };
-
+  //console.log('allPossibleFeatures',allPossibleFeatures)
   const getInventoryFeatures = async () => {
     //setFeatures(formValues.feature)
     await getEquipmentFeatures(formValues.equipmentId)
       .then((data) => {
         const list = data.data.data;
         setFeatures(list);
-        console.log('setFeatures', list)
+        //console.log('setFeatures', list)
       })
       .catch(() => {
         //toast.error("خطا در دریافت ویژگی‌ها");
       });
   }
- 
+
+  console.log('finally',featureValues);
   //Uploaded file func
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -178,6 +209,7 @@ function EditForm(props) {
       toast.error("آپلود فایل با خطا مواجه شد.");
     }
   };
+  console.log('featureValues', featureValues)
   //send data
   const handleSubmit = useCallback(
     async (event) => {
@@ -185,22 +217,32 @@ function EditForm(props) {
       setIsSubmitting(true);
 
       try {
-        console.log('subfeatureValues',featureValues);
-        const payload = {
-          ...formValues,
-          features: Object.keys(featureValues).map((id) => ({
-            FeatureId: Number(id),
-            Value: featureValues[id],
-          })),
-        };
-        console.log('submit',payload)
-onFieldChange('features',payload)
-        await onSubmit(payload);
+        //console.log('subfeatureValues',featureValues);
+        // const payload = {
+        //   ...formValues,
+        //   features: Object.keys(featureValues).map((id) => ({
+        //     FeatureId: Number(id),
+        //     Value: featureValues[id],
+        //   })),
+        // };
+
+        // const newFeature = Object.keys(featureValues).map((id) => ({
+        //   featureId: Number(id),
+        //   value: featureValues[id],
+        //   //name:featureValues[Name]
+        // }));
+
+        // // console.log('featureValues',featureValues)
+        // console.log('newFeature', newFeature)
+        // onFieldChange('features', newFeature)
+        // console.log('newFeature', newFeature)
+        //await onSubmit(payload);
+        await onSubmit();
       } finally {
         setIsSubmitting(false);
       }
     },
-    [formValues, featureValues, onSubmit,features]
+    [formValues, featureValues, onSubmit, features]
   );
 
   const handleReset = useCallback(() => {
@@ -489,28 +531,29 @@ onFieldChange('features',payload)
           {/* end status part */}
 
           {/* show equipment features */}
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
               مشخصات:
             </Typography>
           </Grid>
-              <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }} spacing={3}>
-      {allPossibleFeatures?.map((feature) => ( 
-        <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
-          <TextField
-            label={feature.name} 
-            value={featureValues[feature.id] || ''} 
-            onChange={(e) =>
-              setFeatureValues((prev) => ({
-                ...prev,
-                [feature.id]: e.target.value, 
-              }))
-            }
-            fullWidth
-          />
-        </Grid>
-      ))}
-    </Grid>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }} spacing={3}>
+            {allPossibleFeatures?.map((feature) => {
+                const currentValue = featureValues.find(f => f.featureId === feature.id)?.value || '';
+
+                return (
+                    <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
+                        <TextField
+                            label={feature.name}
+                            value={currentValue} 
+                            onChange={(e) =>
+                                handleFeatureChange(feature.id, e.target.value)
+                            }
+                            fullWidth
+                        />
+                    </Grid>
+                );
+            })}
+          </Grid>
 
 
         </Grid>

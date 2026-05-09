@@ -11,7 +11,7 @@ import Divider from '@mui/material/Divider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 
-function InventoryEditForm({ initialValues, onSubmit, onValuesChange }) {
+function InventoryEditForm({ initialValues, onSubmit}) {
     const { inventoryID } = useParams();
     const navigate = useNavigate();
 
@@ -28,9 +28,6 @@ function InventoryEditForm({ initialValues, onSubmit, onValuesChange }) {
             values: newFormValues,
         }));
 
-        if (onValuesChange) {
-            onValuesChange(newFormValues);
-        }
     }, []);
 
     useEffect(() => {
@@ -54,7 +51,7 @@ function InventoryEditForm({ initialValues, onSubmit, onValuesChange }) {
 
     const handleFormFieldChange = useCallback(
         (name, value, type = "text") => {
-
+console.log('handleFormFieldChange',name, value)
             let finalValue = value;
             if (type == 'radio') {
                 finalValue = Number(value);
@@ -64,6 +61,7 @@ function InventoryEditForm({ initialValues, onSubmit, onValuesChange }) {
                 [name]: finalValue,
             };
 
+console.log('newFormValues',newFormValues)
             setFormValues(newFormValues);
 
             const { issues } = EditValidation(newFormValues);
@@ -95,7 +93,7 @@ function InventoryEditForm({ initialValues, onSubmit, onValuesChange }) {
             await onSubmit(formValues);
             toast.success("ویرایش با موفقیت انجام شد.")
 
-            navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
+          //  navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
         } catch (editError) {
             toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
         }
@@ -118,7 +116,6 @@ export default function Edit() {
     const [inventory, setInventory] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [formValues, setFormValues] = useState({});
 
     const loadData = useCallback(async () => {
         setError(null);
@@ -130,7 +127,7 @@ export default function Edit() {
                 const response = data.data.data;
                 setInventory(response)
                 setIsLoading(false);
-                setFormValues(response);
+                //setFormValues(response);
                 setIsLoading(false);
             }).catch(err => {
                 //console.log(err)
@@ -143,9 +140,20 @@ export default function Edit() {
         loadData();
     }, [loadData]);
 
-    const handleFormValuesChange = useCallback((newFormValues) => {
-        setFormValues(newFormValues);
-    }, []);
+   
+    const handleSubmit = useCallback(
+        async (formValues) => {
+            console.log('handleSubmit formValues',formValues)
+            updateInventory(formValues)
+                .then(data => { 
+                    setInventory(data.data.data)
+                    setIsLoading(false);
+                    //navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
+                }).catch(err => { })
+        },
+        [inventoryID],
+    );
+
     // const handleSubmit = useCallback(
     //     async (formValues) => {
     //         updateInventory(formValues)
@@ -154,26 +162,23 @@ export default function Edit() {
     //                 setIsLoading(false);
     //                 navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
     //             }).catch(err => { })
-    //     },
-    //     [inventoryID],
+    //         },
+                
+        // async (valuesToSend) => {
+        //     try {
+        //         const response = await updateInventory(valuesToSend);
+        //         setInventory(response.data.data)
+        //         setIsLoading(false);
+        //         toast.success("ویرایش با موفقیت انجام شد.");
+        //         navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
+        //     } catch (err) {
+        //         setIsLoading(false);
+        //         toast.error("مشکلی در گرفتن اطلاعات رخ داده است");
+        //         console.error("Error updating inventory:", err);
+        //     }
+        // },
+    //     [inventoryID], 
     // );
-
-    const handleSubmit = useCallback(
-        async (valuesToSend) => {
-            try {
-                const response = await updateInventory(valuesToSend);
-                setInventory(response.data.data)
-                setIsLoading(false);
-                toast.success("ویرایش با موفقیت انجام شد.");
-                navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
-            } catch (err) {
-                setIsLoading(false);
-                toast.error("مشکلی در گرفتن اطلاعات رخ داده است");
-                console.error("Error updating inventory:", err);
-            }
-        },
-        [navigate], // inventoryID دیگر اینجا لازم نیست چون از formValues استفاده میکنیم
-    );
     const renderEdit = useMemo(() => {
         if (isLoading) {
             return (
@@ -201,9 +206,9 @@ export default function Edit() {
         }
 
         return inventory ? (
-            <InventoryEditForm initialValues={inventory} onSubmit={handleSubmit} onValuesChange={handleFormValuesChange} />
+            <InventoryEditForm initialValues={inventory} onSubmit={handleSubmit} />
         ) : null;
-    }, [isLoading, error, inventory, handleSubmit, handleFormValuesChange]);
+    }, [isLoading, error, inventory, handleSubmit]);
 
 
     return (
