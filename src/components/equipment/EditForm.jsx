@@ -30,15 +30,7 @@ function EditForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [parentEquipments, setParentEquipments] = useState();
-  useEffect(() => {
-    getParentEquipments()
-      .then((data) => setParentEquipments(data.data.data))
-      .catch(() => {
-        //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
-      });
-    
-  }, []);
+  
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
@@ -70,26 +62,7 @@ function EditForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
-            <TextField
-              select
-              value={formValues.parentId ?? ''}
-              onChange={(e) => onFieldChange("parentId", e.target.value)}
-              name="parentId"
-              label="Parentقطعه"
-              error={!!formErrors.parentId}
-              helperText={formErrors.parentId ?? ' '}
-              fullWidth
-            >
-              <MenuItem value="0" disabled>انتخاب کنید</MenuItem>
-              {parentEquipments?.map(parent => {
-                return <MenuItem value={parent.id} selected={formValues.parentId === parent.id ?? false}>{parent.name}</MenuItem>
-              })}
-            </TextField>
-            <FormHelperText error={!!formErrors.parentId}>
-              {formErrors.parentId ?? " "}
-            </FormHelperText>
-          </Grid>
+          
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.name ?? ''}

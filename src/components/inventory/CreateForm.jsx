@@ -152,7 +152,7 @@ function CreateForm(props) {
 
        const data = await res.json();
 
-      onFieldChange("InvoiceImage", data.filePath);
+      onFieldChange("InvoiceImageUrl", data.filePath);
 
       toast.success("فایل با موفقیت آپلود شد!");
     } catch (err) {
@@ -380,11 +380,11 @@ function CreateForm(props) {
               آپلود تصویر فاکتور
               <input hidden type="file" onChange={handleFileUpload} />
             </Button>
-            {formValues.InvoiceImage && (
+            {formValues.InvoiceImageUrl && (
               <img
                 src={
                   process.env.REACT_APP_BASE_URL +
-                  `/Uploads/${formValues.InvoiceImage}`
+                  `/${formValues.InvoiceImageUrl}`
                 }
                 alt="Invoice"
                 width={100}

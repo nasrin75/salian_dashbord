@@ -11,8 +11,7 @@ import { APP_ROUTES } from '../../utlis/constants/routePath';
 const INITIAL_FORM_VALUES = {
     Name: '',
     Type: '',
-    IsShowInMenu: false,
-    ParentId: null,
+    IsShowInMenu: false
 };
 
 export default function Create() {

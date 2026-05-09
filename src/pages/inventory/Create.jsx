@@ -19,7 +19,7 @@ const INITIAL_FORM_VALUES = {
     PropertyNumber: '',
     SerialNumber: '',
     InvoiceNumber: null,
-    InvoiceImage: null,
+    InvoiceImageUrl: null,
     Description: null,
     ModelName: '',
     ExpireWarrantyDate: null,

@@ -184,7 +184,6 @@ export default function List() {
         () => [
             { field: 'id', headerName: 'شماره ', width: 240 },
             { field: 'name', headerName: 'نام قطعه', width: 140 },
-            { field: 'parentName', headerName: ' قطعه والد', width: 140 },
             { field: 'type', headerName: 'نوع قطعه', width: 140,
                 type: 'string',
         renderCell: params => params.row.type == 1 ? 'Internal' : 'External'

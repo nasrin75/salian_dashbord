@@ -34,7 +34,6 @@ function CreateForm(props) {
   const [data, setData] = useState({
     Name: '',
     Type: '',
-    ParentId: '',
   });
 
   const handleSubmit = useCallback(
@@ -50,15 +49,7 @@ function CreateForm(props) {
     },
     [formValues, onSubmit],
   );
-  useEffect(() => {
-    getParentEquipments()
-      .then(data => {
-        setParentEquipments(data.data.data)
-      })
-      .catch(() => {
-        //toast.error("مشکلی در گرفتن لیست قطعات رخ داده است.")
-      })
-  }, [])
+  
   return (
     <Box
       component="form"
@@ -69,27 +60,7 @@ function CreateForm(props) {
     >
       <FormGroup>
         <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              select
-              value={formValues.ParentId ?? ''}
-              onChange={(e) => onFieldChange("ParentId", e.target.value)}
-              name="ParentId"
-              label="قطعه Parent "
-              error={!!formErrors.ParentId}
-              helperText={formErrors.ParentId ?? ' '}
-              fullWidth
-            >
-              <MenuItem value="0" disabled>انتخاب کنید</MenuItem>
-              {parentEquipments?.map(parent => {
-                return <MenuItem value={parent.id}>{parent.name}</MenuItem>
-              })}
-            </TextField>
-
-            <FormHelperText error={!!formErrors.ParentId}>
-              {formErrors.ParentId ?? " "}
-            </FormHelperText>
-          </Grid>
+          
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
               value={formValues.Name ?? ''}
