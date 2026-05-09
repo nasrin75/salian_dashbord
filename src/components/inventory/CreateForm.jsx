@@ -127,11 +127,11 @@ function CreateForm(props) {
     const file = event.target.files[0];
     if (!file) return;
 
-    if (!formValues.InvoiceNumber){
+    if (!formValues.InvoiceNumber) {
       toast.error(" برای اپلود تصویر شماره فاکتور الزامی است");
       return
-    } 
-//console.log('inv',formValues.invoiceNumber,formValues.InvoiceNumber);
+    }
+    //console.log('inv',formValues.invoiceNumber,formValues.InvoiceNumber);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -139,7 +139,7 @@ function CreateForm(props) {
       const formData = new FormData();
       formData.append("file", file);
       const token = localStorage.getItem("token");
-          formData.append("invoiceNumber", `${formValues.InvoiceNumber}`);
+      formData.append("invoiceNumber", `${formValues.InvoiceNumber}`);
 
       //TODO: uncomment
       const res = await fetch(process.env.REACT_APP_API_BASE_URL + "/upload", {
@@ -150,7 +150,7 @@ function CreateForm(props) {
         },
       });
 
-       const data = await res.json();
+      const data = await res.json();
 
       onFieldChange("InvoiceImageUrl", data.filePath);
 
@@ -230,8 +230,18 @@ function CreateForm(props) {
               </Grid>
             )
           }
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <TextField
+              value={formValues.ItNumber ?? null}
+              onChange={(e) => onFieldChange("ItNumber", e.target.value, 'number')}
+              name="ItNumber"
+              label="شماره IT"
+              error={!!formErrors.ItNumber}
+              helperText={formErrors.ItNumber ?? " "}
+              fullWidth
+            />
+          </Grid>
 
-          
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.PropertyNumber ?? ""}
@@ -254,17 +264,7 @@ function CreateForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.ItNumber ?? null}
-              onChange={(e) => onFieldChange("ItNumber", e.target.value, 'number')}
-              name="ItNumber"
-              label="شماره IT"
-              error={!!formErrors.ItNumber}
-              helperText={formErrors.ItNumber ?? " "}
-              fullWidth
-            />
-          </Grid>
+
 
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Autocomplete
@@ -372,7 +372,7 @@ function CreateForm(props) {
           {/* upload Image */}
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Button
-            disabled={!formValues.InvoiceNumber}
+              disabled={!formValues.InvoiceNumber}
               component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
@@ -459,24 +459,24 @@ function CreateForm(props) {
 
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }} spacing={3}>
 
-              {features.map((feature) => (
-                <Grid key={feature.id} size={{ xs: 12, sm: 3 }} paddingRight="5px">
-                  <TextField
-                    //sx={{ width: 400 }}
-                    label={feature.name}
-                    value={featureValues[feature.id] || ""}
-                    onChange={(e) =>
+            {features.map((feature) => (
+              <Grid key={feature.id} size={{ xs: 12, sm: 3 }} paddingRight="5px">
+                <TextField
+                  //sx={{ width: 400 }}
+                  label={feature.name}
+                  value={featureValues[feature.id] || ""}
+                  onChange={(e) =>
 
-                      setFeatureValues((prev) => ({
-                        ...prev,
-                        [feature.id]: e.target.value,
-                      }))
+                    setFeatureValues((prev) => ({
+                      ...prev,
+                      [feature.id]: e.target.value,
+                    }))
 
-                    }
-                    fullWidth
-                  />
-                </Grid>
-              ))}
+                  }
+                  fullWidth
+                />
+              </Grid>
+            ))}
           </Grid>
         </Grid>
 

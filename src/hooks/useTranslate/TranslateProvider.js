@@ -8,13 +8,13 @@ const TranslateProvider = ({ children }) => {
          if( !message  || typeof(message) !== 'string'){
             return message;
         }
-        
+       
         if( message === undefined || message == null || isNumber(message)){
             return message;
         }
-        
+         
         const resp = ResponseMessage.find((item) => item?.key && item?.key.toUpperCase() === message.toUpperCase());
-        const result = resp?.mgs || message;
+        const result = resp?.msg || message;
         
         return  result;
     }

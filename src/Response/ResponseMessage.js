@@ -261,5 +261,9 @@ export const ResponseMessage = [
         'key':'LOCATION_NOT_FOUND',
         'msg': 'بخش موردنظر یافت نشد.',
     },
+    {
+        'key':'IT_NUMBER_IS_EXIST',
+        'msg': 'شماره IT تکراری است',
+    }
 
 ]

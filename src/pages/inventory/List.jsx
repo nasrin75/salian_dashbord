@@ -213,7 +213,7 @@ export default function List() {
         return allFeatureNames.map(featureName => ({
             field: featureName,
             headerName: featureName,
-            width: 200,
+            width: 140,
             renderCell: (params) => {
                 const features = params.row.features || [];
                 const item = features.find(f => f.name === featureName);
@@ -345,6 +345,7 @@ export default function List() {
                 headerName: 'وضعیت',
                 width: 140,
                 renderCell: params => {
+                    //return params.row.status
                     return getMessage(params.row.status)
                 },
             },
