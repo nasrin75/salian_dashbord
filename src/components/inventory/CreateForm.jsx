@@ -23,7 +23,9 @@ import RadioGroup from "@mui/material/RadioGroup";
 import { getBrands } from "../../api/BrandApi";
 import { getExternalEquipmentInventories } from "../../api/InventoryApi";
 import { GridKeyboardArrowRight } from "@mui/x-data-grid";
-import { Typography } from "@mui/material";
+import { IconButton, InputAdornment, Typography } from "@mui/material";
+import { getImagesUrlByInvoiceNumber } from "../../api/InvoiceImageApi";
+import SearchIcon from '@mui/icons-material/Search';
 
 function CreateForm(props) {
   const { formState, onFieldChange, onSubmit, submitButtonLabel } = props;
@@ -38,7 +40,8 @@ function CreateForm(props) {
   const [brands, setBrands] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [itParentList, setItParentList] = useState([]);
-
+  const [imagesUrl, setImagesUrl] = useState([]);
+  const [selectedImageId, setSelectedImageId] = useState(null);
   const [features, setFeatures] = useState([]);
   const [featureValues, setFeatureValues] = useState({});
 
@@ -63,6 +66,25 @@ function CreateForm(props) {
         //toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است")
       });
   }, []);
+
+  const handleSearch = async () => {
+    await getImagesUrlByInvoiceNumber(formValues.InvoiceNumber)
+      .then((data) => setImagesUrl(data.data.data))
+      .catch((err) => {
+        console.log('err', err)
+      });
+  }
+
+  useEffect(() => {
+    if (selectedImageId) {
+      onFieldChange('InvoiceImageId',selectedImageId)
+      //handleSearch(selectedImageId);
+    }
+  }, [selectedImageId]);
+
+  const handleImageSelect = async (id) => {
+    setSelectedImageId(id);
+  };
 
   //get features by equipment to enter featureValues
   const getFeaturesData = async (equipmentID) => {
@@ -102,7 +124,6 @@ function CreateForm(props) {
   const handleEquipmentChanges = async (e, value) => {
     if (!value) return;
 
-    console.log("handleEquipmentChanges", value?.type)
     const EquipmentId = value.id;
 
     onFieldChange("EquipmentId", EquipmentId)
@@ -131,7 +152,7 @@ function CreateForm(props) {
       toast.error(" برای اپلود تصویر شماره فاکتور الزامی است");
       return
     }
- 
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -141,7 +162,6 @@ function CreateForm(props) {
       const token = localStorage.getItem("token");
       formData.append("invoiceNumber", `${formValues.InvoiceNumber}`);
 
-      //TODO: uncomment
       const res = await fetch(process.env.REACT_APP_API_BASE_URL + "/upload", {
         method: "POST",
         body: formData,
@@ -360,27 +380,37 @@ function CreateForm(props) {
           {/* start InvoiceNumber */}
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="جستجو..."
               value={formValues.InvoiceNumber ?? null}
               onChange={(e) => onFieldChange("InvoiceNumber", e.target.value)}
-              name="InvoiceNumber"
-              label="شماره فاکتور"
-              error={!!formErrors.InvoiceNumber}
-              helperText={formErrors.InvoiceNumber ?? " "}
-              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleSearch} >
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           {/* upload Image */}
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+
             <Button
+              sx={{ marginTop: '7px' }}
               disabled={!formValues.InvoiceNumber}
               size='small'
-              component="label"
+              //component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
             >
               آپلود تصویر فاکتور
               <input hidden type="file" onChange={handleFileUpload} />
             </Button>
+
             {formValues.InvoiceImageUrl && (
               <img
                 src={
@@ -389,11 +419,42 @@ function CreateForm(props) {
                 }
                 alt="Invoice"
                 width={100}
-                style={{ marginTop: 8 }}
+                style={{ marginTop: 3 }}
               />
             )}
           </Grid>
-
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <FormControl>
+              <FormLabel id="demo-row-radio-buttons-group-label">
+                تصاویر فاکتورهای مرتبط
+              </FormLabel>
+              <RadioGroup
+                value={selectedImageId}
+                onChange={(e) => handleImageSelect(Number(e.target.value))}
+              >
+                {imagesUrl?.map((item) => (
+                  <FormControlLabel
+                    key={item.id}
+                    value={item.id}
+                    control={<Radio />}
+                    label={
+                      <img
+                        src={
+                          process.env.REACT_APP_API_BASE_URL +
+                          `/files/${item.image}`
+                        }
+                        width={120}
+                        style={{ borderRadius: 10 }}
+                      />
+                    }
+                  />
+                ))}
+              </RadioGroup>
+              <FormHelperText error={!!formErrors.status}>
+                {formErrors.status ?? " "}
+              </FormHelperText>
+            </FormControl>
+          </Grid>
           {/* start Description */}
           <Grid size={{ xs: 12, sm: 5 }} sx={{ display: "flex" }}>
             <TextField

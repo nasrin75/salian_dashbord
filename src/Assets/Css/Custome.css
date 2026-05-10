@@ -48,7 +48,16 @@ body {
 /* .css-13pe1bg-MuiPickersSectionList-root-MuiPickersInputBase-sectionsContainer-MuiPickersOutlinedInput-sectionsContainer{
     width: 298px !important;
 } */
-
+.muirtl-1jsz50u-MuiInputBase-root-MuiOutlinedInput-root{
+    padding: 8px 25px 8px 0px !important;
+}
+.muirtl-5biumv-MuiButtonBase-root-MuiIconButton-root{
+    border: none !important;
+}
+.muirtl-5biumv-MuiButtonBase-root-MuiIconButton-root:active{
+    background-color: #efefef !important;
+    padding: 5px 0px !important;
+}
 .login-btn {
     background-color: #466457 !important;
     color: #fff !important;
