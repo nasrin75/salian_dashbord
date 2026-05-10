@@ -15,6 +15,9 @@ import { deleteEmployee, getEmployees } from '../../api/EmployeeApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
+import ListIcon from '@mui/icons-material/List';
+import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import EmployeeInventoryModal from '../../components/employee/EmployeeInventoryModal';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -24,6 +27,30 @@ export default function List() {
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [inventoryRows, setInventoryRows] = useState([]);
+    const [inventoryLoading, setInventoryLoading] = useState(false);
+
+    const handleOpenModal = async (row) => {
+        setSelectedEmployee(row);
+        setOpenModal(true);
+
+        setInventoryLoading(true);
+        try {
+            // call api
+            const data = row.inventories || [];
+            setInventoryRows(data);
+        } finally {
+            setInventoryLoading(false);
+        }
+    };
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        setSelectedEmployee(null);
+        setInventoryRows([]);
+    };
+
 
     const dialogs = useDialogs();
 
@@ -163,7 +190,7 @@ export default function List() {
                         //toast.error("مشکلی در گرفتن اطلاعات رخ داده است")
                         setIsLoading(false);
                     })
-                
+
             }
         },
         [dialogs, loadData],
@@ -196,7 +223,7 @@ export default function List() {
                             key="edit-item"
                             icon={<EditIcon />}
                             label="Edit"
-                            onClick={handleEmployeeEditPage(row.id)}
+                            onClick={() => handleEmployeeEditPage(row.id)}
                         />)
                     }
 
@@ -205,7 +232,7 @@ export default function List() {
                             key="delete-item"
                             icon={<DeleteIcon />}
                             label="Delete"
-                            onClick={handelDeleteEmployee(row)}
+                            onClick={() => handelDeleteEmployee(row)}
                         />)
                     }
                     if (hasPermission([PERMISSION.EMPLOYEE_HISTORY])) {
@@ -216,13 +243,25 @@ export default function List() {
                         // onClick={handleEmployeeEditPage(row)}
                         />)
                     }
+                    if (hasPermission([PERMISSION.INVENTORY_LIST])) {//TODO:get permission
+                        actions.push(<GridActionsCellItem
+                            key="delete-item"
+                            icon={<ListIcon />}
+                            label="list"
+                            onClick={() => handleOpenModal(row)}
+                        />)
+                    }
                     return actions;
                 }
 
             },] : [])
 
         ],
-        [handleEmployeeEditPage, handelDeleteEmployee],
+        [handleEmployeeEditPage,
+            handelDeleteEmployee,
+            handleOpenModal,
+            hasPermission,
+            isAlow],
     );
 
     const pageTitle = 'پرسنل';
@@ -289,6 +328,16 @@ export default function List() {
                     }}
                 />
             </Box>
+
+            <EmployeeInventoryModal
+                open={openModal}
+                onClose={handleCloseModal}
+                employee={selectedEmployee}
+                rows={inventoryRows}
+                loading={inventoryLoading}
+            />
+
+
         </PageContainer>
     );
 }
