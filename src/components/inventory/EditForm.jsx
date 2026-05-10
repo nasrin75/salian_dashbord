@@ -48,6 +48,8 @@ function EditForm(props) {
   const [allPossibleFeatures, setAllPossibleFeatures] = useState([]);
 
   useEffect(() => {
+    setFilePath(formValues?.invoiceImageUrl);
+
     //Equipment List
     getEquipments()
       .then((data) => setEquipments(data.data.data))
@@ -122,13 +124,11 @@ function EditForm(props) {
     if (formValues?.features && formValues.features.length > 0) {
       formValues.features.forEach(feature => {
         initialValues[feature.featureId] = feature.value;
-        //initialValues[feature.Name] = feature.name; 
       });
     }
-    //setFeatureValues(initialValues);
-    //p.1
+
     setFeatureValues(formValues?.features);
-    console.log(formValues)
+
   }, [formValues?.features]);
 
   const handleEquipmentChanges = async (e, value) => {
@@ -154,7 +154,7 @@ function EditForm(props) {
   }
 
   const getInventoryFeatures = async () => {
-    console.log('formValues.equipmentId', formValues.equipmentId)
+    
     await getEquipmentFeatures(formValues.equipmentId)
       .then((data) => {
         const list = data.data.data;
@@ -201,7 +201,7 @@ function EditForm(props) {
     }
   };
 
-  console.log('filePath', filePath)
+
   //send data
   const handleSubmit = useCallback(
     async (event) => {
@@ -222,8 +222,8 @@ function EditForm(props) {
       onReset(formValues);
     }
   }, [formValues, onReset]);
-console.log( process.env.REACT_APP_API_BASE_URL +
-                  `/files/${filePath}`)
+  console.log(process.env.REACT_APP_API_BASE_URL +
+    `/files/${filePath}`)
   return (
     <Box
       component="form"
@@ -419,7 +419,7 @@ console.log( process.env.REACT_APP_API_BASE_URL +
           {/* upload Image */}
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Button
-            size='small'
+              size='small'
               component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
@@ -427,18 +427,18 @@ console.log( process.env.REACT_APP_API_BASE_URL +
               آپلود تصویر فاکتور
               <input hidden type="file" onChange={handleFileUpload} />
             </Button>
-            {formValues.invoiceImageurl || filePath && (
-              <img
-                src={
-                  process.env.REACT_APP_API_BASE_URL +
-                  `/files/${filePath}`
-                }
-                alt="Invoice"
-                width={100}
-                height={100}
-                style={{ margin: 3 }}
-              />
-            )}
+            {/* {filePath && ( */}
+            <img
+              src={
+                process.env.REACT_APP_API_BASE_URL +
+                `/files/${filePath}`
+              }
+              alt="Invoice"
+              width={100}
+              height={100}
+              style={{ margin: 3 }}
+            />
+            {/* )} */}
           </Grid>
 
           <Grid size={{ xs: 12, sm: 5 }} sx={{ display: "flex" }}>
