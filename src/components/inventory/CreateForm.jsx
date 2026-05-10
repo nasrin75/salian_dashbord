@@ -144,22 +144,22 @@ function CreateForm(props) {
 
   //#region Upload Image
   const handleFileUpload = async (event) => {
+    console.log('tessss')
     const file = event.target.files[0];
     if (!file) return;
-
     if (!formValues.InvoiceNumber) {
       toast.error(" برای اپلود تصویر شماره فاکتور الزامی است");
       return
     }
-
     const formData = new FormData();
     formData.append("file", file);
 
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("InvoiceNumber", `${formValues.InvoiceNumber}`);
+
       const token = localStorage.getItem("token");
-      formData.append("invoiceNumber", `${formValues.InvoiceNumber}`);
 
       const res = await fetch(process.env.REACT_APP_API_BASE_URL + "/upload", {
         method: "POST",
@@ -171,6 +171,7 @@ function CreateForm(props) {
 
       const data = await res.json();
 
+      //send image name that is created after uploaded file
       onFieldChange("InvoiceImageUrl", data.url);
       setFilePath(data.url);
       toast.success("فایل با موفقیت آپلود شد!");
@@ -179,6 +180,7 @@ function CreateForm(props) {
       toast.error("آپلود فایل با خطا مواجه شد.");
     }
   };
+  
   //#endregion
   return (
     <Box
@@ -216,11 +218,11 @@ function CreateForm(props) {
               disableClearable
               sx={{ width: 400 }}
               options={equipments}
-              error={!!formErrors.EquipmentId}
-              helperText={formErrors.EquipmentId ?? " "}
+              //error={!!formErrors.EquipmentId}
+              //helperText={formErrors.EquipmentId ?? ''}
               getOptionLabel={(option) => option.name}
               onChange={async (e, value) => handleEquipmentChanges(e, value)}
-              renderInput={(params) => <TextField {...params} label="قطعه" />}
+              renderInput={(params) => <TextField {...params}  helperText={formErrors.EquipmentId ?? ''}  label="قطعه" />}
             />
             <FormHelperText error={!!formErrors.EquipmentId}>
               {formErrors.EquipmentId ?? " "}
@@ -232,7 +234,7 @@ function CreateForm(props) {
               <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}
               >
                 <Autocomplete
-                  id="equipment-select-demo"
+                  id="itnumber-select-demo"
                   autoHighlight
                   disableClearable
                   sx={{ width: 400 }}
@@ -251,7 +253,7 @@ function CreateForm(props) {
           }
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
-              value={formValues.ItNumber ?? null}
+              value={formValues.ItNumber ?? ''}
               onChange={(e) => onFieldChange("ItNumber", e.target.value, 'number')}
               name="ItNumber"
               label="شماره IT"
@@ -287,13 +289,13 @@ function CreateForm(props) {
 
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Autocomplete
-              id="equipment-select-demo"
+              id="brand-select-demo"
               autoHighlight
               disableClearable
               sx={{ width: 400 }}
               options={brands}
-              error={!!formErrors.BrandId}
-              helperText={formErrors.BrandId ?? " "}
+              // error={!!formErrors.BrandId}
+              // helperText={formErrors.BrandId ?? " "}
               getOptionLabel={(option) => option.name}
               onChange={async (e, value) => {
                 if (!value) return;
@@ -383,7 +385,7 @@ function CreateForm(props) {
               variant="outlined"
               label="شماره فاکتور"
               placeholder="شماره فاکتور"
-              value={formValues.InvoiceNumber ?? null}
+              value={formValues.InvoiceNumber ?? ''}
               onChange={(e) => onFieldChange("InvoiceNumber", e.target.value)}
               InputProps={{
                 endAdornment: (
@@ -399,11 +401,10 @@ function CreateForm(props) {
           {/* upload Image */}
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
 
-            <Button
-              sx={{ marginTop: '7px' }}
-              disabled={!formValues.InvoiceNumber}
+             <Button
               size='small'
-              //component="label"
+              disabled={!formValues.InvoiceNumber}
+              component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
             >
@@ -423,7 +424,9 @@ function CreateForm(props) {
               />
             )}
           </Grid>
-          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+          {
+            imagesUrl && (
+              <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">
                 تصاویر فاکتورهای مرتبط
@@ -457,6 +460,9 @@ function CreateForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
+            )
+          }
+          
 
 
           {/* status part */}

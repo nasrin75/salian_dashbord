@@ -562,7 +562,7 @@ function EditForm(props) {
           }
 
           {/* end image section */}
-          {/* <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}></Grid> */}
+
 
           {/* status part */}
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>

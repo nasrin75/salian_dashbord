@@ -4,9 +4,9 @@ export function CreateValidation(inventory) {
   // if (!inventory.ItNumber) {
   //   issues = [...issues, { message: 'شماره IT الزامی است.', path: ['ItNumber'] }];
   // }
-  if (!inventory.PropertyNumber) {
-    issues = [...issues, { message: 'شماره اموال الزامی است.', path: ['PropertyNumber'] }];
-  }
+  // if (!inventory.PropertyNumber) {
+  //   issues = [...issues, { message: 'شماره اموال الزامی است.', path: ['PropertyNumber'] }];
+  // }
   if (!inventory.EmployeeId) {
     issues = [...issues, { message: 'انتخاب مالک الزامی است.', path: ['EmployeeId'] }];
   }
@@ -34,9 +34,9 @@ export function EditValidation(inventory) {
   // if (!inventory.itNumber) {
   //   issues = [...issues, { message: 'شماره IT الزامی است.', path: ['itNumber'] }];
   // }
-  if (!inventory.propertyNumber) {
-    issues = [...issues, { message: 'شماره اموال الزامی است.', path: ['propertyNumber'] }];
-  }
+  // if (!inventory.propertyNumber) {
+  //   issues = [...issues, { message: 'شماره اموال الزامی است.', path: ['propertyNumber'] }];
+  // }
   if (!inventory.employeeId) {
     issues = [...issues, { message: 'انتخاب مالک الزامی است.', path: ['employeeId'] }];
   }
