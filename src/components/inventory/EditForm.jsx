@@ -222,7 +222,8 @@ function EditForm(props) {
       onReset(formValues);
     }
   }, [formValues, onReset]);
-
+console.log( process.env.REACT_APP_API_BASE_URL +
+                  `/files/${filePath}`)
   return (
     <Box
       component="form"
@@ -416,8 +417,9 @@ function EditForm(props) {
           </Grid>
 
           {/* upload Image */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Button
+            size='small'
               component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
@@ -427,9 +429,13 @@ function EditForm(props) {
             </Button>
             {formValues.invoiceImageurl || filePath && (
               <img
-                src={filePath}
+                src={
+                  process.env.REACT_APP_API_BASE_URL +
+                  `/files/${filePath}`
+                }
                 alt="Invoice"
                 width={100}
+                height={100}
                 style={{ margin: 3 }}
               />
             )}

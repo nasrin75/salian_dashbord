@@ -32,7 +32,7 @@ function CreateForm(props) {
   const formErrors = formState.errors;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [invoiceNumber, setInvoiceNumber] = useState(false);
+  const [filePath, setFilePath] = useState('');
   const [isShowItPatentInput, setIsShowItPatentInput] = useState(false);
   const [equipments, setEquipments] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -131,7 +131,7 @@ function CreateForm(props) {
       toast.error(" برای اپلود تصویر شماره فاکتور الزامی است");
       return
     }
-    //console.log('inv',formValues.invoiceNumber,formValues.InvoiceNumber);
+ 
     const formData = new FormData();
     formData.append("file", file);
 
@@ -152,8 +152,8 @@ function CreateForm(props) {
 
       const data = await res.json();
 
-      onFieldChange("InvoiceImageUrl", data.filePath);
-
+      onFieldChange("InvoiceImageUrl", data.url);
+      setFilePath(data.url);
       toast.success("فایل با موفقیت آپلود شد!");
     } catch (err) {
       console.error(err);
@@ -373,6 +373,7 @@ function CreateForm(props) {
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Button
               disabled={!formValues.InvoiceNumber}
+              size='small'
               component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
@@ -383,8 +384,8 @@ function CreateForm(props) {
             {formValues.InvoiceImageUrl && (
               <img
                 src={
-                  process.env.REACT_APP_BASE_URL +
-                  `/${formValues.InvoiceImageUrl}`
+                  process.env.REACT_APP_API_BASE_URL +
+                  `/files/${filePath}`
                 }
                 alt="Invoice"
                 width={100}
