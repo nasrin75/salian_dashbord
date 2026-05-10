@@ -80,19 +80,7 @@ function EditForm(props) {
 
           setCurrentFeatureValues(initialFeatureValues);
 
-          const newFeatures = newFeatureValuesArray
-            .map(feature => {
-              const existingFeature = formValues.features?.find(f => f.featureId === feature.id);
-              const value = existingFeature ? existingFeature.value : '';
-              initialFeatureValues[feature.id] = value;
-
-              return value != '' || null
-                ? { featureId: feature.id, name: feature.name, value }
-                : null;
-            })
-            .filter(Boolean);
-            console.log('newFeatures',newFeatures)
-          onFieldChange('features', newFeatures);
+          onFieldChange('features', newFeatureValuesArray);
         })
         .catch(() => {
           console.error("Failed to fetch equipment features.");
