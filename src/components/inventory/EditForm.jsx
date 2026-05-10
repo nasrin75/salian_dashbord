@@ -37,7 +37,7 @@ function EditForm(props) {
 
   const formValues = formState.values;
   const formErrors = formState.errors;
-  const [isShowItPatentInput, setIsShowItPatentInput] = useState(formValues.itParentNumber ?? false);
+  const [isShowItPatentInput, setIsShowItPatentInput] = useState(formValues.itParentNumber?true: false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [brands, setBrands] = useState([]);
   const [equipments, setEquipments] = useState([]);
@@ -49,6 +49,89 @@ function EditForm(props) {
   const [features, setFeatures] = useState([]);
   const [featureValues, setFeatureValues] = useState({});
   const [allPossibleFeatures, setAllPossibleFeatures] = useState([]);
+  const [currentFeatureValues, setCurrentFeatureValues] = useState({});
+
+  useEffect(() => {
+    if (formValues.equipmentId) {
+      getExternalEquipmentInventories(formValues.equipmentId)
+        .then((data) => setItParentList(data.data.data))
+        .catch(() => console.error("Failed to fetch initial IT parent list"));
+    }
+
+  }, [formValues.equipmentId, formValues?.invoiceImageUrl]);
+
+  useEffect(() => {
+    if (formValues.equipmentId) {
+      getEquipmentFeatures(formValues.equipmentId)
+        .then((data) => {
+          const fetchedFeatures = data.data.data;
+          setAllPossibleFeatures(fetchedFeatures);
+
+          const initialFeatureValues = {};
+          const newFeatureValuesArray = fetchedFeatures.map(feature => {
+            const existingFeature = formValues.features?.find(f => f.featureId === feature.id);
+            const value = existingFeature ? existingFeature.value : '';
+            initialFeatureValues[feature.id] = value;
+            return { featureId: feature.id, name: feature.name, value: value };
+          });
+
+          setCurrentFeatureValues(initialFeatureValues);
+          onFieldChange('features', newFeatureValuesArray);
+        })
+        .catch(() => {
+          console.error("Failed to fetch equipment features.");
+          setAllPossibleFeatures([]);
+          setCurrentFeatureValues({});
+          onFieldChange('features', []);
+        });
+    } else {
+      // Clear features if no equipment is selected
+      setAllPossibleFeatures([]);
+      setCurrentFeatureValues({});
+      onFieldChange('features', []);
+    }
+  }, [formValues.equipmentId]);
+
+
+  const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
+    setCurrentFeatureValues(prevValues => {
+      const updatedValues = { ...prevValues, [featureIdToUpdate]: newValue };
+
+      const featuresArray = allPossibleFeatures.map(feature => ({
+        featureId: feature.id,
+        name: feature.name,
+        value: updatedValues[feature.id] || ''
+      }));
+
+      onFieldChange('features', featuresArray);
+      return updatedValues;
+    });
+  }, [allPossibleFeatures, onFieldChange]);
+
+ 
+  const handleEquipmentChanges = async (e, value) => {
+  
+    onFieldChange('equipmentId', value?.id || null);
+    setIsShowItPatentInput(false);
+
+   
+    // Fetch external inventories based on the new equipmentId
+    if (value?.id) {
+      try {
+        if (value.type == 1) { // 1 = intenral , 2= external
+          setIsShowItPatentInput(true);
+          const data = await getExternalEquipmentInventories(value.id);
+          setItParentList(data.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch IT parent list", error);
+        setItParentList([]);
+      }
+    } else {
+      setItParentList([]);
+    }
+  };
+
 
   useEffect(() => {
     setFilePath(formValues?.invoiceImageUrl);
@@ -99,20 +182,6 @@ function EditForm(props) {
     }
   }, [formValues, allPossibleFeatures]);
 
-  const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
-    setFeatureValues(prevValues => {
-      const updatedValues = prevValues.map(item => {
-        if (item.featureId === featureIdToUpdate) {
-          return { ...item, value: newValue };
-        }
-        return item;
-      });
-      onFieldChange('features', updatedValues)
-      return updatedValues;
-    });
-
-  }, []);
-
 
   useEffect(() => {
 
@@ -154,42 +223,19 @@ function EditForm(props) {
       });
   }
   //#endregion
-
-  const handleEquipmentChanges = async (e, value) => {
-    if (!value) return;
-
-    const EquipmentId = value.id;
-    onFieldChange("equipmentId", value?.id ?? null)
-    setIsShowItPatentInput(false);
-    if (value.type == 1) { // 1 = intenral , 2= external
-
-      setIsShowItPatentInput(true);
-      await getExternalEquipmentInventories(EquipmentId)
-        .then((data) => {
-          const list = data.data.data;
-          setItParentList(list);
-        })
-        .catch(() => {
-          //toast.error("خطا در دریافت ویژگی‌ها");
-        });
-    }
-
-    getInventoryFeatures();
-  }
-
   const getInventoryFeatures = async () => {
-console.log('getInventoryFeatures',formValues.equipmentId);
+   
     await getEquipmentFeatures(formValues.equipmentId)
       .then((data) => {
         const list = data.data.data;
         setFeatures(list);
-        console.log('getEquipmentFeatures', data.data.data)
+       
       })
       .catch(() => {
         //toast.error("خطا در دریافت ویژگی‌ها");
       });
   }
-console.log('setFeatures',features);
+
   //#region Upload
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -249,8 +295,7 @@ console.log('setFeatures',features);
       onReset(formValues);
     }
   }, [formValues, onReset]);
-  console.log(process.env.REACT_APP_API_BASE_URL +
-    `/files/${filePath}`)
+
   return (
     <Box
       component="form"
@@ -286,9 +331,10 @@ console.log('setFeatures',features);
               value={equipments.find(eq => eq.id === formValues.equipmentId) || null}
               options={equipments}
               getOptionLabel={(option) => option.name}
-              onChange={async (e, value) => handleEquipmentChanges(e, value)}
+              onChange={async (e, value) => {
+                await handleEquipmentChanges(e, value);
+              }}
               renderInput={(params) => <TextField {...params} label="قطعه" />}
-
             />
           </Grid>
           {
@@ -455,7 +501,7 @@ console.log('setFeatures',features);
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Button
               size='small'
-               disabled={!formValues.invoiceNumber}
+              disabled={!formValues.invoiceNumber}
               component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
@@ -493,7 +539,7 @@ console.log('setFeatures',features);
                       <FormControlLabel
                         key={item.id}
                         value={item.id}
-                        control={<Radio />}
+                        control={<Radio checked={formValues?.invoiceImageId == item.id ?? false} />}
                         label={
                           <img
                             src={
@@ -580,7 +626,8 @@ console.log('setFeatures',features);
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }} spacing={3}>
             {allPossibleFeatures?.map((feature) => {
-              const currentValue = featureValues.find(f => f.featureId === feature.id)?.value || '';
+              // Use the object state for current values
+              const currentValue = currentFeatureValues[feature.id] || '';
 
               return (
                 <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
@@ -595,6 +642,7 @@ console.log('setFeatures',features);
                 </Grid>
               );
             })}
+
           </Grid>
 
 
