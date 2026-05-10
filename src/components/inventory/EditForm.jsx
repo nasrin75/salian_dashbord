@@ -19,10 +19,11 @@ import { toast } from 'react-toastify';
 import { getEquipmentFeatures, getEquipments } from '../../api/EquipmentApi';
 import { getEmployees } from '../../api/EmployeeApi';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-
+import SearchIcon from '@mui/icons-material/Search';
 import { getExternalEquipmentInventories } from '../../api/InventoryApi';
 import { getBrands } from '../../api/BrandApi';
-import { Typography } from '@mui/material';
+import { IconButton, InputAdornment, Typography } from '@mui/material';
+import { getImagesUrlByInvoiceNumber } from '../../api/InvoiceImageApi';
 
 function EditForm(props) {
   const {
@@ -43,6 +44,8 @@ function EditForm(props) {
   const [employees, setEmployees] = useState([]);
   const [filePath, setFilePath] = useState('');
   const [itParentList, setItParentList] = useState([]);
+  const [imagesUrl, setImagesUrl] = useState([]);
+  const [selectedImageId, setSelectedImageId] = useState(null);
   const [features, setFeatures] = useState([]);
   const [featureValues, setFeatureValues] = useState({});
   const [allPossibleFeatures, setAllPossibleFeatures] = useState([]);
@@ -95,6 +98,7 @@ function EditForm(props) {
       setFeatureValues(initialArray);
     }
   }, [formValues, allPossibleFeatures]);
+
   const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
     setFeatureValues(prevValues => {
       const updatedValues = prevValues.map(item => {
@@ -108,6 +112,7 @@ function EditForm(props) {
     });
 
   }, []);
+
 
   useEffect(() => {
 
@@ -130,6 +135,25 @@ function EditForm(props) {
     setFeatureValues(formValues?.features);
 
   }, [formValues?.features]);
+  //#region InvoiceImage Section
+  useEffect(() => {
+    if (selectedImageId) {
+      onFieldChange('invoiceImageId', selectedImageId, 'radio')
+      //handleSearch(selectedImageId);
+    }
+  }, [selectedImageId]);
+
+  const handleImageSelect = async (id) => {
+    setSelectedImageId(id);
+  };
+  const handleSearch = async () => {
+    await getImagesUrlByInvoiceNumber(formValues.invoiceNumber)
+      .then((data) => setImagesUrl(data.data.data))
+      .catch((err) => {
+        console.log('err', err)
+      });
+  }
+  //#endregion
 
   const handleEquipmentChanges = async (e, value) => {
     if (!value) return;
@@ -154,23 +178,26 @@ function EditForm(props) {
   }
 
   const getInventoryFeatures = async () => {
-    
+console.log('getInventoryFeatures',formValues.equipmentId);
     await getEquipmentFeatures(formValues.equipmentId)
       .then((data) => {
         const list = data.data.data;
         setFeatures(list);
-        //console.log('setFeatures', list)
+        console.log('getEquipmentFeatures', data.data.data)
       })
       .catch(() => {
         //toast.error("خطا در دریافت ویژگی‌ها");
       });
   }
-
-  //Uploaded file func
+console.log('setFeatures',features);
+  //#region Upload
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+    if (!formValues.invoiceNumber) {
+      toast.error(" برای اپلود تصویر شماره فاکتور الزامی است");
+      return
+    }
     const formData = new FormData();
     formData.append("file", file);
 
@@ -200,7 +227,7 @@ function EditForm(props) {
       toast.error("آپلود فایل با خطا مواجه شد.");
     }
   };
-
+  //#endregion
 
   //send data
   const handleSubmit = useCallback(
@@ -234,7 +261,7 @@ function EditForm(props) {
       sx={{ width: '100%' }}
     >
       <FormGroup>
-        <Grid container spacing={2} sx={{ mb: 2, width: "100%" }}>
+        <Grid container spacing={1} sx={{ mb: 2, width: "100%" }}>
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Autocomplete
               id="employee-select-demo"
@@ -355,8 +382,6 @@ function EditForm(props) {
             />
           </Grid>
 
-
-
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ تحویل"
@@ -404,22 +429,33 @@ function EditForm(props) {
               }}
             />
           </Grid>
+
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
+              fullWidth
+              variant="outlined"
+              label="شماره فاکتور"
+              placeholder="شماره فاکتور"
               value={formValues.invoiceNumber ?? null}
               onChange={(e) => onFieldChange("invoiceNumber", e.target.value)}
-              name="invoiceNumber"
-              label="شماره فاکتور"
-              error={!!formErrors.invoiceNumber}
-              helperText={formErrors.invoiceNumber ?? " "}
-              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleSearch} >
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
 
+          {/* Image section */}
           {/* upload Image */}
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Button
               size='small'
+               disabled={!formValues.invoiceNumber}
               component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
@@ -427,40 +463,63 @@ function EditForm(props) {
               آپلود تصویر فاکتور
               <input hidden type="file" onChange={handleFileUpload} />
             </Button>
-            {/* {filePath && ( */}
-            <img
-              src={
-                process.env.REACT_APP_API_BASE_URL +
-                `/files/${filePath}`
-              }
-              alt="Invoice"
-              width={100}
-              height={100}
-              style={{ margin: 3 }}
-            />
-            {/* )} */}
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 5 }} sx={{ display: "flex" }}>
-            <TextField
-              sx={{
-                '& .MuiInputBase-root': {
-                  minRows: 50,
-                  height: '200px'
+            {filePath && (
+              <img
+                src={
+                  process.env.REACT_APP_API_BASE_URL +
+                  `/files/${filePath}`
                 }
-              }}
-              id="outlined-multiline-flexible-grid"
-              label="توضیحات"
-              multiline
-              value={formValues.description}
-              onChange={(e) => onFieldChange('Description', e.target.value)}
-              variant="outlined"
-              placeholder="اینجا بنویسید..."
-              fullWidth
-            />
+                alt="Invoice"
+                width={100}
+                height={100}
+                style={{ margin: 3 }}
+              />
+            )}
           </Grid>
+          {
+            imagesUrl && (
+              <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
+                <FormControl>
+                  <FormLabel id="demo-row-radio-buttons-group-label">
+                    تصاویر فاکتورهای مرتبط
+                  </FormLabel>
+                  <RadioGroup
+                    row
+                    sx={{ gap: 2 }}
+                    value={selectedImageId}
+                    onChange={(e) => handleImageSelect(Number(e.target.value))}
+                  >
+                    {imagesUrl?.map((item) => (
+                      <FormControlLabel
+                        key={item.id}
+                        value={item.id}
+                        control={<Radio />}
+                        label={
+                          <img
+                            src={
+                              process.env.REACT_APP_API_BASE_URL +
+                              `/files/${item.image}`
+                            }
+                            width={120}
+                            style={{ borderRadius: 10 }}
+                          />
+                        }
+                      />
+                    ))}
+                  </RadioGroup>
+                  <FormHelperText error={!!formErrors.status}>
+                    {formErrors.status ?? " "}
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
+            )
+          }
+
+          {/* end image section */}
+          {/* <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}></Grid> */}
+
           {/* status part */}
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">
                 وضعیت
@@ -495,7 +554,24 @@ function EditForm(props) {
             </FormControl>
           </Grid>
           {/* end status part */}
-
+          <Grid size={{ xs: 12, sm: 5 }} sx={{ display: "flex" }}>
+            <TextField
+              sx={{
+                '& .MuiInputBase-root': {
+                  minRows: 50,
+                  height: '200px'
+                }
+              }}
+              id="outlined-multiline-flexible-grid"
+              label="توضیحات"
+              multiline
+              value={formValues.description}
+              onChange={(e) => onFieldChange('Description', e.target.value)}
+              variant="outlined"
+              placeholder="اینجا بنویسید..."
+              fullWidth
+            />
+          </Grid>
           {/* show equipment features */}
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <Typography variant="h6" sx={{ mb: 2 }}>

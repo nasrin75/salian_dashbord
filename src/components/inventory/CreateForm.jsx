@@ -12,7 +12,6 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { getEquipmentFeatures, getEquipments } from "../../api/EquipmentApi";
 import { toast } from "react-toastify";
-import { getLocations } from "../../api/LocationApi";
 import { getEmployees } from "../../api/EmployeeApi";
 import Autocomplete from "@mui/material/Autocomplete";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -22,7 +21,6 @@ import FormLabel from "@mui/material/FormLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import { getBrands } from "../../api/BrandApi";
 import { getExternalEquipmentInventories } from "../../api/InventoryApi";
-import { GridKeyboardArrowRight } from "@mui/x-data-grid";
 import { IconButton, InputAdornment, Typography } from "@mui/material";
 import { getImagesUrlByInvoiceNumber } from "../../api/InvoiceImageApi";
 import SearchIcon from '@mui/icons-material/Search';
@@ -77,7 +75,7 @@ function CreateForm(props) {
 
   useEffect(() => {
     if (selectedImageId) {
-      onFieldChange('InvoiceImageId',selectedImageId)
+      onFieldChange('InvoiceImageId', selectedImageId)
       //handleSearch(selectedImageId);
     }
   }, [selectedImageId]);
@@ -143,7 +141,8 @@ function CreateForm(props) {
 
     getFeaturesData(EquipmentId);
   }
-  //Uploaded file func
+
+  //#region Upload Image
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -180,7 +179,7 @@ function CreateForm(props) {
       toast.error("آپلود فایل با خطا مواجه شد.");
     }
   };
-
+  //#endregion
   return (
     <Box
       component="form"
@@ -382,7 +381,8 @@ function CreateForm(props) {
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="جستجو..."
+              label="شماره فاکتور"
+              placeholder="شماره فاکتور"
               value={formValues.InvoiceNumber ?? null}
               onChange={(e) => onFieldChange("InvoiceNumber", e.target.value)}
               InputProps={{
@@ -429,6 +429,8 @@ function CreateForm(props) {
                 تصاویر فاکتورهای مرتبط
               </FormLabel>
               <RadioGroup
+                row
+                sx={{ gap: 2 }}
                 value={selectedImageId}
                 onChange={(e) => handleImageSelect(Number(e.target.value))}
               >
@@ -455,28 +457,10 @@ function CreateForm(props) {
               </FormHelperText>
             </FormControl>
           </Grid>
-          {/* start Description */}
-          <Grid size={{ xs: 12, sm: 5 }} sx={{ display: "flex" }}>
-            <TextField
-              sx={{
-                '& .MuiInputBase-root': {
-                  minRows: 50,
-                  height: '200px'
-                }
-              }}
-              id="outlined-multiline-flexible-grid"
-              label="توضیحات"
-              multiline
-              //value={data.Body}
-              onChange={(e) => onFieldChange('Description', e.target.value)}
-              variant="outlined"
-              placeholder="اینجا بنویسید..."
-              fullWidth
-            />
-          </Grid>
+
 
           {/* status part */}
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">
                 وضعیت
@@ -512,8 +496,27 @@ function CreateForm(props) {
             </FormControl>
           </Grid>
           {/* end status part */}
+          {/* start Description */}
+          <Grid size={{ xs: 12, sm: 5 }} sx={{ display: "flex" }}>
+            <TextField
+              sx={{
+                '& .MuiInputBase-root': {
+                  minRows: 50,
+                  height: '200px'
+                }
+              }}
+              id="outlined-multiline-flexible-grid"
+              label="توضیحات"
+              multiline
+              //value={data.Body}
+              onChange={(e) => onFieldChange('Description', e.target.value)}
+              variant="outlined"
+              placeholder="اینجا بنویسید..."
+              fullWidth
+            />
+          </Grid>
           {/* show equipment features */}
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
               مشخصات:
             </Typography>
