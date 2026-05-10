@@ -6,7 +6,6 @@ import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import { getLocations } from '../../api/LocationApi';
 import Autocomplete from '@mui/material/Autocomplete';
 import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
@@ -20,7 +19,12 @@ import { toast } from 'react-toastify';
 import { getEquipmentFeatures, getEquipments } from '../../api/EquipmentApi';
 import { getEmployees } from '../../api/EmployeeApi';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useParams } from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
+import { getExternalEquipmentInventories } from '../../api/InventoryApi';
+import { getBrands } from '../../api/BrandApi';
+import { Dialog, DialogActions, DialogContent, IconButton, InputAdornment, Typography } from '@mui/material';
+import { getImagesUrlByInvoiceNumber } from '../../api/InvoiceImageApi';
+import CloseIcon from '@mui/icons-material/Close';
 
 function DuplicateForm(props) {
   const {
@@ -31,17 +35,124 @@ function DuplicateForm(props) {
     submitButtonLabel,
   } = props;
 
+
   const formValues = formState.values;
   const formErrors = formState.errors;
-
+  const [isShowItPatentInput, setIsShowItPatentInput] = useState(formValues.itParentNumber ? true : false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [locations, setLocations] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [equipments, setEquipments] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [filePath, setFilePath] = useState('');
+  const [itParentList, setItParentList] = useState([]);
+  const [imagesUrl, setImagesUrl] = useState([]);
+  const [selectedImageId, setSelectedImageId] = useState(null);
   const [features, setFeatures] = useState([]);
   const [featureValues, setFeatureValues] = useState({});
+  const [allPossibleFeatures, setAllPossibleFeatures] = useState([]);
+  const [currentFeatureValues, setCurrentFeatureValues] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState('');
 
   useEffect(() => {
+    if (formValues.equipmentId) {
+      getExternalEquipmentInventories(formValues.equipmentId)
+        .then((data) => setItParentList(data.data.data))
+        .catch(() => console.error("Failed to fetch initial IT parent list"));
+    }
+
+  }, [formValues.equipmentId, formValues?.invoiceImageUrl]);
+
+  useEffect(() => {
+    if (formValues.equipmentId) {
+      getEquipmentFeatures(formValues.equipmentId)
+        .then((data) => {
+          const fetchedFeatures = data.data.data;
+          setAllPossibleFeatures(fetchedFeatures);
+
+          const initialFeatureValues = {};
+          const newFeatureValuesArray = fetchedFeatures.map(feature => {
+            const existingFeature = formValues.features?.find(f => f.featureId === feature.id);
+            const value = existingFeature ? existingFeature.value : '';
+            initialFeatureValues[feature.id] = value;
+            return { featureId: feature.id, name: feature.name, value: value };
+          });
+
+          setCurrentFeatureValues(initialFeatureValues);
+          
+           const newFeatures = newFeatureValuesArray
+            .map(feature => {
+              const existingFeature = formValues.features?.find(f => f.featureId === feature.id);
+              const value = existingFeature ? existingFeature.value : '';
+              initialFeatureValues[feature.id] = value;
+
+              return value != '' || null
+                ? { featureId: feature.id, name: feature.name, value }
+                : null;
+            })
+            .filter(Boolean);
+            console.log('newFeatures',newFeatures)
+          onFieldChange('features', newFeatures);
+          //onFieldChange('features', newFeatureValuesArray);
+        })
+        .catch(() => {
+          console.error("Failed to fetch equipment features.");
+          setAllPossibleFeatures([]);
+          setCurrentFeatureValues({});
+          onFieldChange('features', []);
+        });
+    } else {
+      // Clear features if no equipment is selected
+      setAllPossibleFeatures([]);
+      setCurrentFeatureValues({});
+      onFieldChange('features', []);
+    }
+  }, [formValues.equipmentId]);
+
+
+  const handleFeatureChange = useCallback((featureIdToUpdate, newValue) => {
+    setCurrentFeatureValues(prevValues => {
+      const updatedValues = { ...prevValues, [featureIdToUpdate]: newValue };
+
+      const featuresArray = allPossibleFeatures.map(feature => ({
+        featureId: feature.id,
+        name: feature.name,
+        value: updatedValues[feature.id] || ''
+      }));
+
+      onFieldChange('features', featuresArray);
+      return updatedValues;
+    });
+  }, [allPossibleFeatures, onFieldChange]);
+
+
+  const handleEquipmentChanges = async (e, value) => {
+
+    onFieldChange('equipmentId', value?.id || null);
+    setIsShowItPatentInput(false);
+
+
+    // Fetch external inventories based on the new equipmentId
+    if (value?.id) {
+      try {
+        if (value.type == 1) { // 1 = intenral , 2= external
+          setIsShowItPatentInput(true);
+          const data = await getExternalEquipmentInventories(value.id);
+          setItParentList(data.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch IT parent list", error);
+        setItParentList([]);
+      }
+    } else {
+      setItParentList([]);
+    }
+  };
+
+
+  useEffect(() => {
+    setFilePath(formValues?.invoiceImageUrl);
+
     //Equipment List
     getEquipments()
       .then((data) => setEquipments(data.data.data))
@@ -49,11 +160,10 @@ function DuplicateForm(props) {
         //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
       });
 
-    //Location List
-    getLocations()
-      .then((data) => setLocations(data.data.data))
+    getBrands()
+      .then((data) => setBrands(data.data.data))
       .catch(() => {
-        //toast("مشکلی در گرفتن لیست بخش ها رخ داده است")
+        //toast("مشکلی در گرفتن لیست قطعات رخ داده است")
       });
 
     //Location List
@@ -63,32 +173,114 @@ function DuplicateForm(props) {
         //toast("مشکلی در گرفتن لیست پرسنل ها رخ داده است")
       });
 
-  }, []);
-
-  //get features by equipment to enter featureValues
-  const getFeaturesData = async (equipmentID) => {
-    await getEquipmentFeatures(equipmentID)
+    getExternalEquipmentInventories(formValues.equipmentId)
       .then((data) => {
         const list = data.data.data;
-        setFeatures(list);
+        setItParentList(list);
       })
       .catch(() => {
         //toast.error("خطا در دریافت ویژگی‌ها");
       });
+    getInventoryFeatures();
+    //setFeatureValues(formValues.features)
+  }, []);
+
+  useEffect(() => {
+    if (formValues?.features && formValues.features.length > 0) {
+      setFeatureValues(formValues.features);
+    } else {
+
+      const initialArray = allPossibleFeatures.map(feature => ({
+        featureId: feature.id,
+        name: feature.name,
+        value: '',
+      }));
+      setFeatureValues(initialArray);
+    }
+  }, [formValues, allPossibleFeatures]);
+
+
+  useEffect(() => {
+
+    getEquipmentFeatures(formValues.equipmentId)
+      .then((data) => {
+        setAllPossibleFeatures(data.data.data);
+      })
+      .catch(() => {
+        console.error("Failed to fetch all possible features.");
+        setAllPossibleFeatures([]);
+      });
+
+    const initialValues = {};
+    if (formValues?.features && formValues.features.length > 0) {
+      formValues.features.forEach(feature => {
+        initialValues[feature.featureId] = feature.value;
+      });
+    }
+
+    setFeatureValues(formValues?.features);
+
+  }, [formValues?.features]);
+  //#region InvoiceImage Section
+  useEffect(() => {
+    if (selectedImageId) {
+      onFieldChange('invoiceImageId', selectedImageId, 'radio')
+      //handleSearch(selectedImageId);
+    }
+  }, [selectedImageId]);
+
+  const handleImageSelect = async (id) => {
+    setSelectedImageId(id);
+  };
+  const handleSearch = async () => {
+    await getImagesUrlByInvoiceNumber(formValues.invoiceNumber)
+      .then((data) => setImagesUrl(data.data.data))
+      .catch((err) => {
+        console.log('err', err)
+      });
+  }
+  //#endregion
+
+  //#region image dialog
+  const handleImageClick = (imageUrl) => {
+    setSelectedImageUrl(imageUrl);
+    setOpenDialog(true);
   };
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedImageUrl('');
+  };
+  //#endregion
 
-  //Uploaded file func
+  const getInventoryFeatures = async () => {
+
+    await getEquipmentFeatures(formValues.equipmentId)
+      .then((data) => {
+        const list = data.data.data;
+        setFeatures(list);
+
+      })
+      .catch(() => {
+        //toast.error("خطا در دریافت ویژگی‌ها");
+      });
+  }
+
+  //#region Upload
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+    if (!formValues.invoiceNumber) {
+      toast.error(" برای اپلود تصویر شماره فاکتور الزامی است");
+      return
+    }
     const formData = new FormData();
     formData.append("file", file);
 
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("invoiceNumber", `${formValues.invoiceNumber}`);
 
       const token = localStorage.getItem("token");
 
@@ -103,14 +295,16 @@ function DuplicateForm(props) {
       const data = await res.json();
 
       //send image name that is created after uploaded file
-      onFieldChange("InvoiceImage", data.fileName);
-
+      onFieldChange("invoiceImageUrl", data.url);
+      setFilePath(data.url);
       toast.success("فایل با موفقیت آپلود شد!");
     } catch (err) {
       console.error(err);
       toast.error("آپلود فایل با خطا مواجه شد.");
     }
   };
+  //#endregion
+
   //send data
   const handleSubmit = useCallback(
     async (event) => {
@@ -118,20 +312,12 @@ function DuplicateForm(props) {
       setIsSubmitting(true);
 
       try {
-        const payload = {
-          ...formValues,
-          Features: Object.keys(featureValues).map((id) => ({
-            FeatureId: Number(id),
-            Value: featureValues[id],
-          })),
-        };
-
-        await onSubmit(payload);
+        await onSubmit();
       } finally {
         setIsSubmitting(false);
       }
     },
-    [formValues, featureValues, onSubmit]
+    [formValues, featureValues, onSubmit, features]
   );
 
   const handleReset = useCallback(() => {
@@ -150,26 +336,8 @@ function DuplicateForm(props) {
       sx={{ width: '100%' }}
     >
       <FormGroup>
-        <Grid container spacing={2} sx={{ mb: 2, width: "100%" }}>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <Autocomplete
-              id="equipment-select-demo"
-              autoHighlight
-              disableClearable
-              sx={{ width: 400 }}
-              value={equipments.find(eq => eq.id === formValues.equipmentId) || null}
-              options={equipments}
-              getOptionLabel={(option) => option.name}
-              onChange={async (e, value) => {
-                if (!value) return value;
-
-                onFieldChange("equipmentId", value?.id ?? null);
-                getFeaturesData(value.id);
-              }}
-              renderInput={(params) => <TextField {...params} label="قطعه" />}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+        <Grid container spacing={1} sx={{ mb: 2, width: "100%" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Autocomplete
               id="employee-select-demo"
               sx={{ width: 400 }}
@@ -184,54 +352,45 @@ function DuplicateForm(props) {
               renderInput={(params) => <TextField {...params} label="مالک" />}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Autocomplete
-              id="location-select-demo"
-              sx={{ width: 400 }}
-              options={locations}
-              value={locations.find(l => l.id === formValues.locationId) || null}
+              id="equipment-select-demo"
               autoHighlight
               disableClearable
-              onChange={(event, value) =>
-                onFieldChange("locationId", value?.id ?? null)
-              }
-              getOptionLabel={(option) => option.title}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="بخش"
-                  slotProps={{
-                    htmlInput: {
-                      ...params.inputProps,
-                    },
-                  }}
+              sx={{ width: 400 }}
+              value={equipments.find(eq => eq.id === formValues.equipmentId) || null}
+              options={equipments}
+              getOptionLabel={(option) => option.name}
+              onChange={async (e, value) => {
+                await handleEquipmentChanges(e, value);
+              }}
+              renderInput={(params) => <TextField {...params} label="قطعه" />}
+            />
+          </Grid>
+          {
+            isShowItPatentInput && (
+              <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}
+              >
+                <Autocomplete
+                  id="equipment-select-demo"
+                  autoHighlight
+                  disableClearable
+                  sx={{ width: 400 }}
+                  value={itParentList.find(eq => eq.id == formValues.itParentNumber) || null}
+                  options={itParentList}
+                  error={!!formErrors.itParentNumber}
+                  helperText={formErrors.itParentNumber ?? " "}
+                  getOptionLabel={(option) => option.name}
+                  onChange={async (e, value) => onFieldChange("itParentNumber", value?.id ?? null)}
+                  renderInput={(params) => <TextField {...params} label="شماره IT Parent" />}
                 />
-              )}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.propertyNumber ?? ""}
-              onChange={(e) => onFieldChange("propertyNumber", e.target.value)}
-              name="propertyNumber"
-              label="شماره اموال"
-              error={!!formErrors.propertyNumber}
-              helperText={formErrors.propertyNumber ?? " "}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.serialNumber ?? ""}
-              onChange={(e) => onFieldChange("serialNumber", e.target.value)}
-              name="serialNumber"
-              label="شماره سریال"
-              error={!!formErrors.serialNumber}
-              helperText={formErrors.serialNumber ?? " "}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+                <FormHelperText error={!!formErrors.itParentNumber}>
+                  {formErrors.itParentNumber ?? " "}
+                </FormHelperText>
+              </Grid>
+            )
+          }
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.itNumber ?? null}
               onChange={(e) => onFieldChange("itNumber", e.target.value, 'number')}
@@ -242,30 +401,52 @@ function DuplicateForm(props) {
               fullWidth
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
-              value={formValues.itParentNumber ?? null}
-              onChange={(e) => onFieldChange("itParentNumber", e.target.value, 'number')}
-              name="itParentNumber"
-              label="شماره IT Parent"
-              error={!!formErrors.itParentNumber}
-              helperText={formErrors.itParentNumber ?? " "}
+              value={formValues.propertyNumber ?? ""}
+              onChange={(e) => onFieldChange("propertyNumber", e.target.value)}
+              name="propertyNumber"
+              label="شماره اموال"
+              error={!!formErrors.propertyNumber}
+              helperText={formErrors.propertyNumber ?? " "}
+              fullWidth
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <TextField
+              value={formValues.serialNumber ?? ""}
+              onChange={(e) => onFieldChange("serialNumber", e.target.value)}
+              name="serialNumber"
+              label="شماره سریال"
+              error={!!formErrors.serialNumber}
+              helperText={formErrors.serialNumber ?? " "}
               fullWidth
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.brandName ?? null}
-              onChange={(e) => onFieldChange("brandName", e.target.value)}
-              name="brandName"
-              label="برند"
-              error={!!formErrors.brandName}
-              helperText={formErrors.brandName ?? " "}
-              fullWidth
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <Autocomplete
+              id="equipment-select-demo"
+              autoHighlight
+              disableClearable
+              sx={{ width: 400 }}
+              value={brands.find(eq => eq.id === formValues.brandId) || null}
+              options={brands}
+              error={!!formErrors.brandId}
+              helperText={formErrors.brandId ?? " "}
+              getOptionLabel={(option) => option.name}
+              onChange={async (e, value) => {
+                if (!value) return;
+
+                onFieldChange("brandId", value.id);
+              }}
+              renderInput={(params) => <TextField {...params} label="برند" />}
             />
+            <FormHelperText error={!!formErrors.brandId}>
+              {formErrors.brandId ?? " "}
+            </FormHelperText>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <TextField
               value={formValues.modelName ?? null}
               onChange={(e) => onFieldChange("modelName", e.target.value)}
@@ -277,30 +458,7 @@ function DuplicateForm(props) {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              value={formValues.invoiceNumber ?? null}
-              onChange={(e) => onFieldChange("invoiceNumber", e.target.value)}
-              name="invoiceNumber"
-              label="شماره فاکتور"
-              error={!!formErrors.invoiceNumber}
-              helperText={formErrors.invoiceNumber ?? " "}
-              fullWidth
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
-            <TextField
-              label="توضیحات"
-              multiline
-              value={formValues.description ?? null}
-              onChange={(e) => onFieldChange("description", e.target.value)}
-              rows={2}
-              maxRows={Infinity}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ تحویل"
               value={
@@ -323,7 +481,7 @@ function DuplicateForm(props) {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <DatePicker
               label="تاریخ پایان گارانتی"
               value={
@@ -347,9 +505,33 @@ function DuplicateForm(props) {
               }}
             />
           </Grid>
+
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="شماره فاکتور"
+              placeholder="شماره فاکتور"
+              value={formValues.invoiceNumber ?? null}
+              onChange={(e) => onFieldChange("invoiceNumber", e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleSearch} >
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+
+          {/* Image section */}
           {/* upload Image */}
-          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <Button
+              size='small'
+              disabled={!formValues.invoiceNumber}
               component="label"
               variant="contained"
               startIcon={<CloudUploadIcon />}
@@ -357,20 +539,128 @@ function DuplicateForm(props) {
               آپلود تصویر فاکتور
               <input hidden type="file" onChange={handleFileUpload} />
             </Button>
-            {formValues.invoiceImage && (
+            {filePath && (
               <img
                 src={
-                  process.env.REACT_APP_BASE_URL +
-                  `/images/inventory/${formValues.invoiceImage}`
+                  process.env.REACT_APP_API_BASE_URL +
+                  `/files/${filePath}`
                 }
                 alt="Invoice"
                 width={100}
-                style={{ marginTop: 8 }}
+                height={100}
+                style={{ margin: 3 }}
               />
             )}
           </Grid>
+          {
+            imagesUrl && (
+              <Grid item xs={12} sm={12} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">تصاویر فاکتورهای مرتبط</FormLabel>
+                  <RadioGroup
+                    row
+                    sx={{ gap: 2, flexWrap: 'nowrap' }}
+                    value={selectedImageId}
+                    onChange={(e) => handleImageSelect(Number(e.target.value))}
+                  >
+                    {imagesUrl.map((item) => {
+                      const imageUrl = process.env.REACT_APP_API_BASE_URL + `/files/${item.image}`;
+                      return (
+                        <FormControlLabel
+                          key={item.id}
+                          value={item.id}
+                          control={<Radio checked={formValues?.invoiceImageId == item.id ?? false} />}
+                          label={
+                            <img
+                              src={imageUrl}
+                              width={120}
+                              style={{ borderRadius: 10, cursor: 'pointer' }}
+                              onClick={() => handleImageClick(imageUrl)}
+                              alt={`Preview of ${item.image}`}
+                            />
+                          }
+                        />
+                      );
+                    })}
+                  </RadioGroup>
+                  <FormHelperText error={!!formErrors.status}>
+                    {formErrors.status ?? " "}
+                  </FormHelperText>
+                </FormControl>
+
+                <Dialog
+                  open={openDialog}
+                  onClose={handleCloseDialog}
+                  maxWidth="md"
+                  fullWidth
+                  PaperProps={{
+                    style: {
+                      position: 'relative',
+                    },
+                  }}
+                >
+                  <DialogActions sx={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}>
+                    <IconButton onClick={handleCloseDialog} aria-label="close">
+                      <CloseIcon />
+                    </IconButton>
+                  </DialogActions>
+                  <DialogContent>
+                    <img
+                      src={selectedImageUrl}
+                      style={{ width: '100%', height: 'auto', display: 'block', margin: 'auto' }}
+                      alt="Enlarged view"
+                    />
+                  </DialogContent>
+                </Dialog>
+              </Grid>
+
+            )
+          }
+
+          {/* {
+            imagesUrl && (
+              <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
+                <FormControl>
+                  <FormLabel id="demo-row-radio-buttons-group-label">
+                    تصاویر فاکتورهای مرتبط
+                  </FormLabel>
+                  <RadioGroup
+                    row
+                    sx={{ gap: 2 }}
+                    value={selectedImageId}
+                    onChange={(e) => handleImageSelect(Number(e.target.value))}
+                  >
+                    {imagesUrl?.map((item) => (
+                      <FormControlLabel
+                        key={item.id}
+                        value={item.id}
+                        control={<Radio checked={formValues?.invoiceImageId == item.id ?? false} />}
+                        label={
+                          <img
+                            src={
+                              process.env.REACT_APP_API_BASE_URL +
+                              `/files/${item.image}`
+                            }
+                            width={120}
+                            style={{ borderRadius: 10 }}
+                          />
+                        }
+                      />
+                    ))}
+                  </RadioGroup>
+                  <FormHelperText error={!!formErrors.status}>
+                    {formErrors.status ?? " "}
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
+            )
+          } */}
+
+          {/* end image section */}
+
+
           {/* status part */}
-          <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">
                 وضعیت
@@ -398,17 +688,6 @@ function DuplicateForm(props) {
                   control={<Radio checked={(formValues.status == "inuse" || formValues.status == "1") ?? false} />}
                   label="استفاده شده"
                 />
-                <FormControlLabel
-                  value="2"
-                  control={<Radio checked={(formValues.status == "sendToCharge" || formValues.status == "2") ?? false} />}
-                  label="ارسال جهت شارژ"
-                />
-                <FormControlLabel
-                  value="3"
-                  control={<Radio checked={(formValues.status == "backFromCharge" || formValues.status == "3") ?? false} />}
-                  label="بازگشت از شارژ"
-                />
-                <FormControlLabel value="4" control={<Radio checked={(formValues.status == "repair" || formValues.status == "4") ?? false} />} label="تعمیر" />
               </RadioGroup>
               <FormHelperText error={!!formErrors.status}>
                 {formErrors.status ?? " "}
@@ -416,28 +695,52 @@ function DuplicateForm(props) {
             </FormControl>
           </Grid>
           {/* end status part */}
-
-          {/* show equipment features */}
-          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }} spacing={3}>
-            {features.map((feature) => (
-              <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
-                <TextField
-                  //sx={{ width: 400 }}
-                  label={feature.name}
-                  //value={featureValues[feature.id] || ""}
-                  onChange={(e) =>
-
-                    setFeatureValues((prev) => ({
-                      ...prev,
-                      [feature.id]: e.target.value,
-                    }))
-
-                  }
-                  fullWidth
-                />
-              </Grid>
-            ))}
+          <Grid size={{ xs: 12, sm: 5 }} sx={{ display: "flex" }}>
+            <TextField
+              sx={{
+                '& .MuiInputBase-root': {
+                  minRows: 50,
+                  height: '200px'
+                }
+              }}
+              id="outlined-multiline-flexible-grid"
+              label="توضیحات"
+              multiline
+              value={formValues.description}
+              onChange={(e) => onFieldChange('Description', e.target.value)}
+              variant="outlined"
+              placeholder="اینجا بنویسید..."
+              fullWidth
+            />
           </Grid>
+          {/* show equipment features */}
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              مشخصات:
+            </Typography>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: "flex" }} spacing={3}>
+            {allPossibleFeatures?.map((feature) => {
+              // Use the object state for current values
+              const currentValue = currentFeatureValues[feature.id] || '';
+
+              return (
+                <Grid key={feature.id} size={{ xs: 12, sm: 12 }} paddingRight="5px">
+                  <TextField
+                    label={feature.name}
+                    value={currentValue}
+                    onChange={(e) =>
+                      handleFeatureChange(feature.id, e.target.value)
+                    }
+                    fullWidth
+                  />
+                </Grid>
+              );
+            })}
+
+          </Grid>
+
+
         </Grid>
       </FormGroup>
       <Stack direction="row" spacing={2} justifyContent="space-between">

@@ -22,8 +22,9 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SearchIcon from '@mui/icons-material/Search';
 import { getExternalEquipmentInventories } from '../../api/InventoryApi';
 import { getBrands } from '../../api/BrandApi';
-import { IconButton, InputAdornment, Typography } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, IconButton, InputAdornment, Typography } from '@mui/material';
 import { getImagesUrlByInvoiceNumber } from '../../api/InvoiceImageApi';
+import CloseIcon from '@mui/icons-material/Close';
 
 function EditForm(props) {
   const {
@@ -37,7 +38,7 @@ function EditForm(props) {
 
   const formValues = formState.values;
   const formErrors = formState.errors;
-  const [isShowItPatentInput, setIsShowItPatentInput] = useState(formValues.itParentNumber?true: false);
+  const [isShowItPatentInput, setIsShowItPatentInput] = useState(formValues.itParentNumber ? true : false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [brands, setBrands] = useState([]);
   const [equipments, setEquipments] = useState([]);
@@ -50,6 +51,8 @@ function EditForm(props) {
   const [featureValues, setFeatureValues] = useState({});
   const [allPossibleFeatures, setAllPossibleFeatures] = useState([]);
   const [currentFeatureValues, setCurrentFeatureValues] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState('');
 
   useEffect(() => {
     if (formValues.equipmentId) {
@@ -76,7 +79,20 @@ function EditForm(props) {
           });
 
           setCurrentFeatureValues(initialFeatureValues);
-          onFieldChange('features', newFeatureValuesArray);
+
+          const newFeatures = newFeatureValuesArray
+            .map(feature => {
+              const existingFeature = formValues.features?.find(f => f.featureId === feature.id);
+              const value = existingFeature ? existingFeature.value : '';
+              initialFeatureValues[feature.id] = value;
+
+              return value != '' || null
+                ? { featureId: feature.id, name: feature.name, value }
+                : null;
+            })
+            .filter(Boolean);
+            console.log('newFeatures',newFeatures)
+          onFieldChange('features', newFeatures);
         })
         .catch(() => {
           console.error("Failed to fetch equipment features.");
@@ -108,13 +124,13 @@ function EditForm(props) {
     });
   }, [allPossibleFeatures, onFieldChange]);
 
- 
+
   const handleEquipmentChanges = async (e, value) => {
-  
+
     onFieldChange('equipmentId', value?.id || null);
     setIsShowItPatentInput(false);
 
-   
+
     // Fetch external inventories based on the new equipmentId
     if (value?.id) {
       try {
@@ -223,13 +239,26 @@ function EditForm(props) {
       });
   }
   //#endregion
+
+  //#region image dialog
+  const handleImageClick = (imageUrl) => {
+    setSelectedImageUrl(imageUrl);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedImageUrl('');
+  };
+  //#endregion
+
   const getInventoryFeatures = async () => {
-   
+
     await getEquipmentFeatures(formValues.equipmentId)
       .then((data) => {
         const list = data.data.data;
         setFeatures(list);
-       
+
       })
       .catch(() => {
         //toast.error("خطا در دریافت ویژگی‌ها");
@@ -524,6 +553,71 @@ function EditForm(props) {
           </Grid>
           {
             imagesUrl && (
+              <Grid item xs={12} sm={12} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">تصاویر فاکتورهای مرتبط</FormLabel>
+                  <RadioGroup
+                    row
+                    sx={{ gap: 2, flexWrap: 'nowrap' }}
+                    value={selectedImageId}
+                    onChange={(e) => handleImageSelect(Number(e.target.value))}
+                  >
+                    {imagesUrl.map((item) => {
+                      const imageUrl = process.env.REACT_APP_API_BASE_URL + `/files/${item.image}`;
+                      return (
+                        <FormControlLabel
+                          key={item.id}
+                          value={item.id}
+                          control={<Radio checked={formValues?.invoiceImageId == item.id ?? false} />}
+                          label={
+                            <img
+                              src={imageUrl}
+                              width={120}
+                              style={{ borderRadius: 10, cursor: 'pointer' }}
+                              onClick={() => handleImageClick(imageUrl)}
+                              alt={`Preview of ${item.image}`}
+                            />
+                          }
+                        />
+                      );
+                    })}
+                  </RadioGroup>
+                  <FormHelperText error={!!formErrors.status}>
+                    {formErrors.status ?? " "}
+                  </FormHelperText>
+                </FormControl>
+
+                <Dialog
+                  open={openDialog}
+                  onClose={handleCloseDialog}
+                  maxWidth="md"
+                  fullWidth
+                  PaperProps={{
+                    style: {
+                      position: 'relative',
+                    },
+                  }}
+                >
+                  <DialogActions sx={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}>
+                    <IconButton onClick={handleCloseDialog} aria-label="close">
+                      <CloseIcon />
+                    </IconButton>
+                  </DialogActions>
+                  <DialogContent>
+                    <img
+                      src={selectedImageUrl}
+                      style={{ width: '100%', height: 'auto', display: 'block', margin: 'auto' }}
+                      alt="Enlarged view"
+                    />
+                  </DialogContent>
+                </Dialog>
+              </Grid>
+
+            )
+          }
+
+          {/* {
+            imagesUrl && (
               <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
                 <FormControl>
                   <FormLabel id="demo-row-radio-buttons-group-label">
@@ -559,7 +653,7 @@ function EditForm(props) {
                 </FormControl>
               </Grid>
             )
-          }
+          } */}
 
           {/* end image section */}
 

@@ -21,9 +21,10 @@ import FormLabel from "@mui/material/FormLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import { getBrands } from "../../api/BrandApi";
 import { getExternalEquipmentInventories } from "../../api/InventoryApi";
-import { IconButton, InputAdornment, Typography } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, IconButton, InputAdornment, Typography } from "@mui/material";
 import { getImagesUrlByInvoiceNumber } from "../../api/InvoiceImageApi";
 import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 
 function CreateForm(props) {
   const { formState, onFieldChange, onSubmit, submitButtonLabel } = props;
@@ -42,6 +43,8 @@ function CreateForm(props) {
   const [selectedImageId, setSelectedImageId] = useState(null);
   const [features, setFeatures] = useState([]);
   const [featureValues, setFeatureValues] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState('');
 
   useEffect(() => {
     //Equipment List
@@ -142,6 +145,17 @@ function CreateForm(props) {
     getFeaturesData(EquipmentId);
   }
 
+  //#region image dialog
+  const handleImageClick = (imageUrl) => {
+    setSelectedImageUrl(imageUrl);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedImageUrl('');
+  };
+  //#endregion
   //#region Upload Image
   const handleFileUpload = async (event) => {
     console.log('tessss')
@@ -180,7 +194,7 @@ function CreateForm(props) {
       toast.error("آپلود فایل با خطا مواجه شد.");
     }
   };
-  
+
   //#endregion
   return (
     <Box
@@ -222,7 +236,7 @@ function CreateForm(props) {
               //helperText={formErrors.EquipmentId ?? ''}
               getOptionLabel={(option) => option.name}
               onChange={async (e, value) => handleEquipmentChanges(e, value)}
-              renderInput={(params) => <TextField {...params}  helperText={formErrors.EquipmentId ?? ''}  label="قطعه" />}
+              renderInput={(params) => <TextField {...params} helperText={formErrors.EquipmentId ?? ''} label="قطعه" />}
             />
             <FormHelperText error={!!formErrors.EquipmentId}>
               {formErrors.EquipmentId ?? " "}
@@ -401,7 +415,7 @@ function CreateForm(props) {
           {/* upload Image */}
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
 
-             <Button
+            <Button
               size='small'
               disabled={!formValues.InvoiceNumber}
               component="label"
@@ -426,45 +440,68 @@ function CreateForm(props) {
           </Grid>
           {
             imagesUrl && (
-              <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
-            <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">
-                تصاویر فاکتورهای مرتبط
-              </FormLabel>
-              <RadioGroup
-                row
-                sx={{ gap: 2 }}
-                value={selectedImageId}
-                onChange={(e) => handleImageSelect(Number(e.target.value))}
-              >
-                {imagesUrl?.map((item) => (
-                  <FormControlLabel
-                    key={item.id}
-                    value={item.id}
-                    control={<Radio />}
-                    label={
-                      <img
-                        src={
-                          process.env.REACT_APP_API_BASE_URL +
-                          `/files/${item.image}`
-                        }
-                        width={120}
-                        style={{ borderRadius: 10 }}
-                      />
-                    }
-                  />
-                ))}
-              </RadioGroup>
-              <FormHelperText error={!!formErrors.status}>
-                {formErrors.status ?? " "}
-              </FormHelperText>
-            </FormControl>
-          </Grid>
+              <Grid item xs={12} sm={12} sx={{ display: "flex", flexDirection: "column", gap: 2 }}> 
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">تصاویر فاکتورهای مرتبط</FormLabel>
+                  <RadioGroup
+                    row
+                    sx={{ gap: 2, flexWrap: 'nowrap' }} 
+                    value={selectedImageId}
+                    onChange={(e) => handleImageSelect(Number(e.target.value))}
+                  >
+                    {imagesUrl.map((item) => {
+                      const imageUrl = process.env.REACT_APP_API_BASE_URL + `/files/${item.image}`;
+                      return (
+                        <FormControlLabel
+                          key={item.id}
+                          value={item.id}
+                          control={<Radio />}
+                          label={
+                            <img
+                              src={imageUrl}
+                              width={120}
+                              style={{ borderRadius: 10, cursor: 'pointer' }}
+                              onClick={() => handleImageClick(imageUrl)}
+                              alt={`Preview of ${item.image}`}
+                            />
+                          }
+                        />
+                      );
+                    })}
+                  </RadioGroup>
+                  <FormHelperText error={!!formErrors.status}>
+                    {formErrors.status ?? " "}
+                  </FormHelperText>
+                </FormControl>
+
+                <Dialog
+                  open={openDialog}
+                  onClose={handleCloseDialog}
+                  maxWidth="md" 
+                  fullWidth
+                  PaperProps={{
+                    style: {
+                      position: 'relative', 
+                    },
+                  }}
+                >
+                  <DialogActions sx={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}>
+                    <IconButton onClick={handleCloseDialog} aria-label="close">
+                      <CloseIcon />
+                    </IconButton>
+                  </DialogActions>
+                  <DialogContent>
+                    <img
+                      src={selectedImageUrl}
+                      style={{ width: '100%', height: 'auto', display: 'block', margin: 'auto' }}
+                      alt="Enlarged view"
+                    />
+                  </DialogContent>
+                </Dialog>
+              </Grid>
+
             )
           }
-          
-
-
           {/* status part */}
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <FormControl>
