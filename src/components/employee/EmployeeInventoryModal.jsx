@@ -288,7 +288,7 @@ const EmployeeInventoryModal = ({
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="xl">
             <DialogTitle>
                 لیست انبارهای {employee?.name}
-                <ExportExcelButton rows={inventories} selectedRows={rows} />
+                <ExportExcelButton rows={rows} selectedRows={rows} />
 
             </DialogTitle>
 
