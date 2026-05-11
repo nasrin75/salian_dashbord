@@ -29,6 +29,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 //import { useGridApiRef } from '@mui/x-data-grid';
 import { DataGridPro, useGridApiRef } from '@mui/x-data-grid-pro';
 import InventortAction from '../../components/inventory/InventoryAction';
+import ExportExcelButton from "../common/ExportExcelButton";
 
 const INITIAL_PAGE_SIZE = 10;
 const EmployeeInventoryModal = ({
@@ -182,7 +183,6 @@ const EmployeeInventoryModal = ({
     useEffect(() => {
         // Hide columns, the other columns will remain visible
         const visibilityColumns = {
-            location: false,
             user: false,
             expireWarrantyDate: false,
             deliveryDate: false,
@@ -211,13 +211,6 @@ const EmployeeInventoryModal = ({
         },
         [navigate],
     );
-
-    const handleDuplicateInventory = useCallback(
-        (inventoryID) => () => {
-            navigate(APP_ROUTES.INVENTORY_CREATE_DUPLICATE_PATH.replace(':inventoryID', inventoryID))
-        },
-        [navigate]
-    )
 
 
     const initialState = useMemo(
@@ -295,6 +288,8 @@ const EmployeeInventoryModal = ({
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="xl">
             <DialogTitle>
                 لیست انبارهای {employee?.name}
+                <ExportExcelButton rows={inventories} selectedRows={rows} />
+
             </DialogTitle>
 
             <DialogContent>
@@ -307,7 +302,7 @@ const EmployeeInventoryModal = ({
           pageSizeOptions={[5, 10]}
         /> */}
                 <DataGrid
-                    rows={inventories}
+                    rows={rows}
                     //rowCount={inventories.length}
                     columns={columns}
                     align="center"

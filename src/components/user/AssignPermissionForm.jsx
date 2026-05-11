@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Divider } from '@mui/material';
 import { getPermissionByCategory } from '../../api/PermissionApi';
-import PermissionNode from '../Common/PermissionNode';
+import PermissionNode from '../common/PermissionNode';
 
 const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
   const [permissionsByCategory, setPermissionsByCategory] = useState({});

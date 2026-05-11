@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Divider } from '@mui/material';
-import { getPermissionByCategory } from '../../api/PermissionApi';
-import PermissionNode from '../Common/PermissionNode';
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Divider } from "@mui/material";
+import { getPermissionByCategory } from "../../api/PermissionApi";
+import PermissionNode from "../common/PermissionNode";
 
 const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
   const [permissionsByCategory, setPermissionsByCategory] = useState({});
@@ -38,14 +38,18 @@ const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
           return null;
         };
 
-        const category = Object.keys(permissionsByCategory).find(cat =>
-          permissionsByCategory[cat].some(x => x.id === permission.parentId)
+        const category = Object.keys(permissionsByCategory).find((cat) =>
+          permissionsByCategory[cat].some((x) => x.id === permission.parentId)
         );
 
-        const parent = category ? findParent(permissionsByCategory[category]) : null;
+        const parent = category
+          ? findParent(permissionsByCategory[category])
+          : null;
 
         if (parent) {
-          const allChildSelected = parent.children.every(ch => newList.has(ch.id));
+          const allChildSelected = parent.children.every((ch) =>
+            newList.has(ch.id)
+          );
           if (allChildSelected) newList.add(parent.id);
           else newList.delete(parent.id);
         }
@@ -66,14 +70,14 @@ const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
     <Box component="form" onSubmit={handleSubmit} sx={{ p: 3 }}>
       {Object.keys(permissionsByCategory).map((cat) => (
         <Box key={cat} sx={{ mb: 4 }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
             {cat}
           </Typography>
 
           <Box
             sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
+              display: "flex",
+              flexWrap: "wrap",
               gap: 2,
             }}
           >
@@ -81,7 +85,7 @@ const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
               <Box
                 key={root.id}
                 sx={{
-                  width: { xs: '100%', sm: '47%', md: '31%', lg: '23%' },
+                  width: { xs: "100%", sm: "47%", md: "31%", lg: "23%" },
                   p: 2,
                 }}
               >
@@ -98,8 +102,11 @@ const AssignPermissionForm = ({ formState, onFieldChange, onSubmit }) => {
         </Box>
       ))}
 
-      <Box sx={{ mt: 3, textAlign: 'right' }}>
-        <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>
+      <Box sx={{ mt: 3, textAlign: "right" }}>
+        <button
+          type="submit"
+          style={{ padding: "10px 20px", cursor: "pointer" }}
+        >
           ذخیره
         </button>
       </Box>

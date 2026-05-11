@@ -248,7 +248,6 @@ export default function List() {
     useEffect(() => {
         // Hide columns, the other columns will remain visible
         const visibilityColumns = {
-            location: false,
             user: false,
             expireWarrantyDate: false,
             deliveryDate: false,

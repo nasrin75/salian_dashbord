@@ -18,3 +18,6 @@ export const createEmployee = (data) =>{
 export const updateEmployee = (data) =>{
     return Api.put('/employee',data)
 }
+export const getEmployeeInventories = (employeeID) =>{
+return Api.post(`/employee/inventories?employeeId=${employeeID}`)
+}

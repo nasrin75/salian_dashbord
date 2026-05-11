@@ -11,7 +11,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import PageContainer from '../../components/PageContainer';
 import { toast } from 'react-toastify';
-import { deleteEmployee, getEmployees } from '../../api/EmployeeApi';
+import { deleteEmployee, getEmployeeInventories, getEmployees } from '../../api/EmployeeApi';
 import { APP_ROUTES } from '../../utlis/constants/routePath';
 import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
@@ -38,9 +38,14 @@ export default function List() {
 
         setInventoryLoading(true);
         try {
+            console.log('row.id',row.id)
             // call api
-            const data = row.inventories || [];
-            setInventoryRows(data);
+            getEmployeeInventories(row.id)
+            //.then(resp=> console.log('getEmployeeInventories',resp.data.data))
+             .then(resp=> setInventoryRows(resp.data.data))
+            .catch(err=>console.log(err));
+            // const data = row.inventories || [];
+            // setInventoryRows(data);
         } finally {
             setInventoryLoading(false);
         }
