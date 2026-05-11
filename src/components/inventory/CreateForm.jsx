@@ -469,9 +469,6 @@ function CreateForm(props) {
                       );
                     })}
                   </RadioGroup>
-                  <FormHelperText error={!!formErrors.status}>
-                    {formErrors.status ?? " "}
-                  </FormHelperText>
                 </FormControl>
 
                 <Dialog
