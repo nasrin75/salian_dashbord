@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Box, TextField, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import CartridgeModal from './actions/CartridgeModal';
 import ReplaceModal from './actions/ReplaceModal';
+import RepairModal from './actions/RepairModal';
+import DepoModal from './actions/DepoModal';
 
 function DialogActionModal({ modalType, open, onClose, children }) {
   return (
@@ -27,11 +29,7 @@ function DialogActionModal({ modalType, open, onClose, children }) {
 
 export default function InventoryAction({ open: parentOpen, onClose: parentOnClose, selectedRows = [] }) {
   const [modalName, setModalName] = useState(null);
-const [modalData, setModalData] = useState({});
-  const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-  });
+  const [modalData, setModalData] = useState({});
 
   const handleOpenModal = (name) => {
     setModalName(name);
@@ -79,18 +77,19 @@ const [modalData, setModalData] = useState({});
         <MenuItem onClick={() => handleOpenModal("depo")}>تحویل به انبار مرکزی</MenuItem>
       </TextField>
 
-      {/* <DialogActionModal
-        modalType={modalName}
-        open={modalName !== null}
-        onClose={handleCloseModal}
-      > */}
-        {modalName === "cartridge" && (
-          <CartridgeModal open={modalName === "cartridge"} onClose={handleCloseModal} formData={formData} setFormData={setFormData} selectedRows={selectedRows} onSave={handleModalSave} />
-        )}
-        {modalName === "replace" && (
-          <ReplaceModal open={modalName === "replace"} onClose={handleCloseModal} selectedRows={selectedRows} onSave={handleModalSave}/>
-        )}
-      {/* </DialogActionModal> */}
+
+      {modalName === "cartridge" && (
+        <CartridgeModal open={modalName === "cartridge"} onClose={handleCloseModal} selectedRows={selectedRows} onSave={handleModalSave} />
+      )}
+      {modalName === "replace" && (
+        <ReplaceModal open={modalName === "replace"} onClose={handleCloseModal} selectedRows={selectedRows} onSave={handleModalSave} />
+      )}
+      {modalName === "repair" && (
+        <RepairModal open={modalName === "repair"} onClose={handleCloseModal} selectedRows={selectedRows} onSave={handleModalSave} />
+      )}
+      {modalName === "depo" && (
+        <DepoModal open={modalName === "depo"} onClose={handleCloseModal} selectedRows={selectedRows} onSave={handleModalSave} />
+      )}
     </Box>
   );
 }

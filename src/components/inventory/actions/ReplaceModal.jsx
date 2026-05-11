@@ -17,6 +17,7 @@ export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
         values: {
             Ids: selectedIds,
             ActionType: 'Replace',
+            EmployeeId: null,
             ReceiveDate: null,
             NewStatus: null,
             Description: null,

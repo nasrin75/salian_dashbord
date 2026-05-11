@@ -27,7 +27,7 @@ function TabPanel(props) {
     );
 }
 
-function a11yProps(index) {
+function tabProps(index) {
     return {
         id: 'simple-tab-' + index,
         'aria-controls': 'simple-tabpanel-' + index,
@@ -49,7 +49,9 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
             Ids: selectedIds,
             SendDate: null,
             ReturnDate: null,
+            RepairShop:null,
             InLocal: null,
+            Problem: null,
             Description: null,
             ActionType: 'SendToCharge'
         },
@@ -169,8 +171,8 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
 
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={tabValue} onChange={handleTabChange} aria-label="tabs example">
-                            <Tab label="ارسال"  {...a11yProps(0)} />
-                            <Tab label="برگشت" {...a11yProps(1)} />
+                            <Tab label="ارسال"  {...tabProps(0)} />
+                            <Tab label="برگشت" {...tabProps(1)} />
                         </Tabs>
                     </Box>
                     {/* Send Tab */}
@@ -197,12 +199,12 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
                                 <TextField
-                                    value={formValues.Shop ?? ''}
-                                    onChange={(e) => handleInputChange("Shop", e.target.value)}
-                                    name="Shop"
+                                    value={formValues.RepairShop ?? ''}
+                                    onChange={(e) => handleInputChange("RepairShop", e.target.value)}
+                                    name="RepairShop"
                                     label="نام تعمیرگاه"
-                                    error={!!formErrors.Shop}
-                                    helperText={formErrors.Shop ?? ' '}
+                                    error={!!formErrors.RepairShop}
+                                    helperText={formErrors.RepairShop ?? ' '}
                                     fullWidth
                                 />
                             </Grid>
@@ -276,12 +278,12 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
 
                             <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
                                 <TextField
-                                    value={formValues.Shop ?? ''}
-                                    onChange={(e) => handleInputChange("Shop", e.target.value)}
-                                    name="Shop"
+                                    value={formValues.RepairShop ?? ''}
+                                    onChange={(e) => handleInputChange("RepairShop", e.target.value)}
+                                    name="RepairShop"
                                     label="نام تعمیرگاه"
-                                    error={!!formErrors.Shop}
-                                    helperText={formErrors.Shop ?? ' '}
+                                    error={!!formErrors.RepairShop}
+                                    helperText={formErrors.RepairShop ?? ' '}
                                     fullWidth
                                 />
                             </Grid>
