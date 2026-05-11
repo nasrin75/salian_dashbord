@@ -129,7 +129,7 @@ export function userValidate(user) {
     // Scope
     if (user.Scope === null || user.Scope === undefined || String(user.Scope).trim() === '') {
       addIssue('انتخاب نوع IP الزامی است', ['Scope']);
-    } else {
+    } 
       // SingleIp
 
       if (Number(user.Scope) === 0) {
@@ -166,7 +166,7 @@ export function userValidate(user) {
               }
             }
           }
-        }
+        
       }
 
     }
@@ -300,10 +300,10 @@ export function userEditValidator(user) {
   if (user.IsCheckIp === true) {
     if (user.scope === null || user.scope === undefined || String(user.scope).trim() === '') {
       addIssue('انتخاب نوع IP الزامی است', ['scope']);
-    } else {
+    } 
       // SingleIp
       if (Number(user.scope) === 0) {
-        if (!user.startIp || String(user.startIp).trim() === '') {
+        if (!user.startIp || String(user.startIp).trim() === '' || String(user.startIp).trim() === '') {
           addIssue('IP را وارد کنید', ['startIp']);
         } else if (!isValidIpAddress(user.startIp)) {
           addIssue('فرمت IP نامعتبر است', ['startIp']);
@@ -311,9 +311,9 @@ export function userEditValidator(user) {
       }
 
       else if (Number(user.scope) === 1) {
-        if (!user.endIp || String(user.endIp).trim() === '') {
+        if (!user.endIp || String(user.endIp).trim() === '' || String(user.endIp).trim() === '...') {
           addIssue('انتخاب محدوده الزامی است', ['endIp']);
-        } else {
+        } 
           //const rangeParts = String(user.endIp).split(',').map(ip => ip.trim());
 
           // if (rangeParts.length !== 2) {
@@ -335,10 +335,6 @@ export function userEditValidator(user) {
                 addIssue('IP انتهایی باید بزرگ‌تر یا مساوی IP ابتدایی باشد.', ['endIp']);
               }
             }
-           
-         }
-      }
-
     }
   }
 

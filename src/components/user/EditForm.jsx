@@ -16,6 +16,9 @@ import { getRoles } from '../../api/RoleApi';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { PERMISSION } from '../../utlis/constants/Permissions';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const ipArrayToString = (arr) => {
   if (!arr) return '';
@@ -49,6 +52,8 @@ function EditForm(props) {
   const [singleIp, setSingleIp] = useState(ipStringToArray(formValues?.startIp));
   const [rangeIpFrom, setRangeIpFrom] = useState(ipStringToArray(formValues?.startIp));
   const [rangeIpTo, setRangeIpTo] = useState(ipStringToArray(formValues?.endIp));
+  const [showPassword, setShowPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
 
@@ -204,6 +209,9 @@ function EditForm(props) {
         }
 
         formValues.scope = scope;
+        if (newPassword.trim() !== '') {
+          formValues.password = newPassword;
+        }
         await onSubmit(formValues);
       } finally {
         setIsSubmitting(false);
@@ -244,14 +252,25 @@ function EditForm(props) {
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
-              value={''}
-              onChange={(e) => onFieldChange("password", e.target.value)}
+            type={showPassword ? "text" : "password"}
+              //value={''}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
               name="password"
               label="رمزعبور"
               error={!!formErrors.password}
               helperText={formErrors.password ?? ' '}
               fullWidth
               disabled={!hasPermission([PERMISSION.USER_VIEW_PASSWORD])}
+              InputProps={{
+                              endAdornment: (
+                                <InputAdornment position="end">
+                                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                  </IconButton>
+                                </InputAdornment>
+                              ),
+                            }}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
@@ -351,7 +370,7 @@ function EditForm(props) {
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 1 }} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
             <FormControl>
               <FormControlLabel
                 name="isCheckIp"
@@ -371,7 +390,7 @@ function EditForm(props) {
           </Grid>
           {
             formValues.isCheckIp && (
-              <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
+              <Grid size={{ xs: 12, sm: 10 }} sx={{ display: 'flex' }}>
                 <FormControl>
 
                   <RadioGroup
@@ -400,23 +419,37 @@ function EditForm(props) {
 
                   {(scope === '1') ? (
                     <>
+                      
                       <Grid item xs={12}>
                         <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
                           از:
                         </Typography>
+                        <FormHelperText error={!!formErrors.startIp}>
+                    {formErrors.startIp ?? ' '}
+                  </FormHelperText>
                         {renderIpInputs("from", rangeIpFrom)}
                       </Grid>
                       <Grid item xs={12}>
                         <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
                           تا:
                         </Typography>
+                        <FormHelperText error={!!formErrors.endIp}>
+                    {formErrors.endIp ?? ' '}
+                  </FormHelperText>
                         {renderIpInputs("to", rangeIpTo)}
                       </Grid>
                     </>
                   ) : (
+                    <>
+                      <FormHelperText error={!!formErrors.startIp}>
+                    {formErrors.startIp ?? ' '}
+                    </FormHelperText>
                     <Grid item xs={12}>
                       {renderIpInputs("single", singleIp)}
                     </Grid>
+                 
+                    </>
+                    
                   )}
 
                 </FormControl>

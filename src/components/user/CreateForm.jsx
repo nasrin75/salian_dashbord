@@ -17,9 +17,11 @@ import { getRoles } from '../../api/RoleApi';
 import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
 import { Fragment } from 'react';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const ipArrayToString = (arr) => arr.join('.');
-const ipStringToArray = (str) => str.split('.').map(num => num === '' ? '' : parseInt(num, 10));
 
 function UserForm(props) {
   const {
@@ -35,7 +37,7 @@ function UserForm(props) {
   const isMobileFieldEmpty = !formValues.Mobile;
   const isOtpFieldRelevant = !isMobileFieldEmpty;
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   const [isCheckIpBtn, setIsCheckIpBtn] = useState(false);
   const [scope, setScope] = useState();
   const [singleIp, setSingleIp] = useState(Array(4).fill(''));
@@ -214,6 +216,7 @@ function UserForm(props) {
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
+                type={showPassword ? "text" : "password"}
               value={formValues.Password ?? ''}
               onChange={(e) => onFieldChange("Password", e.target.value)}
               name="Password"
@@ -221,6 +224,15 @@ function UserForm(props) {
               error={!!formErrors.Password}
               helperText={formErrors.Password ?? ' '}
               fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
 
           </Grid>
@@ -386,6 +398,9 @@ function UserForm(props) {
 
                   {scope === '1' ? (
                     <>
+                     <FormHelperText error={!!formErrors.RangeIp}>
+                    {formErrors.RangeIp ?? ' '}
+                  </FormHelperText>
                       <Grid item xs={12}>
                         <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
                           از:
@@ -398,11 +413,19 @@ function UserForm(props) {
                         </Typography>
                         {renderIpInputs("to", rangeIpTo, setRangeIpTo)}
                       </Grid>
+                     
                     </>
                   ) : (
+                    <>
+                    <FormHelperText error={!!formErrors.SingleIp}>
+                    {formErrors.SingleIp ?? ' '}
+                  </FormHelperText>
                     <Grid item xs={12}>
                       {renderIpInputs("single", singleIp, setSingleIp)}
                     </Grid>
+                    
+                    </>
+                    
                   )}
 
                 </FormControl>
