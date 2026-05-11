@@ -25,7 +25,7 @@ function DialogActionModal({ modalType, open, onClose, children }) {
   );
 }
 
-export default function InventoryAction({ open: parentOpen, onClose: parentOnClose, rows = [] }) {
+export default function InventoryAction({ open: parentOpen, onClose: parentOnClose, selectedRows = [] }) {
   const [modalName, setModalName] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -55,56 +55,6 @@ export default function InventoryAction({ open: parentOpen, onClose: parentOnClo
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const renderModalContent = (name) => {
-    switch (name) {
-      case "cartridge":
-        return (
-          <>
-            <TextField
-              label="نام"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              fullWidth
-              margin="dense"
-            />
-            <TextField
-              label="سن"
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              fullWidth
-              margin="dense"
-            />
-            {/* سایر فیلدهای مودال شارژ کارتریج */}
-          </>
-        );
-      case "replace":
-        return (
-          <>
-            <p>فرم جابجایی در اینجا قرار می‌گیرد.</p>
-            {/* فیلدهای مربوط به جابجایی */}
-          </>
-        );
-      case "repair":
-        return (
-          <>
-            <p>فرم تعمیر در اینجا قرار می‌گیرد.</p>
-            {/* فیلدهای مربوط به تعمیر */}
-          </>
-        );
-      case "depo":
-        return (
-          <>
-            <p>فرم تحویل به انبار مرکزی در اینجا قرار می‌گیرد.</p>
-            {/* فیلدهای مربوط به تحویل به انبار */}
-          </>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
       <TextField
@@ -128,10 +78,10 @@ export default function InventoryAction({ open: parentOpen, onClose: parentOnClo
         onClose={handleCloseModal}
       >
         {modalName === "cartridge" && (
-          <CartridgeModal open={modalName === "cartridge"} onClose={handleCloseModal} formData={formData} setFormData={setFormData} />
+          <CartridgeModal open={modalName === "cartridge"} onClose={handleCloseModal} formData={formData} setFormData={setFormData} selectedRows={selectedRows} />
         )}
         {modalName === "replace" && (
-          <ReplaceModal open={modalName === "replace"} onClose={handleCloseModal} />
+          <ReplaceModal open={modalName === "replace"} onClose={handleCloseModal} selectedRows={selectedRows}/>
         )}
       </DialogActionModal>
     </Box>

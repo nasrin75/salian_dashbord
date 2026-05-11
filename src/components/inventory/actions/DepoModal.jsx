@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-const CartridgeModal = ({ onClose, setFormData, selectedRows = [] }) => {
+const DepoModal = ({ onClose, setFormData, selectedRows = [] }) => {
 
     const selectedIds = selectedRows && selectedRows.ids ? Array.from(selectedRows.ids) : [];
     if (!selectedIds || selectedIds.length === 0) {
@@ -9,10 +9,10 @@ const CartridgeModal = ({ onClose, setFormData, selectedRows = [] }) => {
         onClose(true)
 
     }
-    console.log('CartridgeModal selectedIds', selectedIds)
+    console.log('DepoModal selectedIds', selectedIds)
     return (
-        <p>CartridgeModal</p>
+        <p>DepoModal</p>
     );
 }
 
-export default CartridgeModal;
+export default DepoModal;

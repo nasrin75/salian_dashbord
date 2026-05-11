@@ -20,7 +20,7 @@ import { PERMISSION } from '../../utlis/constants/Permissions';
 import useTranslate from '../../hooks/useTranslate/useTranslate';
 import { getFeaturesName } from '../../api/FeatureApi';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import {  useGridApiRef } from '@mui/x-data-grid-pro';
+import { useGridApiRef } from '@mui/x-data-grid-pro';
 import InventortAction from '../../components/inventory/InventoryAction';
 import ExportExcelButton from '../../components/common/ExportExcelButton';
 
@@ -420,7 +420,7 @@ export default function List() {
                     <InventortAction
                         open={openModal}
                         onClose={handleCloseModal}
-                        rows={selectedRows}
+                        selectedRows={selectedRows}
                     />
                     <Button
                         variant="contained"
@@ -430,7 +430,7 @@ export default function List() {
                         افزودن به انبار
                     </Button>
 
-                   <ExportExcelButton rows={inventories} selectedRows={selectedRows} />
+                    <ExportExcelButton rows={inventories} selectedRows={selectedRows} />
 
                 </Stack>)
             }
