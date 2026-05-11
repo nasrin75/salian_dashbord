@@ -19,13 +19,10 @@ import useAuth from '../../hooks/useAuth/useAuth';
 import { PERMISSION } from '../../utlis/constants/Permissions';
 import useTranslate from '../../hooks/useTranslate/useTranslate';
 import { getFeaturesName } from '../../api/FeatureApi';
-import * as XLSX from 'xlsx';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import { IconButton } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-//import { useGridApiRef } from '@mui/x-data-grid';
-import { DataGridPro, useGridApiRef } from '@mui/x-data-grid-pro';
+import {  useGridApiRef } from '@mui/x-data-grid-pro';
 import InventortAction from '../../components/inventory/InventoryAction';
+import ExportExcelButton from '../../components/common/ExportExcelButton';
 
 
 const INITIAL_PAGE_SIZE = 10;
@@ -62,46 +59,6 @@ const INITIAL_PAGE_SIZE = 10;
 //     );
 //   }
 
-
-function ExportExcelButton({ rows = [], selectedRows = [] }) {
-    const handleExport = () => {
-        const safeRows = Array.isArray(rows) ? rows : [];
-        const selectedIds = selectedRows && selectedRows.ids ? Array.from(selectedRows.ids) : [];
-
-        const selectedAsString = selectedIds.map(String);
-
-        const filteredRows =
-            selectedAsString.length > 0
-                ? safeRows.filter((r) => selectedAsString.includes(String(r.id)))
-                : safeRows;
-
-        if (!filteredRows.length) {
-            alert("هیچ رکوردی برای خروجی وجود ندارد");
-            return;
-        }
-
-        const worksheet = XLSX.utils.json_to_sheet(filteredRows);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        XLSX.writeFile(workbook, "export.xlsx");
-    };
-
-    return (
-        <Button variant="contained" onClick={handleExport}>
-            Export Excel
-        </Button>
-    );
-}
-
-function Export({ inventories, selectedRows }) {
-    return (
-        <div style={{ display: "flex", gap: "10px", padding: "8px" }}>
-            {/* <ExportCsvButton rows={inventories} /> */}
-            <ExportExcelButton rows={inventories} selectedRows={selectedRows} />
-        </div>
-    );
-}
-
 export default function List() {
     const apiRef = useGridApiRef();
 
@@ -114,7 +71,13 @@ export default function List() {
     const [allFeatureNames, setAllFeatureNames] = useState([]);
     const [visibilityColumns, setVisibilityColumns] = useState({});
     const [selectedRows, setSelectedRows] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
 
+    //#region  Modal
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
+    //#endregion
     const [paginationModel, setPaginationModel] = useState({
         page: searchParams.get('page') ? Number(searchParams.get('page')) : 0,
         pageSize: searchParams.get('pageSize')
@@ -453,7 +416,12 @@ export default function List() {
             marginTop='20px'
             actions={hasPermission([PERMISSION.INVENTORY_CREATE]) &&
                 (<Stack direction="row" alignItems="center" spacing={1}>
-                     <InventortAction />
+
+                    <InventortAction
+                        open={openModal}
+                        onClose={handleCloseModal}
+                        rows={selectedRows}
+                    />
                     <Button
                         variant="contained"
                         onClick={handleCreateClick}
@@ -461,9 +429,9 @@ export default function List() {
                     >
                         افزودن به انبار
                     </Button>
-                   
-                    <Export inventories={inventories} selectedRows={selectedRows} />
-                       
+
+                   <ExportExcelButton rows={inventories} selectedRows={selectedRows} />
+
                 </Stack>)
             }
         >

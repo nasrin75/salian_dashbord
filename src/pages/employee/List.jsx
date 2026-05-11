@@ -38,12 +38,12 @@ export default function List() {
 
         setInventoryLoading(true);
         try {
-            console.log('row.id',row.id)
+            console.log('row.id', row.id)
             // call api
             getEmployeeInventories(row.id)
-            //.then(resp=> console.log('getEmployeeInventories',resp.data.data))
-             .then(resp=> setInventoryRows(resp.data.data))
-            .catch(err=>console.log(err));
+                //.then(resp=> console.log('getEmployeeInventories',resp.data.data))
+                .then(resp => setInventoryRows(resp.data.data))
+                .catch(err => console.log(err));
             // const data = row.inventories || [];
             // setInventoryRows(data);
         } finally {
@@ -229,7 +229,7 @@ export default function List() {
                             key="edit-item"
                             icon={<EditIcon />}
                             label="Edit"
-                            onClick={ handleEmployeeEditPage(row.id)}
+                            onClick={handleEmployeeEditPage(row.id)}
                         />)
                     }
 
@@ -238,7 +238,7 @@ export default function List() {
                             key="delete-item"
                             icon={<DeleteIcon />}
                             label="Delete"
-                            onClick={ handelDeleteEmployee(row)}
+                            onClick={handelDeleteEmployee(row)}
                         />)
                     }
                     if (hasPermission([PERMISSION.EMPLOYEE_HISTORY])) {
