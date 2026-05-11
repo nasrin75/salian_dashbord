@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import { getLocations } from '../../api/LocationApi';
 import MenuItem from '@mui/material/MenuItem';
 import { toast } from 'react-toastify';
+import { getBranches } from '../../api/BranchApi';
 
 function CreateForm(props) {
     const {
@@ -29,6 +30,7 @@ function CreateForm(props) {
     });
 
     const [locations, setLocations] = useState([]);
+    const [branches, setBranches] = useState([]);
 
     useEffect(() => {
 
@@ -39,6 +41,12 @@ function CreateForm(props) {
             .catch(err => {
                 //toast.error("مشکلی در گرفتن لیست بخش ها رخ داده است.")
             })
+
+        getBranches()
+            .then((data) => {
+                setBranches(data.data.data)
+            })
+            .catch(err => { })
 
     }, [])
 
@@ -66,7 +74,7 @@ function CreateForm(props) {
         >
             <FormGroup>
                 <Grid container spacing={2} sx={{ mb: 2, width: '100%' }}>
-                    <Grid size={{ xs: 12, sm: 3}} sx={{ display: 'flex' }}>
+                    <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
                         <TextField
                             value={formValues.Name ?? ''}
                             onChange={(e) => onFieldChange("Name", e.target.value)}
@@ -78,7 +86,7 @@ function CreateForm(props) {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
+                    <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
                         <TextField
                             value={formValues.Email ?? ''}
                             onChange={(e) => onFieldChange("Email", e.target.value)}
@@ -90,13 +98,13 @@ function CreateForm(props) {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
+                    <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
                         <TextField
                             select
                             value={formValues.LocationId ?? ''}
                             onChange={(e) => onFieldChange("LocationId", e.target.value)}
                             name="LocationId"
-                            label="موقعیت *"
+                            label="واحد *"
                             error={!!formErrors.LocationId}
                             helperText={formErrors.LocationId ?? ' '}
                             fullWidth
@@ -107,7 +115,23 @@ function CreateForm(props) {
                             })}
                         </TextField>
                     </Grid>
-                   
+                    <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex' }}>
+                        <TextField
+                            select
+                            value={formValues.BranchId ?? ''}
+                            onChange={(e) => onFieldChange("BranchId", e.target.value)}
+                            name="BranchId"
+                            label="شعبه"
+                            error={!!formErrors.BranchId}
+                            helperText={formErrors.BranchId ?? ' '}
+                            fullWidth
+                        >
+                            <MenuItem value="0" disabled>انتخاب کنید</MenuItem>
+                            {branches.map(branch => {
+                                return <MenuItem value={branch.id}>{branch.name}</MenuItem>
+                            })}
+                        </TextField>
+                    </Grid>
                 </Grid>
             </FormGroup>
             <Stack direction="row" spacing={2} justifyContent="space-between">

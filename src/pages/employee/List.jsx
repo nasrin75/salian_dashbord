@@ -214,7 +214,8 @@ export default function List() {
             { field: 'id', headerName: 'کدپرسنلی ', width: 240 },
             { field: 'name', headerName: 'نام', width: 140 },
             { field: 'email', headerName: 'ایمیل', width: 240 },
-            { field: 'location', headerName: 'موقعیت', width: 140 },
+            { field: 'location', headerName: 'واحد', width: 140 },
+            { field: 'branch', headerName: 'شعبه', width: 140 },
             ...(isAlow ? [{
                 field: '',
                 headerName: 'عملیات',
@@ -228,7 +229,7 @@ export default function List() {
                             key="edit-item"
                             icon={<EditIcon />}
                             label="Edit"
-                            onClick={() => handleEmployeeEditPage(row.id)}
+                            onClick={ handleEmployeeEditPage(row.id)}
                         />)
                     }
 
@@ -237,7 +238,7 @@ export default function List() {
                             key="delete-item"
                             icon={<DeleteIcon />}
                             label="Delete"
-                            onClick={() => handelDeleteEmployee(row)}
+                            onClick={ handelDeleteEmployee(row)}
                         />)
                     }
                     if (hasPermission([PERMISSION.EMPLOYEE_HISTORY])) {

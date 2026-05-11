@@ -12,6 +12,7 @@ const INITIAL_FORM_VALUES = {
     Name: '',
     Email: '',
     LocationId: '',
+    BranchId: '',
 };
 
 export default function Create() {

@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { getLocations } from '../../api/LocationApi';
 import MenuItem from '@mui/material/MenuItem';
+import { getBranches } from '../../api/BranchApi';
 
 function EditForm(props) {
   const {
@@ -23,6 +24,7 @@ function EditForm(props) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [locations, setLocations] = useState([]);
+  const [branches, setBranches] = useState([]);
 
   useEffect(() => {
 
@@ -33,7 +35,12 @@ function EditForm(props) {
       .catch(err => {
         //console.log(err)
       })
-
+      
+    getBranches()
+      .then((data) => {
+        setBranches(data.data.data)
+      })
+      .catch(err => { })
   }, [])
 
 
@@ -98,7 +105,7 @@ function EditForm(props) {
               value={formValues.locationId ?? ''}
               onChange={(e) => onFieldChange("locationId", e.target.value)}
               name="locationId"
-              label="موقعیت *"
+              label="واحد *"
               error={!!formErrors.locationId}
               helperText={formErrors.locationId ?? ' '}
               fullWidth
@@ -106,6 +113,24 @@ function EditForm(props) {
               <MenuItem value="0" disabled>انتخاب کنید</MenuItem>
               {locations.map(location => {
                 return <MenuItem value={location.id} selected={formValues.locationId === location.id ?? false}>{location.title}</MenuItem>
+              })}
+            </TextField>
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
+            <TextField
+              select
+              value={formValues.branchId ?? ''}
+              onChange={(e) => onFieldChange("branchId", e.target.value)}
+              name="branchId"
+              label="شعبه"
+              error={!!formErrors.branchId}
+              helperText={formErrors.branchId ?? ' '}
+              fullWidth
+            >
+              <MenuItem value="0" disabled>انتخاب کنید</MenuItem>
+              {branches.map(branch => {
+                return <MenuItem value={branch.id} selected={formValues.branchId === branch.id ?? false}>{branch.name}</MenuItem>
               })}
             </TextField>
           </Grid>
@@ -131,12 +156,14 @@ EditForm.propTypes = {
     errors: PropTypes.shape({
       name: PropTypes.string,
       email: PropTypes.string,
-      locationId: PropTypes.string,
+      locationId: PropTypes.number,
+      branchId: PropTypes.number,
     }).isRequired,
     values: PropTypes.shape({
       name: PropTypes.string,
       email: PropTypes.string,
-      locationId: PropTypes.string,
+      locationId: PropTypes.number,
+      branchId: PropTypes.number,
     }).isRequired,
   }).isRequired,
   onFieldChange: PropTypes.func.isRequired,
