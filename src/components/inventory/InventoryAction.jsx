@@ -27,7 +27,7 @@ function DialogActionModal({ modalType, open, onClose, children }) {
 
 export default function InventoryAction({ open: parentOpen, onClose: parentOnClose, selectedRows = [] }) {
   const [modalName, setModalName] = useState(null);
-
+const [modalData, setModalData] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -35,25 +35,32 @@ export default function InventoryAction({ open: parentOpen, onClose: parentOnClo
 
   const handleOpenModal = (name) => {
     setModalName(name);
+    setModalData({})
     // resetForm();
   };
 
   const handleCloseModal = () => {
     setModalName(null);
+    setModalData({})
     // resetForm();
   };
 
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      age: "",
-    });
+  const handleModalSave = (data) => {
+    console.log("داده‌های دریافتی از مودال:", data);
+    handleCloseModal();
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // const resetForm = () => {
+  //   setFormData({
+  //     name: "",
+  //     age: "",
+  //   });
+  // };
+
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
 
   return (
     <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
@@ -72,18 +79,18 @@ export default function InventoryAction({ open: parentOpen, onClose: parentOnClo
         <MenuItem onClick={() => handleOpenModal("depo")}>تحویل به انبار مرکزی</MenuItem>
       </TextField>
 
-      <DialogActionModal
+      {/* <DialogActionModal
         modalType={modalName}
         open={modalName !== null}
         onClose={handleCloseModal}
-      >
+      > */}
         {modalName === "cartridge" && (
-          <CartridgeModal open={modalName === "cartridge"} onClose={handleCloseModal} formData={formData} setFormData={setFormData} selectedRows={selectedRows} />
+          <CartridgeModal open={modalName === "cartridge"} onClose={handleCloseModal} formData={formData} setFormData={setFormData} selectedRows={selectedRows} onSave={handleModalSave} />
         )}
         {modalName === "replace" && (
-          <ReplaceModal open={modalName === "replace"} onClose={handleCloseModal} selectedRows={selectedRows}/>
+          <ReplaceModal open={modalName === "replace"} onClose={handleCloseModal} selectedRows={selectedRows} onSave={handleModalSave}/>
         )}
-      </DialogActionModal>
+      {/* </DialogActionModal> */}
     </Box>
   );
 }
