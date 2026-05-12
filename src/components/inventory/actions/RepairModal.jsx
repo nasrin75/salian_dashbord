@@ -226,7 +226,7 @@ export default function RepairModal({ open, onClose, selectedRows = [] }) {
                                     saveImages={handleInputChange}
                                     lable=" آپلود تصاویر"
                                     selectedIds={formValues.Ids}
-                                    folderName="Inventory/Repair"
+                                    folderName="Inventory/Repair/Send"
                                 />
                             </Grid>
                         </Grid>
@@ -320,7 +320,7 @@ export default function RepairModal({ open, onClose, selectedRows = [] }) {
                                     saveImages={handleInputChange}
                                     lable=" آپلود تصاویر"
                                     selectedIds={formValues.Ids}
-                                    folderName="Inventory/Repair"
+                                    folderName="Inventory/Repair/Back"
                                 />
                             </Grid>
                         </Grid>
