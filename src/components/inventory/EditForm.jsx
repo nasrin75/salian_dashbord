@@ -22,9 +22,12 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SearchIcon from '@mui/icons-material/Search';
 import { getExternalEquipmentInventories } from '../../api/InventoryApi';
 import { getBrands } from '../../api/BrandApi';
-import { Dialog, DialogActions, DialogContent, IconButton, InputAdornment, Typography } from '@mui/material';
+import { CircularProgress, Dialog, DialogActions, DialogContent, IconButton, InputAdornment, Typography } from '@mui/material';
 import { getImagesUrlByInvoiceNumber } from '../../api/InvoiceImageApi';
 import CloseIcon from '@mui/icons-material/Close';
+import MultiImageUploader from '../common/MultiImageUploader';
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import Gallery from '../common/Gallery';
 
 function EditForm(props) {
   const {
@@ -53,6 +56,7 @@ function EditForm(props) {
   const [currentFeatureValues, setCurrentFeatureValues] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     if (formValues.equipmentId) {
@@ -516,21 +520,30 @@ function EditForm(props) {
           {/* Image section */}
           {/* upload Image */}
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
-            <Button
-              size='small'
-              disabled={!formValues.invoiceNumber}
-              component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
-            >
-              آپلود تصویر فاکتور
-              <input hidden type="file" onChange={handleFileUpload} />
-            </Button>
+
+            <MultiImageUploader
+              maxFiles={1}
+              maxSizeMB={20}
+              folderName="Inventory"
+              onChange={(uploadedItems) => {
+                setImages(uploadedItems);
+                onFieldChange(
+                  "imageIds",
+                  uploadedItems.filter(x => x.id).map(x => x.id)
+                );
+              }}
+              saveImages={onFieldChange}
+              lable=" آپلود فاکتور"
+              invoiceNumber={formValues.invoiceNumber}
+            />
+
+          </Grid>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             {filePath && (
               <img
                 src={
-                  process.env.REACT_APP_API_BASE_URL +
-                  `/files/${filePath}`
+                  process.env.REACT_APP_BASE_HTTPS_URL +
+                  `/${filePath}`
                 }
                 alt="Invoice"
                 width={100}
@@ -551,7 +564,7 @@ function EditForm(props) {
                     onChange={(e) => handleImageSelect(Number(e.target.value))}
                   >
                     {imagesUrl.map((item) => {
-                      const imageUrl = process.env.REACT_APP_API_BASE_URL + `/files/${item.image}`;
+                      const imageUrl = process.env.REACT_APP_BASE_HTTPS_URL + `/${item.url}`;
                       return (
                         <FormControlLabel
                           key={item.id}
@@ -563,7 +576,7 @@ function EditForm(props) {
                               width={120}
                               style={{ borderRadius: 10, cursor: 'pointer' }}
                               onClick={() => handleImageClick(imageUrl)}
-                              alt={`Preview of ${item.image}`}
+                              alt={`Preview of ${item.url}`}
                             />
                           }
                         />
@@ -575,7 +588,7 @@ function EditForm(props) {
                   </FormHelperText>
                 </FormControl>
 
-                <Dialog
+                <Dialog 
                   open={openDialog}
                   onClose={handleCloseDialog}
                   maxWidth="md"
@@ -762,5 +775,56 @@ EditForm.propTypes = {
   submitButtonLabel: PropTypes.string.isRequired,
 };
 
-
+const ImageCard = ({ item, onDelete, onPreview, canDelete, isDeleting, isUploading, error }) => (
+  <Box
+    sx={{
+      width: 110,
+      height: 110,
+      position: "relative",
+      borderRadius: 2,
+      overflow: "hidden",
+      border: "1px solid #ddd",
+      cursor: "pointer",
+      "&:hover .overlay": { opacity: isUploading || error ? 1 : (item.fullUrl || item.previewUrl ? 1 : 0) },
+    }}
+  >
+    <Box
+      component="img"
+      src={item.fullUrl || item.previewUrl}
+      alt={`item-${item.uniqueKey}`}
+      onClick={onPreview}
+      sx={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        display: "block",
+        filter: isUploading ? 'blur(3px)' : (error ? 'grayscale(100%)' : 'none'),
+      }}
+    />
+    {(isUploading || error || canDelete) && (
+      <Box
+        className="overlay"
+        sx={{
+          position: "absolute",
+          inset: 0,
+          bgcolor: isUploading || error ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.35)",
+          opacity: 0,
+          transition: "0.2s",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 0.5,
+        }}
+      >
+        {isUploading && <CircularProgress size={20} color="inherit" />}
+        {error && <Typography variant="caption" color="error">خطا</Typography>}
+        {canDelete && !isUploading && !error && (
+          <IconButton size="small" onClick={(e) => { e.stopPropagation(); onDelete(); }} sx={{ color: "#fff" }}>
+            {isDeleting ? <CircularProgress size={16} color="inherit" /> : <DeleteOutlineIcon fontSize="small" />}
+          </IconButton>
+        )}
+      </Box>
+    )}
+  </Box>
+);
 export default EditForm;

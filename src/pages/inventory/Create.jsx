@@ -82,7 +82,7 @@ export default function Create() {
             };
 
             setFormValues(newFormValues);
-
+console.log('newFormValues ',newFormValues)
             const { issues } = CreateValidation(newFormValues);
 
             setFormErrors({
@@ -103,7 +103,7 @@ export default function Create() {
             return;
         }
         setFormErrors({});
-
+console.log('handleFormSubmit payload',payload)
         createInventory(JSON.stringify(payload))
             .then(() => {
                 toast.success("عملیات با موفقیت انجام شد.")

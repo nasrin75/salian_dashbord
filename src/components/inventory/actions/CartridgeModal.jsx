@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { CreateValidation } from "../../../validation/CartridgeValidation";
 import { useNavigate } from "react-router-dom";
+import MultiImageUploader from "../../common/MultiImageUploader";
 
 
 function TabPanel(props) {
@@ -36,7 +37,7 @@ function tabProps(index) {
 
 export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
     const navigate = useNavigate();
-      const selectedIds = selectedRows && selectedRows.ids ? Array.from(selectedRows.ids) : [];
+    const selectedIds = selectedRows && selectedRows.ids ? Array.from(selectedRows.ids) : [];
     if (!selectedIds || selectedIds.length === 0) {
 
         toast.error("انتخاب حداقل یه قطعه الزامی است.")
@@ -47,13 +48,14 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
     const [formState, setFormState] = useState(() => ({
         values: {
             Ids: selectedIds,
+            ActionType: 'SendToCharge',
             SendDate: null,
             ReturnDate: null,
-            RepairShop:null,
+            RepairShop: null,
             InLocal: null,
             Problem: null,
             Description: null,
-            ActionType: 'SendToCharge'
+            ImageIds: [],
         },
         errors: {},
     }));
@@ -61,7 +63,8 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
 
     const formValues = formState.values;
     const formErrors = formState.errors;
-  
+    const [images, setImages] = useState([]);
+
 
     //console.log(formValues.ActionType, tabValue)
     const setFormValues = useCallback((newFormValues) => {
@@ -89,7 +92,7 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                 ...formValues,
                 [name]: finalValue,
             };
-            console.log(name, value)
+            console.log("handleInputChange",name, value)
 
             setFormValues(newFormValues);
 
@@ -133,27 +136,20 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
     // };
 
     const handleSave = useCallback(async (payload) => {
-        const { issues } = CreateValidation(payload);
+        //TODO:add validation
+        // const { issues } = CreateValidation(payload);
 
-        if (issues && issues.length > 0) {
-            setFormErrors(
-                Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
-            );
-            return;
-        }
-        setFormErrors({});
+        // if (issues && issues.length > 0) {
+        //     setFormErrors(
+        //         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
+        //     );
+        //     return;
+        // }
+        // setFormErrors({});
         console.log('final', formValues)
         // call api
         alert('داده‌ها ذخیره شد!');
         handleCloseAndReset();
-        // createInventory(JSON.stringify(payload))
-        //     .then(() => {
-        //         toast.success("عملیات با موفقیت انجام شد.")
-        //         navigate(APP_ROUTES.INVENTORY_LIST_PATH + '?equipment=ALL');
-        //     })
-        //     .catch(() => {
-        //         //toast.error("مشکلی در افزودن به انبار رخ داده است")
-        //     })
 
     }, [navigate, setFormErrors]);
 
@@ -326,6 +322,23 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                                     onChange={(e) => handleInputChange('Description', e.target.value)}
                                     variant="outlined"
                                     fullWidth
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
+                                <MultiImageUploader
+                                    maxFiles={1}
+                                    maxSizeMB={20}
+                                    onChange={(uploadedItems) => {
+                                        setImages(uploadedItems);
+                                        handleInputChange(
+                                            "ImageIds",
+                                            uploadedItems.filter(x => x.id).map(x => x.id)
+                                        );
+                                    }}
+                                    saveImages={handleInputChange}
+                                    lable=" آپلود فاکتور"
+                                    selectedIds={formValues.Ids}
+                                    folderName="Inventory/Cartridge"
                                 />
                             </Grid>
                         </Grid>

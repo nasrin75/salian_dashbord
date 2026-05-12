@@ -25,6 +25,7 @@ import { Dialog, DialogActions, DialogContent, IconButton, InputAdornment, Typog
 import { getImagesUrlByInvoiceNumber } from "../../api/InvoiceImageApi";
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import MultiImageUploader from "../common/MultiImageUploader";
 
 function CreateForm(props) {
   const { formState, onFieldChange, onSubmit, submitButtonLabel } = props;
@@ -45,6 +46,7 @@ function CreateForm(props) {
   const [featureValues, setFeatureValues] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
+ const [images, setImages] = useState([]);
 
   useEffect(() => {
     //Equipment List
@@ -70,7 +72,11 @@ function CreateForm(props) {
 
   const handleSearch = async () => {
     await getImagesUrlByInvoiceNumber(formValues.InvoiceNumber)
-      .then((data) => setImagesUrl(data.data.data))
+      //.then((data) => setImagesUrl(data.data.data))
+      .then((data) => {
+        setImagesUrl(data.data.data)
+        console.log(data.data.data)
+      })
       .catch((err) => {
         console.log('err', err)
       });
@@ -413,7 +419,7 @@ function CreateForm(props) {
             />
           </Grid>
           {/* upload Image */}
-          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+          {/* <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
 
             <Button
               size='small'
@@ -437,20 +443,37 @@ function CreateForm(props) {
                 style={{ marginTop: 3 }}
               />
             )}
+          </Grid> */}
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <MultiImageUploader
+              maxFiles={1}
+              maxSizeMB={20}
+              folderName = "Inventory"
+              onChange={(uploadedItems) => {
+                setImages(uploadedItems);
+                onFieldChange(
+                  "ImageIds",
+                  uploadedItems.filter(x => x.id).map(x => x.id)
+                );
+              }}
+              saveImages={onFieldChange}
+              lable=" آپلود فاکتور"
+              invoiceNumber={formValues.InvoiceNumber}
+            />
           </Grid>
           {
             imagesUrl && (
-              <Grid item xs={12} sm={12} sx={{ display: "flex", flexDirection: "column", gap: 2 }}> 
+              <Grid item xs={12} sm={12} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <FormControl component="fieldset">
                   <FormLabel component="legend">تصاویر فاکتورهای مرتبط</FormLabel>
                   <RadioGroup
                     row
-                    sx={{ gap: 2, flexWrap: 'nowrap' }} 
+                    sx={{ gap: 2, flexWrap: 'nowrap' }}
                     value={selectedImageId}
                     onChange={(e) => handleImageSelect(Number(e.target.value))}
                   >
                     {imagesUrl.map((item) => {
-                      const imageUrl = process.env.REACT_APP_API_BASE_URL + `/files/${item.image}`;
+                      const imageUrl = process.env.REACT_APP_API_BASE_URL + `${item.url}`;
                       return (
                         <FormControlLabel
                           key={item.id}
@@ -462,7 +485,7 @@ function CreateForm(props) {
                               width={120}
                               style={{ borderRadius: 10, cursor: 'pointer' }}
                               onClick={() => handleImageClick(imageUrl)}
-                              alt={`Preview of ${item.image}`}
+                              alt={`Preview of ${item.url}`}
                             />
                           }
                         />
@@ -474,11 +497,11 @@ function CreateForm(props) {
                 <Dialog
                   open={openDialog}
                   onClose={handleCloseDialog}
-                  maxWidth="md" 
+                  maxWidth="md"
                   fullWidth
                   PaperProps={{
                     style: {
-                      position: 'relative', 
+                      position: 'relative',
                     },
                   }}
                 >

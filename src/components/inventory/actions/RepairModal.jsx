@@ -55,6 +55,7 @@ export default function RepairModal({ open, onClose, selectedRows = [] }) {
             NewStatus: null,
             Description: null,
             RepairShop: null,
+            ImageIds : [],
         },
         errors: {},
     }));

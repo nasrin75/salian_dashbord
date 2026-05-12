@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
     Box,
     Button,
@@ -19,13 +19,14 @@ export default function MultiImageUploader({
     onChange,
     lable,
     folderName = "Inventory",
-    selectedIds = []
+    selectedIds = [],
+    invoiceNumber = null
 }) {
     const inputRef = useRef(null);
 
     const [items, setItems] = useState([]);
     // items: [{ file: File, url: string, id: string }]
-
+    const [isDisable, setIsDisable] = useState(false);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewIndex, setPreviewIndex] = useState(0);
 
@@ -37,6 +38,7 @@ export default function MultiImageUploader({
 
     const openPicker = () => inputRef.current?.click();
 
+    console.log('MultiImageUploader', invoiceNumber);
     const addFiles = async (fileList) => {
         const files = Array.from(fileList || []);
 
@@ -47,7 +49,10 @@ export default function MultiImageUploader({
             return;
         }
 
-
+        if (folderName == "Inventory" && invoiceNumber == null) {
+            toast.error("شماره فاکتور الزامی است");
+            return;
+        }
         const tempItems = files.map((file) => {
             const uniqueKey = crypto.randomUUID();
             return {
@@ -78,6 +83,9 @@ export default function MultiImageUploader({
                 const formData = new FormData();
                 formData.append("File", tempItem.file);
                 formData.append("FolderName", folderName);
+                if (invoiceNumber != null) {
+                    formData.append("InvoiceNumber", invoiceNumber);
+                }
 
                 if (Array.isArray(selectedIds)) {
                     selectedIds.forEach((id) => {
@@ -121,7 +129,6 @@ export default function MultiImageUploader({
 
                     return updated;
                 });
-                console.log("imgUrl", process.env.REACT_APP_BASE_HTTPS_URL + '/' + uploaded.url)
             } catch (err) {
                 setItems((prev) =>
                     prev.map((x) =>
@@ -150,12 +157,9 @@ export default function MultiImageUploader({
     // { uniqueKey: '...', id: null, previewUrl: 'blob:...', serverUrl: '', file: File }
 
     const handleDelete = async (uniqueKey) => {
-        console.log("delete uniqueKey:", uniqueKey);
-
         const target = items.find((x) => x.uniqueKey === uniqueKey);
 
         if (!target) {
-            console.log("target not found");
             return;
         }
 
@@ -177,7 +181,6 @@ export default function MultiImageUploader({
                     throw new Error("Server delete failed");
                 }
             } catch (error) {
-                console.error("delete error:", error);
                 alert("خطا در حذف فایل از سرور");
                 return;
             }
@@ -207,7 +210,7 @@ export default function MultiImageUploader({
         setPreviewOpen(false);
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         return () => {
             items.forEach((x) => {
                 if (x.previewUrl?.startsWith("blob:")) {
@@ -216,7 +219,6 @@ export default function MultiImageUploader({
             });
         };
     }, [items]);
-
 
     return (
         <Box>
@@ -239,9 +241,9 @@ export default function MultiImageUploader({
                     {lable}
                 </Button>
 
-                <Typography variant="body2" color="text.secondary">
+                {/* <Typography variant="body2" color="text.secondary">
                     {totalCount}/{maxFiles} عکس
-                </Typography>
+                </Typography> */}
             </Stack>
 
             <Box>
@@ -266,7 +268,7 @@ export default function MultiImageUploader({
                             >
                                 <Box
                                     component="img"
-                                   src={x.serverUrl || x.previewUrl}
+                                    src={x.serverUrl || x.previewUrl}
                                     alt={`preview-${index}`}
                                     sx={{
                                         width: "100%",
