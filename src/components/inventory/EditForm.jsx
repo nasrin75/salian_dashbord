@@ -28,6 +28,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import MultiImageUploader from '../common/MultiImageUploader';
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import Gallery from '../common/Gallery';
+import InvoiceImageWithDeleteZoom from '../common/InvoiceImageWithDeleteZoom';
 
 function EditForm(props) {
   const {
@@ -57,6 +58,7 @@ function EditForm(props) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
   const [images, setImages] = useState([]);
+const [invoiceImages, setInvoiceImages] = useState([]);
 
   useEffect(() => {
     if (formValues.equipmentId) {
@@ -299,6 +301,7 @@ function EditForm(props) {
   //send data
   const handleSubmit = useCallback(
     async (event) => {
+      console.log("handle",formValues)
       event.preventDefault();
       setIsSubmitting(true);
 
@@ -539,7 +542,14 @@ function EditForm(props) {
 
           </Grid>
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
-            {filePath && (
+            <InvoiceImageWithDeleteZoom
+              filePath={filePath}
+              imageId={formValues.invoiceImageId}
+              onDeleted={(path) => {
+                setInvoiceImages((prev) => prev.filter((x) => x.path !== path));
+              }}
+            />
+            {/* {filePath && (
               <img
                 src={
                   process.env.REACT_APP_BASE_HTTPS_URL +
@@ -550,7 +560,7 @@ function EditForm(props) {
                 height={100}
                 style={{ margin: 3 }}
               />
-            )}
+            )} */}
           </Grid>
           {
             imagesUrl && (
@@ -588,7 +598,7 @@ function EditForm(props) {
                   </FormHelperText>
                 </FormControl>
 
-                <Dialog 
+                <Dialog
                   open={openDialog}
                   onClose={handleCloseDialog}
                   maxWidth="md"

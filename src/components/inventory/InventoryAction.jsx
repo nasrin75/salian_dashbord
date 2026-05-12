@@ -5,28 +5,6 @@ import ReplaceModal from './actions/ReplaceModal';
 import RepairModal from './actions/RepairModal';
 import DepoModal from './actions/DepoModal';
 
-function DialogActionModal({ modalType, open, onClose, children }) {
-  return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
-        {modalType === "cartridge" && "شارژ کارتریج"}
-        {modalType === "replace" && "جابجایی"}
-        {modalType === "repair" && "تعمیر"}
-        {modalType === "depo" && "تحویل به انبار مرکزی"}
-        {modalType === "other" && "عملیات دیگر"}
-      </DialogTitle>
-      <DialogContent>
-        {children}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>بستن</Button>
-
-        <Button onClick={() => alert('ذخیره شد!')} color="primary">ذخیره</Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
 export default function InventoryAction({ open: parentOpen, onClose: parentOnClose, selectedRows = [] }) {
   const [modalName, setModalName] = useState(null);
   const [modalData, setModalData] = useState({});
