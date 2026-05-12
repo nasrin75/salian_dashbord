@@ -59,7 +59,7 @@ export default function RepairModal({ open, onClose, selectedRows = [] }) {
         errors: {},
     }));
 
-console.log("images",images);
+    console.log("images", images);
     const formValues = formState.values;
     const formErrors = formState.errors;
 
@@ -216,12 +216,17 @@ console.log("images",images);
                                 <MultiImageUploader
                                     maxFiles={8}
                                     maxSizeMB={20}
-                                    onChange={(uploaded) => {
-    setImages(uploaded);
-    handleInputChange("ImageIds", uploaded.map(x => x.id));
-  }}
+                                    onChange={(uploadedItems) => {
+                                        setImages(uploadedItems);
+                                        handleInputChange(
+                                            "ImageIds",
+                                            uploadedItems.filter(x => x.id).map(x => x.id)
+                                        );
+                                    }}
                                     saveImages={handleInputChange}
                                     lable=" آپلود تصاویر"
+                                    selectedIds={formValues.Ids}
+                                    folderName="Inventory/Repair"
                                 />
                             </Grid>
                         </Grid>
@@ -304,12 +309,18 @@ console.log("images",images);
                             <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
                                 <MultiImageUploader
                                     maxFiles={8}
-                                    maxSizeMB={5}
-                                    onChange={(uploaded) => {
-    setImages(uploaded);
-    handleInputChange("ImageIds", uploaded.map(x => x.id));
-  }}
+                                    maxSizeMB={20}
+                                    onChange={(uploadedItems) => {
+                                        setImages(uploadedItems);
+                                        handleInputChange(
+                                            "ImageIds",
+                                            uploadedItems.filter(x => x.id).map(x => x.id)
+                                        );
+                                    }}
+                                    saveImages={handleInputChange}
                                     lable=" آپلود تصاویر"
+                                    selectedIds={formValues.Ids}
+                                    folderName="Inventory/Repair"
                                 />
                             </Grid>
                         </Grid>
