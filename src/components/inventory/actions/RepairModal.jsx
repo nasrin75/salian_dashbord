@@ -215,8 +215,11 @@ console.log("images",images);
                             <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
                                 <MultiImageUploader
                                     maxFiles={8}
-                                    maxSizeMB={5}
-                                    onChange={(files) => setImages(files)}
+                                    maxSizeMB={20}
+                                    onChange={(uploaded) => {
+    setImages(uploaded);
+    handleInputChange("ImageIds", uploaded.map(x => x.id));
+  }}
                                     saveImages={handleInputChange}
                                     lable=" آپلود تصاویر"
                                 />
@@ -302,7 +305,10 @@ console.log("images",images);
                                 <MultiImageUploader
                                     maxFiles={8}
                                     maxSizeMB={5}
-                                    onChange={(files) => setImages(files)}
+                                    onChange={(uploaded) => {
+    setImages(uploaded);
+    handleInputChange("ImageIds", uploaded.map(x => x.id));
+  }}
                                     lable=" آپلود تصاویر"
                                 />
                             </Grid>

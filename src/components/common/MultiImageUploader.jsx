@@ -11,6 +11,7 @@ import {
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import { toast } from "react-toastify";
 
 export default function MultiImageUploader({
   maxFiles = 10,
@@ -34,25 +35,60 @@ export default function MultiImageUploader({
 
   const openPicker = () => inputRef.current?.click();
 
-  const addFiles = (fileList) => {
+  const addFiles = async (fileList) => {
     const filesArray = Array.from(fileList || []);
     if (filesArray.length === 0) return;
+  
+    const remaining = maxFiles - items.length;
+    const toAdd = filesArray.slice(0, Math.max(remaining, 0));
+  
+    const valid = toAdd.filter((f) => f.size <= maxSizeBytes);
+  
+    for (const file of valid) {
+      const tempId = `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`;
+      const tempUrl = URL.createObjectURL(file);
+  
+      setItems((prev) => [...prev, { file, url: tempUrl, id: tempId }]);
+  
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("FolderName", 'invne');
+  
+        const token = localStorage.getItem("token");
 
-    setItems((prev) => {
-      const remaining = maxFiles - prev.length;
-      const toAdd = filesArray.slice(0, Math.max(remaining, 0));
-
-      const valid = toAdd
-        .filter((f) => f.size <= maxSizeBytes)
-        .map((file) => ({
-          file,
-          url: URL.createObjectURL(file),
-          id: `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
-        }));
-
-      return [...prev, ...valid];
-    });
+      const res = await fetch(process.env.REACT_APP_API_BASE_URL + "/files/upload", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      });
+  
+        if (!res.ok) throw new Error("Upload failed");
+  
+        const data = await res.json();
+  
+        setItems((prev) =>
+          prev.map((x) =>
+            x.id === tempId ? { ...x, id: data.id, serverUrl: data.url } : x
+          )
+        );
+  
+        onChange?.([
+          ...items.map((x) => ({
+            id: x.id,
+            url: x.serverUrl || x.url,
+          })),
+          { id: data.id, url: data.url },
+        ]);
+      } catch (err) {
+        console.error(err);
+        toast.error(`آپلود ${file.name} ناموفق بود`);
+      }
+    }
   };
+  
 
   const handleInputChange = (e) => {
     addFiles(e.target.files);
