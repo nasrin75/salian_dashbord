@@ -63,7 +63,7 @@ function InventoryEditForm({ initialValues, onSubmit }) {
 
 
             setFormValues(newFormValues);
-
+console.log('newFormValues',newFormValues)
             const { issues } = EditValidation(newFormValues);
 
             setFormErrors({

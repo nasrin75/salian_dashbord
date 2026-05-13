@@ -38,7 +38,6 @@ export default function MultiImageUploader({
 
     const openPicker = () => inputRef.current?.click();
 
-    console.log('MultiImageUploader', invoiceNumber);
     const addFiles = async (fileList) => {
         const files = Array.from(fileList || []);
 

@@ -264,6 +264,10 @@ export const ResponseMessage = [
     {
         'key':'IT_NUMBER_IS_EXIST',
         'msg': 'شماره IT تکراری است',
+    },
+    {
+        'key':'IMAGE_WITH_THIS_INVOICE_NUM_EXIST',
+        'msg': 'قطعات دیگری از این تصویر فاکتور استفاده میکنند',
     }
 
 ]

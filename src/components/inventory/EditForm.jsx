@@ -28,7 +28,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import MultiImageUploader from '../common/MultiImageUploader';
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import Gallery from '../common/Gallery';
-import InvoiceImageWithDeleteZoom from '../common/InvoiceImageWithDeleteZoom';
 
 function EditForm(props) {
   const {
@@ -58,7 +57,7 @@ function EditForm(props) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
   const [images, setImages] = useState([]);
-const [invoiceImages, setInvoiceImages] = useState([]);
+  const [invoiceImages, setInvoiceImages] = useState([]);
 
   useEffect(() => {
     if (formValues.equipmentId) {
@@ -302,7 +301,7 @@ const [invoiceImages, setInvoiceImages] = useState([]);
   //send data
   const handleSubmit = useCallback(
     async (event) => {
-      console.log("handle",formValues)
+      console.log("handle", formValues)
       event.preventDefault();
       setIsSubmitting(true);
 
@@ -543,48 +542,58 @@ const [invoiceImages, setInvoiceImages] = useState([]);
 
           </Grid>
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
-            <InvoiceImageWithDeleteZoom
+            <Gallery
               filePath={filePath}
               imageId={formValues.invoiceImageId}
               onDeleted={() => setFilePath("")}
 
-              // onDeleted={(path) => {
-              //   setInvoiceImages((prev) => prev.filter((x) => x.path !== path));
-              // }}
+            // onDeleted={(path) => {
+            //   setInvoiceImages((prev) => prev.filter((x) => x.path !== path));
+            // }}
             />
-           
+
           </Grid>
+          
           {
             imagesUrl && (
               <Grid item xs={12} sm={12} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <FormControl component="fieldset">
                   <FormLabel component="legend">تصاویر فاکتورهای مرتبط</FormLabel>
+
                   <RadioGroup
                     row
-                    sx={{ gap: 2, flexWrap: 'nowrap' }}
+                    sx={{ gap: 2, flexWrap: "nowrap" }}
                     value={selectedImageId}
-                    onChange={(e) => handleImageSelect(Number(e.target.value))}
+                    onChange={(e) => {
+                      const id = Number(e.target.value);
+                      handleImageSelect(id); 
+                    }}
                   >
                     {imagesUrl.map((item) => {
                       const imageUrl = process.env.REACT_APP_BASE_HTTPS_URL + `/${item.url}`;
+
                       return (
                         <FormControlLabel
                           key={item.id}
                           value={item.id}
-                          control={<Radio checked={formValues?.invoiceImageId == item.id ?? false} />}
+                          control={<Radio />}
                           label={
                             <img
                               src={imageUrl}
                               width={120}
-                              style={{ borderRadius: 10, cursor: 'pointer' }}
-                              onClick={() => handleImageClick(imageUrl)}
+                              style={{ borderRadius: 10, cursor: "pointer" }}
                               alt={`Preview of ${item.url}`}
+                              onClick={(e) => {
+                                e.stopPropagation(); 
+                                handleImageClick(imageUrl); 
+                              }}
                             />
                           }
                         />
                       );
                     })}
                   </RadioGroup>
+
                   <FormHelperText error={!!formErrors.status}>
                     {formErrors.status ?? " "}
                   </FormHelperText>
@@ -596,12 +605,10 @@ const [invoiceImages, setInvoiceImages] = useState([]);
                   maxWidth="md"
                   fullWidth
                   PaperProps={{
-                    style: {
-                      position: 'relative',
-                    },
+                    style: { position: "relative" },
                   }}
                 >
-                  <DialogActions sx={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}>
+                  <DialogActions sx={{ position: "absolute", top: 0, right: 0, zIndex: 1 }}>
                     <IconButton onClick={handleCloseDialog} aria-label="close">
                       <CloseIcon />
                     </IconButton>
@@ -609,55 +616,14 @@ const [invoiceImages, setInvoiceImages] = useState([]);
                   <DialogContent>
                     <img
                       src={selectedImageUrl}
-                      style={{ width: '100%', height: 'auto', display: 'block', margin: 'auto' }}
+                      style={{ width: "100%", height: "auto", display: "block", margin: "auto" }}
                       alt="Enlarged view"
                     />
                   </DialogContent>
                 </Dialog>
               </Grid>
-
             )
           }
-
-          {/* {
-            imagesUrl && (
-              <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
-                <FormControl>
-                  <FormLabel id="demo-row-radio-buttons-group-label">
-                    تصاویر فاکتورهای مرتبط
-                  </FormLabel>
-                  <RadioGroup
-                    row
-                    sx={{ gap: 2 }}
-                    value={selectedImageId}
-                    onChange={(e) => handleImageSelect(Number(e.target.value))}
-                  >
-                    {imagesUrl?.map((item) => (
-                      <FormControlLabel
-                        key={item.id}
-                        value={item.id}
-                        control={<Radio checked={formValues?.invoiceImageId == item.id ?? false} />}
-                        label={
-                          <img
-                            src={
-                              process.env.REACT_APP_API_BASE_URL +
-                              `/files/${item.image}`
-                            }
-                            width={120}
-                            style={{ borderRadius: 10 }}
-                          />
-                        }
-                      />
-                    ))}
-                  </RadioGroup>
-                  <FormHelperText error={!!formErrors.status}>
-                    {formErrors.status ?? " "}
-                  </FormHelperText>
-                </FormControl>
-              </Grid>
-            )
-          } */}
-
           {/* end image section */}
 
 

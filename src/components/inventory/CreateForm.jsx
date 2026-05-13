@@ -72,10 +72,8 @@ function CreateForm(props) {
 
   const handleSearch = async () => {
     await getImagesUrlByInvoiceNumber(formValues.InvoiceNumber)
-      //.then((data) => setImagesUrl(data.data.data))
       .then((data) => {
         setImagesUrl(data.data.data)
-        console.log(data.data.data)
       })
       .catch((err) => {
         console.log('err', err)
@@ -474,7 +472,7 @@ function CreateForm(props) {
                     onChange={(e) => handleImageSelect(Number(e.target.value))}
                   >
                     {imagesUrl.map((item) => {
-                      const imageUrl = process.env.REACT_APP_API_BASE_URL + `${item.url}`;
+                      const imageUrl = process.env.REACT_APP_BASE_HTTPS_URL + `/${item.url}`;
                       return (
                         <FormControlLabel
                           key={item.id}
