@@ -160,47 +160,7 @@ function CreateForm(props) {
     setSelectedImageUrl('');
   };
   //#endregion
-  //#region Upload Image
-  const handleFileUpload = async (event) => {
-    console.log('tessss')
-    const file = event.target.files[0];
-    if (!file) return;
-    if (!formValues.InvoiceNumber) {
-      toast.error(" برای اپلود تصویر شماره فاکتور الزامی است");
-      return
-    }
-    const formData = new FormData();
-    formData.append("file", file);
 
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("InvoiceNumber", `${formValues.InvoiceNumber}`);
-
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(process.env.REACT_APP_API_BASE_URL + "/upload", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-      });
-
-      const data = await res.json();
-
-      //send image name that is created after uploaded file
-      onFieldChange("InvoiceImageIds", [data.id]);
-      console.log([data.id])
-      setFilePath(data.url);
-      toast.success("فایل با موفقیت آپلود شد!");
-    } catch (err) {
-      console.error(err);
-      toast.error("آپلود فایل با خطا مواجه شد.");
-    }
-  };
-
-  //#endregion
   return (
     <Box
       component="form"

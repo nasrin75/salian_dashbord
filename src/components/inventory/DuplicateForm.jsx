@@ -25,6 +25,8 @@ import { getBrands } from '../../api/BrandApi';
 import { Dialog, DialogActions, DialogContent, IconButton, InputAdornment, Typography } from '@mui/material';
 import { getImagesUrlByInvoiceNumber } from '../../api/InvoiceImageApi';
 import CloseIcon from '@mui/icons-material/Close';
+import MultiImageUploader from '../common/MultiImageUploader';
+import Gallery from '../common/Gallery';
 
 function DuplicateForm(props) {
   const {
@@ -53,6 +55,7 @@ function DuplicateForm(props) {
   const [currentFeatureValues, setCurrentFeatureValues] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     if (formValues.equipmentId) {
@@ -80,7 +83,7 @@ function DuplicateForm(props) {
 
           setCurrentFeatureValues(initialFeatureValues);
 
-          
+
           onFieldChange('features', newFeatureValuesArray);
         })
         .catch(() => {
@@ -212,7 +215,8 @@ function DuplicateForm(props) {
   //#region InvoiceImage Section
   useEffect(() => {
     if (selectedImageId) {
-      onFieldChange('invoiceImageId', selectedImageId, 'radio')
+      onFieldChange('invoiceImageId', selectedImageId, 'radio')// for show in UI
+      onFieldChange('invoiceImageIds', [Number(selectedImageId)])// for send to server
       //handleSearch(selectedImageId);
     }
   }, [selectedImageId]);
@@ -517,60 +521,71 @@ function DuplicateForm(props) {
           {/* Image section */}
           {/* upload Image */}
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
-            <Button
-              size='small'
-              disabled={!formValues.invoiceNumber}
-              component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
-            >
-              آپلود تصویر فاکتور
-              <input hidden type="file" onChange={handleFileUpload} />
-            </Button>
-            {filePath && (
-              <img
-                src={
-                  process.env.REACT_APP_API_BASE_URL +
-                  `/files/${filePath}`
-                }
-                alt="Invoice"
-                width={100}
-                height={100}
-                style={{ margin: 3 }}
-              />
-            )}
+
+            <MultiImageUploader
+              maxFiles={1}
+              maxSizeMB={20}
+              folderName="Inventory"
+              onChange={(uploadedItems) => {
+                setImages(uploadedItems);
+                onFieldChange(
+                  "invoiceImageIds",
+                  uploadedItems.filter(x => x.id).map(x => x.id)
+                );
+              }}
+              saveImages={onFieldChange}
+              lable=" آپلود فاکتور"
+              invoiceNumber={formValues.invoiceNumber}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
+            <Gallery
+              filePath={filePath}
+              imageId={formValues.invoiceImageId}
+              onDeleted={() => setFilePath("")}
+            />
+
           </Grid>
           {
             imagesUrl && (
               <Grid item xs={12} sm={12} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <FormControl component="fieldset">
                   <FormLabel component="legend">تصاویر فاکتورهای مرتبط</FormLabel>
+
                   <RadioGroup
                     row
-                    sx={{ gap: 2, flexWrap: 'nowrap' }}
+                    sx={{ gap: 2, flexWrap: "nowrap" }}
                     value={selectedImageId}
-                    onChange={(e) => handleImageSelect(Number(e.target.value))}
+                    onChange={(e) => {
+                      const id = Number(e.target.value);
+                      handleImageSelect(id); 
+                    }}
                   >
                     {imagesUrl.map((item) => {
-                      const imageUrl = process.env.REACT_APP_API_BASE_URL + `/files/${item.image}`;
+                      const imageUrl = process.env.REACT_APP_BASE_HTTPS_URL + `/${item.url}`;
+
                       return (
                         <FormControlLabel
                           key={item.id}
                           value={item.id}
-                          control={<Radio checked={formValues?.invoiceImageId == item.id ?? false} />}
+                          control={<Radio />}
                           label={
                             <img
                               src={imageUrl}
                               width={120}
-                              style={{ borderRadius: 10, cursor: 'pointer' }}
-                              onClick={() => handleImageClick(imageUrl)}
-                              alt={`Preview of ${item.image}`}
+                              style={{ borderRadius: 10, cursor: "pointer" }}
+                              alt={`Preview of ${item.url}`}
+                              onClick={(e) => {
+                                e.stopPropagation(); 
+                                handleImageClick(imageUrl); 
+                              }}
                             />
                           }
                         />
                       );
                     })}
                   </RadioGroup>
+
                   <FormHelperText error={!!formErrors.status}>
                     {formErrors.status ?? " "}
                   </FormHelperText>
@@ -582,12 +597,10 @@ function DuplicateForm(props) {
                   maxWidth="md"
                   fullWidth
                   PaperProps={{
-                    style: {
-                      position: 'relative',
-                    },
+                    style: { position: "relative" },
                   }}
                 >
-                  <DialogActions sx={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}>
+                  <DialogActions sx={{ position: "absolute", top: 0, right: 0, zIndex: 1 }}>
                     <IconButton onClick={handleCloseDialog} aria-label="close">
                       <CloseIcon />
                     </IconButton>
@@ -595,54 +608,14 @@ function DuplicateForm(props) {
                   <DialogContent>
                     <img
                       src={selectedImageUrl}
-                      style={{ width: '100%', height: 'auto', display: 'block', margin: 'auto' }}
+                      style={{ width: "100%", height: "auto", display: "block", margin: "auto" }}
                       alt="Enlarged view"
                     />
                   </DialogContent>
                 </Dialog>
               </Grid>
-
             )
           }
-
-          {/* {
-            imagesUrl && (
-              <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
-                <FormControl>
-                  <FormLabel id="demo-row-radio-buttons-group-label">
-                    تصاویر فاکتورهای مرتبط
-                  </FormLabel>
-                  <RadioGroup
-                    row
-                    sx={{ gap: 2 }}
-                    value={selectedImageId}
-                    onChange={(e) => handleImageSelect(Number(e.target.value))}
-                  >
-                    {imagesUrl?.map((item) => (
-                      <FormControlLabel
-                        key={item.id}
-                        value={item.id}
-                        control={<Radio checked={formValues?.invoiceImageId == item.id ?? false} />}
-                        label={
-                          <img
-                            src={
-                              process.env.REACT_APP_API_BASE_URL +
-                              `/files/${item.image}`
-                            }
-                            width={120}
-                            style={{ borderRadius: 10 }}
-                          />
-                        }
-                      />
-                    ))}
-                  </RadioGroup>
-                  <FormHelperText error={!!formErrors.status}>
-                    {formErrors.status ?? " "}
-                  </FormHelperText>
-                </FormControl>
-              </Grid>
-            )
-          } */}
 
           {/* end image section */}
 

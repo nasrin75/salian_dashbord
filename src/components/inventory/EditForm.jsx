@@ -546,10 +546,6 @@ function EditForm(props) {
               filePath={filePath}
               imageId={formValues.invoiceImageId}
               onDeleted={() => setFilePath("")}
-
-            // onDeleted={(path) => {
-            //   setInvoiceImages((prev) => prev.filter((x) => x.path !== path));
-            // }}
             />
 
           </Grid>
