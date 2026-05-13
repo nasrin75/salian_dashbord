@@ -14,7 +14,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import useAuth from '../../hooks/useAuth/useAuth';
 
 function UserEditForm({ initialValues, onSubmit }) {
-   const { hasPermission } = useAuth();
+  const { hasPermission } = useAuth();
   const { userId } = useParams();
   const navigate = useNavigate();
 
@@ -74,7 +74,7 @@ function UserEditForm({ initialValues, onSubmit }) {
       }
 
       if (name === "Status") {
-        finalValue = value =="active" ? 1: -1;
+        finalValue = value == "active" ? 1 : -1;
       }
 
       if (type === "radio") {
@@ -140,7 +140,7 @@ function UserEditForm({ initialValues, onSubmit }) {
       onSubmit={handleFormSubmit}
       onReset={handleFormReset}
       onIpChange={handleIpUpdate}
-      hasPermission ={hasPermission}
+      hasPermission={hasPermission}
       submitButtonLabel="ذخیره"
     />
   );
@@ -174,14 +174,14 @@ export default function UserEdit() {
   const handleSubmit = useCallback(
 
     async (formValues) => {
-      
+
       updateUser(JSON.stringify(formValues))
         .then(data => {
           setUser('handlesubmit', data.data.data)
           setIsLoading(false);
-        }).catch(err =>{})
+        }).catch(err => { })
 
-      
+
     },
     [userId],
   );

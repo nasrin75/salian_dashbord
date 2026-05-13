@@ -183,7 +183,7 @@ function CreateForm(props) {
               onChange={(event, value) =>
                 onFieldChange("EmployeeId", value?.id ?? null)
               }
-              renderInput={(params) => <TextField {...params} label="مالک" />}
+              renderInput={(params) => <TextField {...params} label="مالک *" />}
             />
             <FormHelperText error={!!formErrors.EmployeeId}>
               {formErrors.EmployeeId ?? " "}
@@ -201,7 +201,7 @@ function CreateForm(props) {
               //helperText={formErrors.EquipmentId ?? ''}
               getOptionLabel={(option) => option.name}
               onChange={async (e, value) => handleEquipmentChanges(e, value)}
-              renderInput={(params) => <TextField {...params} helperText={formErrors.EquipmentId ?? ''} label="قطعه" />}
+              renderInput={(params) => <TextField {...params} helperText={formErrors.EquipmentId ?? ''} label="قطعه *" />}
             />
             <FormHelperText error={!!formErrors.EquipmentId}>
               {formErrors.EquipmentId ?? " "}
@@ -378,31 +378,7 @@ function CreateForm(props) {
             />
           </Grid>
           {/* upload Image */}
-          {/* <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
-
-            <Button
-              size='small'
-              disabled={!formValues.InvoiceNumber}
-              component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
-            >
-              آپلود تصویر فاکتور
-              <input hidden type="file" onChange={handleFileUpload} />
-            </Button>
-
-            {formValues.InvoiceImageUrl && (
-              <img
-                src={
-                  process.env.REACT_APP_API_BASE_URL +
-                  `/files/${filePath}`
-                }
-                alt="Invoice"
-                width={100}
-                style={{ marginTop: 3 }}
-              />
-            )}
-          </Grid> */}
+         
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
             <MultiImageUploader
               maxFiles={1}
@@ -485,7 +461,7 @@ function CreateForm(props) {
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">
-                وضعیت
+                وضعیت *
               </FormLabel>
               <RadioGroup
                 row

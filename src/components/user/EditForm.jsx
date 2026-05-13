@@ -160,7 +160,7 @@ function EditForm(props) {
   };
 
   useEffect(() => {
-   
+
     onFieldChange('scope', scope)
   }, [scope]);
 
@@ -179,7 +179,7 @@ function EditForm(props) {
 
   const handleCheckIp = (e) => {
     const isChecked = e.target.checked;
-    
+
     onFieldChange("isCheckIp", isChecked);
     setIsCheckIpBtn(isChecked);
     if (isChecked) {
@@ -189,6 +189,12 @@ function EditForm(props) {
       }
     }
   }
+
+  useEffect(() => {
+
+    onFieldChange('newPassword', newPassword)
+  }, [newPassword])
+
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
@@ -211,6 +217,7 @@ function EditForm(props) {
         formValues.scope = scope;
         if (newPassword.trim() !== '') {
           formValues.password = newPassword;
+          onFieldChange('password', newPassword)
         }
         await onSubmit(formValues);
       } finally {
@@ -252,7 +259,7 @@ function EditForm(props) {
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
             <TextField
-            type={showPassword ? "text" : "password"}
+              type={showPassword ? "text" : "password"}
               //value={''}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -263,14 +270,14 @@ function EditForm(props) {
               fullWidth
               disabled={!hasPermission([PERMISSION.USER_VIEW_PASSWORD])}
               InputProps={{
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                  </IconButton>
-                                </InputAdornment>
-                              ),
-                            }}
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }} sx={{ display: 'flex' }}>
@@ -339,7 +346,7 @@ function EditForm(props) {
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 12}} sx={{ display: 'flex' }}>
+          <Grid size={{ xs: 12, sm: 12 }} sx={{ display: 'flex' }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">ورود با : *</FormLabel>
               <FormGroup
@@ -419,14 +426,14 @@ function EditForm(props) {
 
                   {(scope === '1') ? (
                     <>
-                      
+
                       <Grid item xs={12}>
                         <Typography variant="body2" component="label" sx={{ mt: 1, mb: 1, display: "block", fontWeight: 500 }}>
                           از:
                         </Typography>
                         <FormHelperText error={!!formErrors.startIp}>
-                    {formErrors.startIp ?? ' '}
-                  </FormHelperText>
+                          {formErrors.startIp ?? ' '}
+                        </FormHelperText>
                         {renderIpInputs("from", rangeIpFrom)}
                       </Grid>
                       <Grid item xs={12}>
@@ -434,22 +441,22 @@ function EditForm(props) {
                           تا:
                         </Typography>
                         <FormHelperText error={!!formErrors.endIp}>
-                    {formErrors.endIp ?? ' '}
-                  </FormHelperText>
+                          {formErrors.endIp ?? ' '}
+                        </FormHelperText>
                         {renderIpInputs("to", rangeIpTo)}
                       </Grid>
                     </>
                   ) : (
                     <>
                       <FormHelperText error={!!formErrors.startIp}>
-                    {formErrors.startIp ?? ' '}
-                    </FormHelperText>
-                    <Grid item xs={12}>
-                      {renderIpInputs("single", singleIp)}
-                    </Grid>
-                 
+                        {formErrors.startIp ?? ' '}
+                      </FormHelperText>
+                      <Grid item xs={12}>
+                        {renderIpInputs("single", singleIp)}
+                      </Grid>
+
                     </>
-                    
+
                   )}
 
                 </FormControl>

@@ -343,7 +343,7 @@ function EditForm(props) {
               onChange={(event, value) =>
                 onFieldChange("employeeId", value?.id ?? null)
               }
-              renderInput={(params) => <TextField {...params} label="مالک" />}
+              renderInput={(params) => <TextField {...params} label="مالک *" />}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 2 }} sx={{ display: "flex" }}>
@@ -358,7 +358,7 @@ function EditForm(props) {
               onChange={async (e, value) => {
                 await handleEquipmentChanges(e, value);
               }}
-              renderInput={(params) => <TextField {...params} label="قطعه" />}
+              renderInput={(params) => <TextField {...params} label="قطعه *" />}
             />
           </Grid>
           {
@@ -627,7 +627,7 @@ function EditForm(props) {
           <Grid size={{ xs: 12, sm: 12 }} sx={{ display: "flex" }}>
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">
-                وضعیت
+                وضعیت *
               </FormLabel>
               <RadioGroup
                 row
