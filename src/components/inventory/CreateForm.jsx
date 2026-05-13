@@ -84,7 +84,7 @@ function CreateForm(props) {
 
   useEffect(() => {
     if (selectedImageId) {
-      onFieldChange('InvoiceImageId', selectedImageId)
+      onFieldChange('InvoiceImageIds', [selectedImageId])
       //handleSearch(selectedImageId);
     }
   }, [selectedImageId]);
@@ -192,7 +192,8 @@ function CreateForm(props) {
       const data = await res.json();
 
       //send image name that is created after uploaded file
-      onFieldChange("InvoiceImageUrl", data.url);
+      onFieldChange("InvoiceImageIds", [data.id]);
+      console.log([data.id])
       setFilePath(data.url);
       toast.success("فایل با موفقیت آپلود شد!");
     } catch (err) {
@@ -452,7 +453,7 @@ function CreateForm(props) {
               onChange={(uploadedItems) => {
                 setImages(uploadedItems);
                 onFieldChange(
-                  "ImageIds",
+                  "InvoiceImageIds",
                   uploadedItems.filter(x => x.id).map(x => x.id)
                 );
               }}

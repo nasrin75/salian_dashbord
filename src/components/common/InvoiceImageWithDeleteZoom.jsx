@@ -16,7 +16,6 @@ export default function InvoiceImageWithDeleteZoom({
     filePath,
     onDeleted,
     imageId,
-    deleteUrlBase = "/files/delete",
 }) {
     const [open, setOpen] = useState(false);
     const [loadingDelete, setLoadingDelete] = useState(false);
@@ -54,7 +53,7 @@ export default function InvoiceImageWithDeleteZoom({
                 throw new Error(text || "حذف ناموفق بود");
             }
 
-            onDeleted?.(filePath);
+            onDeleted?.(imageId);
 
             setOpen(false);
         } catch (e) {

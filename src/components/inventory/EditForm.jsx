@@ -217,7 +217,8 @@ const [invoiceImages, setInvoiceImages] = useState([]);
   //#region InvoiceImage Section
   useEffect(() => {
     if (selectedImageId) {
-      onFieldChange('invoiceImageId', selectedImageId, 'radio')
+      onFieldChange('invoiceImageId', selectedImageId, 'radio')// for show in UI
+      onFieldChange('invoiceImageIds', [Number(selectedImageId)])// for send to server
       //handleSearch(selectedImageId);
     }
   }, [selectedImageId]);
@@ -531,7 +532,7 @@ const [invoiceImages, setInvoiceImages] = useState([]);
               onChange={(uploadedItems) => {
                 setImages(uploadedItems);
                 onFieldChange(
-                  "imageIds",
+                  "invoiceImageIds",
                   uploadedItems.filter(x => x.id).map(x => x.id)
                 );
               }}
@@ -545,22 +546,13 @@ const [invoiceImages, setInvoiceImages] = useState([]);
             <InvoiceImageWithDeleteZoom
               filePath={filePath}
               imageId={formValues.invoiceImageId}
-              onDeleted={(path) => {
-                setInvoiceImages((prev) => prev.filter((x) => x.path !== path));
-              }}
+              onDeleted={() => setFilePath("")}
+
+              // onDeleted={(path) => {
+              //   setInvoiceImages((prev) => prev.filter((x) => x.path !== path));
+              // }}
             />
-            {/* {filePath && (
-              <img
-                src={
-                  process.env.REACT_APP_BASE_HTTPS_URL +
-                  `/${filePath}`
-                }
-                alt="Invoice"
-                width={100}
-                height={100}
-                style={{ margin: 3 }}
-              />
-            )} */}
+           
           </Grid>
           {
             imagesUrl && (
