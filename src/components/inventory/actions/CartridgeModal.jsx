@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { CreateValidation } from "../../../validation/CartridgeValidation";
 import { useNavigate } from "react-router-dom";
 import MultiImageUploader from "../../common/MultiImageUploader";
+import { chargeCartridge } from "../../../api/InventoryAction";
 
 
 function TabPanel(props) {
@@ -37,13 +38,9 @@ function tabProps(index) {
 
 export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
     const navigate = useNavigate();
+
     const selectedIds = selectedRows && selectedRows.ids ? Array.from(selectedRows.ids) : [];
-    if (!selectedIds || selectedIds.length === 0) {
 
-        toast.error("انتخاب حداقل یه قطعه الزامی است.")
-        onClose()
-
-    }
     const [tabValue, setTabValue] = useState(0); // 0 => send 1=>back
     const [formState, setFormState] = useState(() => ({
         values: {
@@ -52,21 +49,27 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
             SendDate: null,
             ReturnDate: null,
             RepairShop: null,
-            InLocal: null,
+            InLocal: false,
             Problem: null,
-            Description: null,
+            SendDescription: null,
+            ReturnDescription: null,
             ImageIds: [],
         },
         errors: {},
     }));
 
+    if (!selectedIds || selectedIds.length === 0) {
+
+        toast.error("انتخاب حداقل یه قطعه الزامی است.")
+        onClose()
+
+    }
+    const [data, setData] = useState({});
 
     const formValues = formState.values;
     const formErrors = formState.errors;
     const [images, setImages] = useState([]);
 
-
-    //console.log(formValues.ActionType, tabValue)
     const setFormValues = useCallback((newFormValues) => {
         setFormState((previousState) => ({
             ...previousState,
@@ -79,22 +82,23 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
             ...previousState,
             errors: newFormErrors,
         }));
-    }, []);
+    }, [formValues]);
 
 
-    const handleInputChange = useCallback(
+    const handleFormFieldChange = useCallback(
         (name, value, type = "text") => {
             let finalValue = value;
-            // if (type === 'radio') {
-            //     finalValue = Number(value)
-            // }
+            if (type === 'radio') {
+                finalValue =value == '1'? true: false;
+            }
             const newFormValues = {
                 ...formValues,
                 [name]: finalValue,
             };
-            console.log("handleInputChange",name, value)
+            console.log("handleFormFieldChange", name, value)
 
             setFormValues(newFormValues);
+            setData(newFormValues);
 
             const { issues } = CreateValidation(newFormValues);
             console.log('issue', issues)
@@ -109,33 +113,35 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
     );
 
     useEffect(() => {
-        handleInputChange("Ids", selectedIds)
-        setActionType();
+        handleFormFieldChange("Ids", selectedIds)
+        //setActionType();
     }, [])
 
-    useEffect(() => {
-        setActionType();
-    }, [tabValue])
+    // useEffect(() => {
+    //     setActionType();
+    // }, [tabValue])
     console.log('formErro', formErrors)
     console.log('formValues', formValues)
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
-        // const actionType = newValue == 0 ? 'SendToCharge' : 'BackFromCharge'
-        // handleInputChange('ActionType', actionType);
+        handleFormFieldChange(
+            'ActionType',
+            newValue === 1 ? 'BackFromCharge' : 'SendToCharge'
+        );
     };
 
-    const setActionType = async () => {
-        const actionType = tabValue == 1 ? 'BackFromCharge' : 'SendToCharge'
-        handleInputChange('ActionType', actionType);
-    }
-    // const handleSave = () => {
+    // const setActionType = async () => {
+    //     const actionType = tabValue == 1 ? 'BackFromCharge' : 'SendToCharge'
+    //     handleFormFieldChange('ActionType', actionType);
+    // }
+    // const handleFormSubmit = () => {
     //     console.log('final', formValues)
     //     // call api
     //     alert('داده‌ها ذخیره شد!');
     //     handleCloseAndReset();
     // };
 
-    const handleSave = useCallback(async (payload) => {
+    const handleFormSubmit = useCallback(async (payload) => {
         //TODO:add validation
         // const { issues } = CreateValidation(payload);
 
@@ -146,10 +152,20 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
         //     return;
         // }
         // setFormErrors({});
-        console.log('final', formValues)
+        console.log('final ', formValues)
+
         // call api
-        alert('داده‌ها ذخیره شد!');
-        handleCloseAndReset();
+        try {
+            chargeCartridge(formValues)
+                .then(resp => {
+                    toast.success("افزوده شد");
+                    onClose();
+                })
+                .catch(err => { })
+        } catch (editError) {
+            alert('مشکلی رخ داده');
+            handleCloseAndReset();
+        }
 
     }, [navigate, setFormErrors]);
 
@@ -160,7 +176,7 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
 
     console.log('CartridgeModal selectedIds', selectedIds)
     return (
-        <Dialog open={open} onClose={handleCloseAndReset} maxWidth="sm" fullWidth>
+        <Dialog open={open} onClose={handleCloseAndReset} maxWidth="sm" fullWidth  >
             <DialogTitle>شارژ کارتریج</DialogTitle>
             <DialogContent>
                 <Box sx={{ width: '100%' }}>
@@ -181,12 +197,12 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                                         row
                                         aria-labelledby="demo-row-radio-buttons-group-label"
                                         name="InLocal"
-                                        onChange={(e) => handleInputChange("InLocal", e.target.value, "radio")}
+                                        onChange={(e) => handleFormFieldChange("InLocal", e.target.value, "radio")}
                                         error={!!formErrors.InLocal}
                                         helperText={formErrors.InLocal ?? " "}
                                     >
                                         <FormControlLabel value="1" control={<Radio />} label="درمحل" />
-                                        <FormControlLabel value="2" control={<Radio />} label="خارج از محل" />
+                                        <FormControlLabel value="0" control={<Radio />} label="خارج از محل" />
                                     </RadioGroup>
                                     <FormHelperText error={!!formErrors.InLocal}>
                                         {formErrors.InLocal ?? ' '}
@@ -196,7 +212,7 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                             <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
                                 <TextField
                                     value={formValues.RepairShop ?? ''}
-                                    onChange={(e) => handleInputChange("RepairShop", e.target.value)}
+                                    onChange={(e) => handleFormFieldChange("RepairShop", e.target.value)}
                                     name="RepairShop"
                                     label="نام تعمیرگاه"
                                     error={!!formErrors.RepairShop}
@@ -213,7 +229,7 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                                         formValues.SendDate ? dayjs(formValues.SendDate) : null
                                     }
                                     onChange={(value) =>
-                                        handleInputChange(
+                                        handleFormFieldChange(
                                             "SendDate",
                                             value
                                                 ? dayjs(value).calendar("gregory").format("YYYY-MM-DD")
@@ -239,8 +255,8 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                                     id="outlined-multiline-flexible-grid"
                                     label="توضیحات"
                                     multiline
-                                    value={formValues.Description}
-                                    onChange={(e) => handleInputChange('Description', e.target.value)}
+                                    value={formValues.SendDescription}
+                                    onChange={(e) => handleFormFieldChange('SendDescription', e.target.value)}
                                     variant="outlined"
                                     fullWidth
                                 />
@@ -257,7 +273,7 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                                         row
                                         aria-labelledby="demo-row-radio-buttons-group-label"
                                         name="Problem"
-                                        onChange={(e) => handleInputChange("Problem", e.target.value)}
+                                        onChange={(e) => handleFormFieldChange("Problem", e.target.value)}
                                         error={!!formErrors.Problem}
                                         helperText={formErrors.Problem ?? " "}
                                     >
@@ -275,7 +291,7 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                             <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex' }}>
                                 <TextField
                                     value={formValues.RepairShop ?? ''}
-                                    onChange={(e) => handleInputChange("RepairShop", e.target.value)}
+                                    onChange={(e) => handleFormFieldChange("RepairShop", e.target.value)}
                                     name="RepairShop"
                                     label="نام تعمیرگاه"
                                     error={!!formErrors.RepairShop}
@@ -292,7 +308,7 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                                         formValues.ReturnDate ? dayjs(formValues.ReturnDate) : null
                                     }
                                     onChange={(value) =>
-                                        handleInputChange(
+                                        handleFormFieldChange(
                                             "ReturnDate",
                                             value
                                                 ? dayjs(value).calendar("gregory").format("YYYY-MM-DD")
@@ -318,8 +334,8 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                                     id="outlined-multiline-flexible-grid"
                                     label="توضیحات"
                                     multiline
-                                    value={formValues.Description}
-                                    onChange={(e) => handleInputChange('Description', e.target.value)}
+                                    value={formValues.ReturnDescription}
+                                    onChange={(e) => handleFormFieldChange('ReturnDescription', e.target.value)}
                                     variant="outlined"
                                     fullWidth
                                 />
@@ -330,12 +346,12 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                                     maxSizeMB={20}
                                     onChange={(uploadedItems) => {
                                         setImages(uploadedItems);
-                                        handleInputChange(
+                                        handleFormFieldChange(
                                             "ImageIds",
                                             uploadedItems.filter(x => x.id).map(x => x.id)
                                         );
                                     }}
-                                    saveImages={handleInputChange}
+                                    saveImages={handleFormFieldChange}
                                     lable=" آپلود فاکتور"
                                     selectedIds={formValues.Ids}
                                     folderName="Inventory/Cartridge"
@@ -348,7 +364,7 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
             </DialogContent>
             <DialogActions>
 
-                <Button onClick={handleSave} color="primary" variant="contained">
+                <Button onClick={handleFormSubmit} color="primary" variant="contained">
                     ذخیره
                 </Button>
                 <Button onClick={handleCloseAndReset} color="warning" variant="contained">لغو</Button>
