@@ -311,6 +311,15 @@ export default function List() {
                     return getMessage(params.row.status)
                 },
             },
+            {
+                field: 'latestStatus',
+                headerName: 'آخرین وضعیت',
+                width: 140,
+                renderCell: params => {
+                    //return params.row.status
+                    return getMessage(params.row.latestStatus)
+                },
+            },
             { field: 'user', headerName: 'کاربر', width: 140 },
             { field: 'serialNumber', headerName: 'شماره سریال', width: 140 },
             {

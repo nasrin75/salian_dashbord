@@ -64,7 +64,6 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
         onClose()
 
     }
-    const [data, setData] = useState({});
 
     const formValues = formState.values;
     const formErrors = formState.errors;
@@ -95,10 +94,8 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
                 ...formValues,
                 [name]: finalValue,
             };
-            console.log("handleFormFieldChange", name, value)
 
             setFormValues(newFormValues);
-            setData(newFormValues);
 
             const { issues } = CreateValidation(newFormValues);
             console.log('issue', issues)
@@ -130,17 +127,6 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
         );
     };
 
-    // const setActionType = async () => {
-    //     const actionType = tabValue == 1 ? 'BackFromCharge' : 'SendToCharge'
-    //     handleFormFieldChange('ActionType', actionType);
-    // }
-    // const handleFormSubmit = () => {
-    //     console.log('final', formValues)
-    //     // call api
-    //     alert('داده‌ها ذخیره شد!');
-    //     handleCloseAndReset();
-    // };
-
     const handleFormSubmit = useCallback(async (payload) => {
         //TODO:add validation
         // const { issues } = CreateValidation(payload);
@@ -154,7 +140,6 @@ export default function CartridgeModal({ open, onClose, selectedRows = [] }) {
         // setFormErrors({});
         console.log('final ', formValues)
 
-        // call api
         try {
             chargeCartridge(formValues)
                 .then(resp => {

@@ -5,18 +5,14 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { CreateValidation } from "../../../validation/ReplaceValidation";
 import { getEmployees } from "../../../api/EmployeeApi";
+import { AddReplace } from "../../../api/InventoryAction";
 
 export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
     const selectedIds = selectedRows && selectedRows.ids ? Array.from(selectedRows.ids) : [];
-    if (!selectedIds || selectedIds.length === 0) {
-        toast.error("انتخاب حداقل یه قطعه الزامی است.")
-        onClose()
-    }
 
     const [formState, setFormState] = useState(() => ({
         values: {
             Ids: selectedIds,
-            ActionType: 'Replace',
             EmployeeId: null,
             ReceiveDate: null,
             NewStatus: null,
@@ -25,11 +21,17 @@ export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
         errors: {},
     }));
 
+    if (!selectedIds || selectedIds.length === 0) {
+        toast.error("انتخاب حداقل یه قطعه الزامی است.")
+        onClose()
+    }
     const formValues = formState.values;
     const formErrors = formState.errors;
     const [employees, setEmployees] = useState({});
 
     useEffect(() => {
+        handleFormFieldChange("Ids", selectedIds)
+
         getEmployees()
             .then((data) => setEmployees(data.data.data))
             .catch(() => { });
@@ -47,10 +49,10 @@ export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
             ...previousState,
             errors: newFormErrors,
         }));
-    }, []);
+    }, [formValues]);
 
 
-    const handleInputChange = useCallback(
+    const handleFormFieldChange = useCallback(
         (name, value, type = "text") => {
             let finalValue = value;
             if (type === 'radio') {
@@ -75,12 +77,33 @@ export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
         [formValues, formErrors],
     );
 
-    const handleSave = () => {
-        console.log('final', formValues)
-        // call api
-        alert('داده‌ها ذخیره شد!');
-        handleCloseAndReset();
-    };
+const handleFormSubmit = useCallback(async (payload) => {
+        //TODO:add validation
+        // const { issues } = CreateValidation(payload);
+
+        // if (issues && issues.length > 0) {
+        //     setFormErrors(
+        //         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
+        //     );
+        //     return;
+        // }
+        // setFormErrors({});
+        console.log('final ', formValues)
+
+        try {
+            //alert("saved")
+            AddReplace(formValues)
+                .then(resp => {
+                    toast.success("افزوده شد");
+                    onClose();
+                })
+                .catch(err => { })
+        } catch (editError) {
+            alert('مشکلی رخ داده');
+            handleCloseAndReset();
+        }
+
+    }, [setFormErrors]);
 
     const handleCloseAndReset = () => {
         onClose();
@@ -105,7 +128,7 @@ export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
                                 autoHighlight
                                 getOptionLabel={(option) => option.name}
                                 onChange={(event, value) =>
-                                    handleInputChange("EmployeeId", value?.id ?? null)
+                                    handleFormFieldChange("EmployeeId", value?.id ?? null)
                                 }
                                 renderInput={(params) => <TextField {...params} label=" مالک جدید *" />}
                             />
@@ -123,7 +146,7 @@ export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
                                     formValues.ReceiveDate ? dayjs(formValues.ReceiveDate) : null
                                 }
                                 onChange={(value) =>
-                                    handleInputChange(
+                                    handleFormFieldChange(
                                         "ReceiveDate",
                                         value
                                             ? dayjs(value).calendar("gregory").format("YYYY-MM-DD")
@@ -145,7 +168,7 @@ export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name="NewStatus"
-                                    onChange={(e) => handleInputChange("NewStatus", e.target.value, "radio")}
+                                    onChange={(e) => handleFormFieldChange("NewStatus", e.target.value, "radio")}
                                     error={!!formErrors.NewStatus}
                                     helperText={formErrors.NewStatus ?? " "}
                                 >
@@ -182,7 +205,7 @@ export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
                                 label="توضیحات"
                                 multiline
                                 value={formValues.Description}
-                                onChange={(e) => handleInputChange('Description', e.target.value)}
+                                onChange={(e) => handleFormFieldChange('Description', e.target.value)}
                                 variant="outlined"
                                 fullWidth
                             />
@@ -192,7 +215,7 @@ export default function ReplaceModal({ open, onClose, selectedRows = [] }) {
             </DialogContent>
             <DialogActions>
 
-                <Button onClick={handleSave} color="primary" variant="contained">
+                <Button onClick={handleFormSubmit} color="primary" variant="contained">
                     ذخیره
                 </Button>
                 <Button onClick={handleCloseAndReset} color="warning" variant="contained">لغو</Button>
